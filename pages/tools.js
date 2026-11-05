@@ -1,0 +1,268 @@
+// Araç sayfalarının içerikleri. build.js bunları sayfaya dönüştürür.
+const cfg = require('../site.config');
+const oranlar = require('../data/kira-oranlari');
+
+const tr2 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function field(name, label, o = {}) {
+  const unit = o.unit ? `<span class="unit">${o.unit}</span>` : '';
+  const money = o.money ? ' data-money' : '';
+  return `<div class="field${o.full ? ' full' : ''}">
+  <label for="${o.id || name}">${label}</label>
+  <div class="input"><input id="${o.id || name}" name="${name}" type="text" inputmode="decimal" autocomplete="off"${money} value="${o.value ?? ''}" placeholder="${o.placeholder ?? ''}"${o.unit ? ' class="has-unit"' : ''}>${unit}</div>
+  ${o.hint ? `<span class="hint">${o.hint}</span>` : ''}
+</div>`;
+}
+
+const stat = (key, label) => `<div class="stat"><b data-out="${key}">–</b><span>${label}</span></div>`;
+
+// ---------- Amortisman formu (anasayfa ve ilçe sayfalarında da kullanılır) ----------
+function amortismanForm({ fiyat = '6.500.000', kira = '30.000', heading = true, idPrefix = 'a' } = {}) {
+  const id = (n) => `${idPrefix}-${n}`;
+  return `<form class="calc" data-tool="amortisman" novalidate>
+  ${heading ? '<h2>Kaç yılda amorti eder?</h2><p class="muted small">Satış fiyatını ve alabileceğin kirayı yaz, sonuç anında hesaplansın.</p>' : ''}
+  <div class="fields">
+    ${field('fiyat', 'Satış fiyatı', { id: id('fiyat'), unit: 'TL', money: true, value: fiyat })}
+    ${field('kira', 'Aylık kira', { id: id('kira'), unit: 'TL', money: true, value: kira, hint: 'Aynı bölgede benzer dairelerin kira ilanlarına bak.' })}
+  </div>
+  <details class="more">
+    <summary>Giderleri ve senaryoyu ayarla</summary>
+    <div class="fields">
+      ${field('masraf', 'Alım masrafları', { id: id('masraf'), unit: '%', value: '4,4', hint: 'Tapu harcı %2 + emlakçı komisyonu %2 + KDV' })}
+      ${field('bos', 'Yılda boş kalma', { id: id('bos'), unit: 'ay', value: '0,5', hint: 'Kiracı değişiminde boş geçen süre' })}
+      ${field('bakim', 'Bakım ve onarım', { id: id('bakim'), unit: '%', value: '5', hint: 'Yıllık kiranın yüzdesi' })}
+      ${field('gider', 'Ev sahibinin aylık gideri', { id: id('gider'), unit: 'TL', money: true, value: '0', hint: 'Aidatı sen ödüyorsan buraya yaz' })}
+      ${field('artis', 'Kiranın enflasyonu yıllık ne kadar geçeceği', { id: id('artis'), unit: '%', value: '2', full: true, hint: 'Reel artış senaryosu. Kira enflasyon kadar artacaksa 0 yaz.' })}
+    </div>
+  </details>
+  <div class="result" aria-live="polite" hidden>
+    <div class="result-head"><div class="big" data-out="yil">–</div><span data-out="verdict" class="verdict"></span></div>
+    <div class="years" aria-hidden="true"></div>
+    <div class="years-caption" data-out="yilcap"></div>
+    <div class="stats">
+      ${stat('brut', 'Brüt amortisman (masrafsız)')}
+      ${stat('getiri', 'Brüt yıllık kira getirisi')}
+      ${stat('yillik', 'Yıllık net kira')}
+      ${stat('artisyil', 'Kira enflasyonu yılda <span data-out="artisoran"></span> geçerse')}
+    </div>
+    <p class="note">Net süre; alım masrafları, boş kalma ve bakım giderleri düşülerek hesaplanır. Kira geliri vergisi ve evin değer değişimi dahil değildir. Reel senaryo, kiranın her yıl enflasyonun belirttiğin oran kadar üstünde arttığını varsayar.</p>
+  </div>
+</form>`;
+}
+
+function ilanForm() {
+  const satisRows = [1, 2, 3, 4, 5].map((i) => `<tr data-comp="satis"><td><div class="input"><input name="s${i}fiyat" aria-label="${i}. ilan fiyatı" inputmode="decimal" data-money placeholder="${i <= 3 ? 'ör. 6.200.000' : ''}"></div></td><td><div class="input"><input name="s${i}m2" aria-label="${i}. ilan m²" inputmode="decimal" placeholder="${i <= 3 ? 'ör. 105' : ''}"></div></td></tr>`).join('');
+  const kiraRows = [1, 2, 3].map((i) => `<tr data-comp="kira"><td><div class="input"><input name="k${i}kira" aria-label="${i}. kira ilanı" inputmode="decimal" data-money placeholder="${i === 1 ? 'ör. 28.000' : ''}"></div></td><td><div class="input"><input name="k${i}m2" aria-label="${i}. kira ilanı m²" inputmode="decimal" placeholder="${i === 1 ? 'ör. 100' : ''}"></div></td></tr>`).join('');
+  return `<form class="calc" data-tool="ilan" novalidate>
+  <h2>Baktığın ilan</h2>
+  <div class="fields">
+    ${field('fiyat', 'İlan fiyatı', { id: 'i-fiyat', unit: 'TL', money: true, placeholder: 'ör. 5.400.000' })}
+    ${field('m2', 'Net m²', { id: 'i-m2', unit: 'm²', placeholder: 'ör. 100' })}
+  </div>
+  <h3 style="margin-top:20px">Aynı bölgedeki benzer satılık ilanlar</h3>
+  <p class="muted small">Aynı mahallede, benzer yaş ve büyüklükteki en az 3 ilanı yaz.</p>
+  <table class="comps"><thead><tr><th>Fiyat (TL)</th><th>Net m²</th></tr></thead><tbody>${satisRows}</tbody></table>
+  <details class="more">
+    <summary>Kira ilanlarıyla amortismanı da hesapla</summary>
+    <table class="comps"><thead><tr><th>Aylık kira (TL)</th><th>Net m²</th></tr></thead><tbody>${kiraRows}</tbody></table>
+  </details>
+  <div class="result" aria-live="polite" hidden>
+    <div class="result-head"><div class="big" data-out="fark">–</div><span data-out="verdict" class="verdict"></span></div>
+    <p class="muted small">Benzer ilanların ortalama m² fiyatına göre fark</p>
+    <p data-out="aciklama"></p>
+    <div class="stats">
+      ${stat('ilanm2', 'Bu ilanın m² fiyatı')}
+      ${stat('medm2', 'Benzerlerin ortanca m² fiyatı')}
+      ${stat('kira', 'Tahmini aylık kira')}
+      ${stat('amorti', 'Brüt amortisman')}
+    </div>
+  </div>
+</form>`;
+}
+
+function kiraArtisForm() {
+  const opts = oranlar.map((o, i) => `<option value="${o.oran}"${i === 0 ? ' selected' : ''}>${o.ay} (%${tr2(o.oran)})</option>`).join('');
+  return `<form class="calc" data-tool="kira-artis" novalidate>
+  <div class="fields">
+    ${field('kira', 'Mevcut aylık kira', { id: 'ka-kira', unit: 'TL', money: true, value: '25.000' })}
+    <div class="field"><label for="ka-ay">Sözleşmenin yenilendiği ay</label><div class="input"><select id="ka-ay" name="ay">${opts}</select></div></div>
+  </div>
+  <div class="result" aria-live="polite" hidden>
+    <p class="muted small" style="margin:0 0 4px"><span data-out="ay"></span> için en fazla</p>
+    <div class="result-head"><div class="big" data-out="yeni">–</div></div>
+    <div class="stats">
+      ${stat('artis', 'Aylık artış tutarı')}
+      ${stat('oran', 'Yasal üst sınır')}
+      ${stat('yillik', 'Yıllık ek ödeme')}
+    </div>
+    <p class="note">Taraflar bu oranın altında bir artışta anlaşabilir. Beş yılı dolduran sözleşmelerde kira bedeli hâkim tarafından emsal kiralara göre yeniden belirlenebilir.</p>
+  </div>
+</form>`;
+}
+
+function krediForm() {
+  return `<form class="calc" data-tool="kredi" novalidate>
+  <div class="fields">
+    ${field('tutar', 'Kredi tutarı', { id: 'k-tutar', unit: 'TL', money: true, value: '2.000.000', full: true })}
+    ${field('vade', 'Vade', { id: 'k-vade', unit: 'ay', value: '120' })}
+    ${field('faiz', 'Aylık faiz oranı', { id: 'k-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ','), hint: 'Ekim 2026: teklifler yaklaşık %2,87\'den başlıyor' })}
+  </div>
+  <div class="result" aria-live="polite" hidden>
+    <div class="result-head"><div class="big" data-out="taksit">–</div></div>
+    <div class="stats">
+      ${stat('toplam', 'Toplam geri ödeme')}
+      ${stat('faizTop', 'Toplam faiz')}
+      ${stat('oranx', 'Çekilen tutarın katı')}
+      ${stat('gelir', 'Önerilen en az aylık gelir')}
+    </div>
+    <p class="note">Konut kredilerinde BSMV ve KKDF uygulanmaz. Dosya masrafı, ekspertiz ve sigorta ücretleri dahil değildir. Gelir tahmini, taksitin net gelirin yarısını aşmaması varsayımıyla yaklaşık hesaplanır; her bankanın kendi kriteri vardır.</p>
+  </div>
+</form>`;
+}
+
+function krediKiraForm() {
+  return `<form class="calc" data-tool="kredi-kira" novalidate>
+  <div class="fields">
+    ${field('fiyat', 'Ev fiyatı', { id: 'kk-fiyat', unit: 'TL', money: true, value: '5.000.000' })}
+    ${field('pesinat', 'Peşinat', { id: 'kk-pesinat', unit: 'TL', money: true, value: '2.000.000' })}
+    ${field('vade', 'Vade', { id: 'kk-vade', unit: 'ay', value: '120' })}
+    ${field('faiz', 'Aylık faiz', { id: 'kk-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ',') })}
+    ${field('kira', 'Aynı ev için aylık kira', { id: 'kk-kira', unit: 'TL', money: true, value: '27.000' })}
+    ${field('artis', 'Yıllık kira artışı varsayımı', { id: 'kk-artis', unit: '%', value: String(cfg.defaults.kiraArtisVarsayimi) })}
+  </div>
+  <div class="result" aria-live="polite" hidden>
+    <div class="result-head"><div class="big" data-out="kesisme">–</div><span data-out="verdict" class="verdict"></span></div>
+    <p class="muted small">Kiranın kredi taksitini geçtiği yıl</p>
+    <div class="years" aria-hidden="true"></div>
+    <div class="years-caption" data-out="yilcap"></div>
+    <div class="stats">
+      ${stat('taksit', 'Aylık kredi taksiti (sabit)')}
+      ${stat('fark', 'İlk ay taksit ile kira farkı')}
+      ${stat('topkira', 'Vade boyunca ödenecek toplam kira')}
+      ${stat('topkredi', 'Toplam kredi ödemesi + peşinat')}
+    </div>
+    <p class="note">Taksit sabit kalırken kira her yıl artar. Hesaba peşinatın faize yatırılması halinde getireceği kazanç ve evin değer artışı dahil değildir; karar vermeden önce bu ikisini de düşün.</p>
+  </div>
+</form>`;
+}
+
+const icons = {
+  hourglass: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12M6 22h12M7 2c0 5 10 7 10 10s-10 5-10 10M17 2c0 5-10 7-10 10s10 5 10 10"/></svg>',
+  search: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  up: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>',
+  bank: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/></svg>',
+  scale: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0zM8 21h8"/></svg>',
+};
+
+const tools = [
+  {
+    slug: 'amortisman-hesaplama',
+    icon: icons.hourglass,
+    menu: 'Amortisman hesaplama',
+    kisa: 'Bir evin kendini kaç yılda ödeyeceğini giderlerle birlikte hesapla.',
+    title: 'Amortisman Hesaplama: Ev Kaç Yılda Kendini Öder?',
+    h1: 'Amortisman hesaplama',
+    lede: 'Satış fiyatını ve alabileceğin kirayı gir. Alım masrafları, boş kalma ve bakım dahil net amortisman süresini gör.',
+    form: () => amortismanForm({ heading: false }),
+    content: `<h2>Amortisman süresi nedir?</h2>
+<p>Konutta amortisman süresi, evin satış fiyatının kira geliriyle kaç yılda geri döneceğini gösterir. En basit hali, fiyatın yıllık kiraya bölünmesidir: 6.000.000 TL'lik bir ev aylık 25.000 TL kira getiriyorsa yıllık kira 300.000 TL, brüt amortisman süresi 20 yıl olur.</p>
+<p>Gerçek hayatta bu süre biraz daha uzundur. Ev alırken tapu harcı ve emlakçı komisyonu ödersin, kiracı değişirken ev birkaç hafta boş kalabilir, bakım ve onarım masrafları çıkar. Bu araç bunları da hesaba katarak net süreyi gösterir.</p>
+<h2>Kaç yıl iyi sayılır?</h2>
+<p>Kesin bir doğru yok ama yatırımcılar genelde süreyi bölgedeki diğer evlerle karşılaştırır. Aynı ilçede benzer bir ev 22 yılda amorti ederken baktığın ev 17 yılda ediyorsa, ya fiyatı uygundur ya da kira potansiyeli yüksektir. Bu yüzden tek bir sayıya değil, karşılaştırmaya bak.</p>
+<h2>Kira artışı neden ayrı gösteriliyor?</h2>
+<p>Enflasyonun yüksek olduğu dönemlerde kiranın nominal artışı amortismanı olduğundan kısa gösterir, çünkü paranın değeri de düşer. Bu yüzden araç artışı reel olarak sorar: kira enflasyonla aynı hızda artıyorsa 0 yaz, enflasyonu yılda 2 puan geçeceğini düşünüyorsan 2 yaz. Sonuç bugünün parasıyla kaç yılda geri döneceğini gösterir.</p>`,
+    faq: [
+      ['Amortisman hesabına kira geliri vergisi dahil mi?', 'Hayır. Kira geliri vergisi kişinin toplam gelirine ve istisna tutarına göre değiştiği için hesaba katılmadı.'],
+      ['Aidatı kim öder?', 'Kiralık dairelerde aidatı genelde kiracı öder. Sen ödüyorsan veya ev boş kaldığında ödemek zorunda kalacaksan "Ev sahibinin aylık gideri" alanına yaz.'],
+      ['Alım masrafları neden %4,4?', 'Alıcı payına düşen tapu harcı satış bedelinin %2\'sidir. Emlakçı komisyonu çoğunlukla %2 + KDV alınır. Komisyonsuz alıyorsan bu oranı %2\'ye düşür.'],
+    ],
+  },
+  {
+    slug: 'ilan-firsat-mi',
+    icon: icons.search,
+    menu: 'Bu ilan fırsat mı?',
+    kisa: 'Baktığın ilanı aynı bölgedeki benzerleriyle karşılaştır.',
+    title: 'Bu İlan Fırsat mı? Ev İlanı Fiyat Karşılaştırma',
+    h1: 'Bu ilan fırsat mı?',
+    lede: 'Baktığın ilanın fiyatını ve m²\'sini, aynı bölgedeki birkaç benzer ilanla birlikte gir. İlanın piyasanın neresinde durduğunu ve tahmini amortisman süresini gör.',
+    form: ilanForm,
+    content: `<h2>Nasıl kullanılır?</h2>
+<p>Bir ilanın ucuz mu pahalı mı olduğunu anlamanın en güvenilir yolu, aynı mahalledeki benzer evlerle metrekare fiyatını karşılaştırmaktır. İlan sitelerinde aynı mahalle, benzer bina yaşı ve oda sayısıyla filtreleme yap, bulduğun ilanların fiyatını ve net m²'sini buraya yaz.</p>
+<p>Araç, benzer ilanların ortanca m² fiyatını bulur ve baktığın ilanla farkı hesaplar. Ortanca kullanıldığı için tek bir aşırı pahalı veya ucuz ilan sonucu bozmaz.</p>
+<h2>Fiyat çok düşükse önce bunları kontrol et</h2>
+<ul class="check">
+  <li>Tapu kat mülkiyetli mi, yoksa kat irtifaklı veya hisseli mi?</li>
+  <li>Binanın iskânı var mı? Krediye uygun mu?</li>
+  <li>Ev kiracılı mı satılıyor? Kiracının sözleşme süresi ve kira bedeli ne?</li>
+  <li>Bina kentsel dönüşüm kapsamında mı, riskli yapı tespiti yapıldı mı?</li>
+  <li>İlandaki m² brüt mü net mi? Karşılaştırmada hep aynı türü kullan.</li>
+  <li>Aynı ev başka ilanlarda farklı fiyatla mı yayında?</li>
+</ul>`,
+    faq: [
+      ['Kaç benzer ilan girmeliyim?', 'En az 3, mümkünse 5. Benzerler ne kadar yakın mahalleden ve benzer yaştaysa sonuç o kadar anlamlı olur.'],
+      ['Net m² mi brüt m² mi kullanmalıyım?', 'İkisi de olur ama tüm ilanlarda aynısını kullanmalısın. Net m² genelde daha karşılaştırılabilir sonuç verir.'],
+      ['Tahmini kira nasıl hesaplanıyor?', 'Girdiğin kiralık ilanların ortanca m² kirası, baktığın evin m²\'siyle çarpılır.'],
+    ],
+  },
+  {
+    slug: 'kira-artis-hesaplama',
+    icon: icons.up,
+    menu: 'Kira artış hesaplama',
+    kisa: `Güncel yasal tavan %${tr2(oranlar[0].oran)}. Yeni kiranı hesapla.`,
+    title: `Kira Artış Hesaplama ${oranlar[0].ay}: Yasal Tavan %${tr2(oranlar[0].oran)}`,
+    h1: 'Kira artış hesaplama',
+    lede: `${oranlar[0].ay}'da yenilenen kira sözleşmeleri için yasal üst sınır %${tr2(oranlar[0].oran)}. Mevcut kiranı ve yenileme ayını seç, yeni kiranı gör.`,
+    form: kiraArtisForm,
+    content: `<h2>Kira artış oranları</h2>
+<p>Konut ve çatılı iş yeri kiralarında yenileme döneminde yapılabilecek en yüksek artış, TÜİK'in açıkladığı TÜFE'nin 12 aylık ortalamalara göre değişim oranıdır. Oran her ayın başında, bir önceki ayın enflasyon verisiyle birlikte açıklanır.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Sözleşmenin yenilendiği ay</th><th>Yasal üst sınır</th></tr></thead><tbody>
+${oranlar.map((o, i) => `<tr${i === 0 ? ' class="current"' : ''}><td>${o.ay}</td><td>%${tr2(o.oran)}</td></tr>`).join('')}
+</tbody></table></div>
+<p class="muted small">Kaynak: TÜİK Tüketici Fiyat Endeksi bültenleri.</p>
+<h2>Hesaplama nasıl yapılır?</h2>
+<p>Mevcut kira, oranın 100'e bölünüp 1 eklenmesiyle bulunan katsayıyla çarpılır. ${oranlar[0].ay} için 20.000 TL kira en fazla ${Math.round(20000 * (1 + oranlar[0].oran / 100)).toLocaleString('tr-TR')} TL olur.</p>`,
+    faq: [
+      ['Yıllık enflasyon mu, 12 aylık ortalama mı?', 'Kira artışında yıllık enflasyon değil, TÜFE\'nin 12 aylık ortalamalara göre değişim oranı esas alınır. TÜİK bültenlerinde ayrı bir satır olarak yer alır.'],
+      ['%25 sınırı hâlâ geçerli mi?', 'Hayır. Konut kiralarına bir dönem uygulanan geçici %25 sınırı sona erdi; artış tavanı yeniden TÜFE\'nin 12 aylık ortalamasına göre belirleniyor.'],
+      ['Ev sahibi daha fazla zam isteyebilir mi?', 'Yenileme döneminde yasal tavanın üzerinde artış yapılamaz. Beş yılı dolduran sözleşmelerde ise kira bedeli dava yoluyla emsal kiralara göre yeniden belirlenebilir.'],
+    ],
+  },
+  {
+    slug: 'konut-kredisi-hesaplama',
+    icon: icons.bank,
+    menu: 'Konut kredisi hesaplama',
+    kisa: 'Aylık taksiti, toplam geri ödemeyi ve faiz yükünü gör.',
+    title: 'Konut Kredisi Hesaplama: Aylık Taksit ve Toplam Geri Ödeme',
+    h1: 'Konut kredisi hesaplama',
+    lede: 'Kredi tutarını, vadeyi ve aylık faiz oranını gir. Taksiti, toplam geri ödemeyi ve önerilen gelir seviyesini gör.',
+    form: krediForm,
+    content: `<h2>Taksit nasıl hesaplanır?</h2>
+<p>Konut kredilerinde taksit, eşit taksitli kredi formülüyle hesaplanır ve vade boyunca sabit kalır. İlk yıllarda taksitin büyük bölümü faize, son yıllarda anaparaya gider.</p>
+<p>Konut kredileri BSMV ve KKDF'den muaf olduğu için bu araçtaki hesap bankanın göstereceği taksite oldukça yakındır. Fark genelde dosya masrafı, ekspertiz ücreti ve zorunlu sigortalardan gelir.</p>
+<h2>Faiz oranı nereden bulunur?</h2>
+<p>Bankalar konut kredisi faizini aylık oran olarak açıklar. Kampanyalı oranlar genelde maaş müşterisi olma veya ek ürün alma şartına bağlıdır. Başvuru öncesinde bankanın sana özel teklifini al ve buraya gir.</p>`,
+    faq: [
+      ['Konut kredisinde vergi var mı?', 'Konut kredileri BSMV ve KKDF\'den muaftır. İhtiyaç ve taşıt kredilerinde ise bu vergiler uygulanır.'],
+      ['Vadeyi uzatmak mantıklı mı?', 'Vade uzadıkça taksit düşer ama toplam faiz artar. Enflasyonun yüksek olduğu dönemlerde sabit taksit gelirine göre zamanla hafifler; bu yüzden karar gelir beklentine bağlıdır.'],
+    ],
+  },
+  {
+    slug: 'kredi-mi-kira-mi',
+    icon: icons.scale,
+    menu: 'Kredi mi kira mı?',
+    kisa: 'Aynı ev için kredi taksitini ve kirayı yıllar boyunca karşılaştır.',
+    title: 'Kredi mi Kira mı? Ev Almak mı Kiralamak mı Hesaplama',
+    h1: 'Kredi mi kira mı?',
+    lede: 'Aynı ev için kredi taksitini ve ödeyeceğin kirayı karşılaştır. Kira her yıl artarken sabit taksitin kaçıncı yılda kiranın altında kaldığını gör.',
+    form: krediKiraForm,
+    content: `<h2>Neden bu karşılaştırma önemli?</h2>
+<p>Bugün kredi taksiti çoğu zaman aynı evin kirasından yüksek görünür. Ancak taksit vade boyunca sabit kalırken kira her yıl artar. Bu araç, kiranın taksite hangi yılda yetiştiğini ve vade sonuna kadar toplamda ne kadar ödeyeceğini gösterir.</p>
+<h2>Hesaba katılmayanlar</h2>
+<p>Peşinatı bankada tutsan alacağın faiz geliri, evin yıllar içindeki değer artışı, emlak vergisi ve bakım giderleri bu hesapta yok. Karar vermeden önce özellikle peşinatın alternatif getirisini de düşün.</p>`,
+    faq: [
+      ['Kira artışını yüzde kaç girmeliyim?', `Son aylarda yasal kira artış tavanı %31 civarında. Önümüzdeki yıllar için daha düşük bir oran girmek daha temkinli bir senaryo olur.`],
+    ],
+  },
+];
+
+module.exports = { tools, amortismanForm, icons };
