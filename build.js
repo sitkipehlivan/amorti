@@ -79,6 +79,7 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/league-spartan-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/questrial-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>try{var t=localStorage.getItem('amorti-tema');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="stylesheet" href="/assets/style.css?v=${V.css}">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 ${ga}
@@ -88,7 +89,7 @@ ${ga}
   <div class="wrap mast-top">
     <div class="mast-date">${bugun}</div>
     <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="36" height="36"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span><span class="logo-tag">Emlak haberleri ve hesaplama araçları</span></a>
-    <div class="mast-side"><a href="/kira-paylas/">Kiranı paylaş</a></div>
+    <div class="mast-side"><a href="/kira-paylas/">Kiranı paylaş</a><button type="button" class="theme-btn" aria-label="Koyu ve açık mod arasında geç" title="Koyu / açık mod"><svg class="i-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="i-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button></div>
   </div>
   <nav class="catnav" aria-label="Kategoriler"><div class="wrap">
     ${navItems.map((n) => (n === 'sep' ? '<span class="sep" aria-hidden="true"></span>' : `<a href="${n[0]}"${active === n[0] ? ' aria-current="page"' : ''}>${n[1]}</a>`)).join('')}
@@ -317,7 +318,7 @@ ${crumbs(c)}
 <div class="table-wrap"><table class="data faiz-tablo">
 <thead><tr><th>Banka</th><th>Aylık faiz</th><th>2 milyon TL, 120 ay taksit</th><th>Koşul</th><th>Son kontrol</th><th></th></tr></thead>
 <tbody>
-${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td class="bank-cell">${bankLogo(b)}<span><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></span></td><td class="num"><b>%${tr2(b.oran)}</b></td><td class="num">${tl0(taksit(b.oran))}</td><td class="small">${b.kosul}</td><td class="small muted">${b.kontrolMetin}</td><td><button type="button" class="btn-hesapla" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#k-faiz">Hesapla</button></td></tr>`).join('\n')}
+${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td class="c-banka"><div class="bank-cell">${bankLogo(b)}<span><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></span></div></td><td class="num c-oran" data-label="Aylık faiz"><b>%${tr2(b.oran)}</b></td><td class="num c-taksit" data-label="2 milyon TL, 120 ay">${tl0(taksit(b.oran))}</td><td class="small c-kosul">${b.kosul}</td><td class="small muted c-kontrol">${b.kontrolMetin}</td><td class="c-btn"><button type="button" class="btn-hesapla" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#k-faiz">Hesapla</button></td></tr>`).join('\n')}
 ${faiz.bekleyen.map((b) => `<tr><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td colspan="5" class="small muted">Oran henüz alınamadı. Güncel oran için bankanın sayfasına bak.</td></tr>`).join('\n')}
 </tbody></table></div>
 <p class="small muted">Banka logoları ilgili bankaların tescilli markalarıdır; ${cfg.name}'nin bankalarla ticari ilişkisi yoktur. Taksit, ilk konutunu alanlar için (BSMV'siz) eşit taksitli formülle hesaplanmıştır; dosya masrafı, ekspertiz ve sigorta dahil değildir. Oranlar bankaların ilan ettiği oranlardır, sana özel teklif farklı olabilir.</p>

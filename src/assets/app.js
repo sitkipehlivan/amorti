@@ -278,6 +278,16 @@
     i.addEventListener('input', function (e) { if (e.isTrusted) isaretle(i, null); });
   });
 
+  // Koyu / açık mod
+  var themeBtn = document.querySelector('.theme-btn');
+  if (themeBtn) themeBtn.addEventListener('click', function () {
+    var root = document.documentElement;
+    var cur = root.getAttribute('data-theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('amorti-tema', next); } catch (e) {}
+  });
+
   // Mobil menü
   var toggle = document.querySelector('.nav-toggle'), nav = document.querySelector('.nav');
   if (toggle && nav) toggle.addEventListener('click', function () {
