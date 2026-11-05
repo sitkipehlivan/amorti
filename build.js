@@ -10,6 +10,9 @@ const enf = require('./data/enflasyon');
 const { tools, amortismanForm, icons } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
+// Önbellek kırıcı: dosya içeriği değişince adres değişir
+const ver = (f) => require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'src/assets', f))).digest('hex').slice(0, 8);
+const V = { css: ver('style.css'), js: ver('app.js') };
 const urls = [];
 
 // ---------- yardımcılar ----------
@@ -63,7 +66,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=${V.css}">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 ${ga}
 </head>
@@ -104,7 +107,7 @@ ${body}
   <div class="wrap"><p class="small" style="margin:24px 0 0">© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}</p></div>
 </footer>
 <script>window.AMORTI_ENF=${JSON.stringify(enf.yol)};</script>
-<script src="/assets/app.js" defer></script>
+<script src="/assets/app.js?v=${V.js}" defer></script>
 </body>
 </html>`;
 }
