@@ -2,6 +2,10 @@
 
 Bu görev hafta içi her gün bankaların **kendi sitelerinde** yayınladığı konut kredisi aylık faiz oranlarını okur ve `data/faizler.json` dosyasını günceller. Sitedeki `/konut-kredisi-faiz-oranlari/` sayfası, anasayfadaki faiz kutusu ve hesaplayıcıların varsayılan faizi bu dosyadan üretilir.
 
+## Günde birden fazla çalışma
+
+Görev hafta içi 10:37, 14:37 ve 17:37'de çalışır; amaç bilgisayarın açık olduğu ilk saatte taramaktır. Taramaya başlamadan önce `data/faizler.json` dosyasına bak: listedeki **tüm** bankaların `kontrol` alanı bugünün tarihiyse (İstanbul saatiyle) bugün tarama zaten yapılmıştır. Bu durumda Chrome'u açma, hiçbir şeyi değiştirme ve yalnızca "Faizler bugün zaten güncellendi." diye raporla. Bazı bankalar bugün okunamadıysa yalnızca o bankaları yeniden dene.
+
 ## Neden tarayıcı
 
 Bankaların çoğu oranı sayfaya JavaScript ile yüklüyor; düz sayfa okuma (WebFetch) çoğunlukla boş döner. Bu yüzden oranlar kullanıcının bilgisayarındaki Chrome (Claude in Chrome) ile okunur: sayfayı aç, 4–5 saniye bekle, `javascript_tool` ile metni ve hesaplayıcı alanlarını oku. Chrome araçları yüklenemiyorsa ya da bilgisayara ulaşılamıyorsa hiçbir şey değiştirme ve bunu raporla.
