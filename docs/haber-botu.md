@@ -92,6 +92,15 @@ TÜİK her ayın 3'ünde (hafta sonu/tatile denk gelirse sonraki iş günü) enf
 
 Bankaların konut kredisi faizlerinde belirgin ve genel bir değişiklik haberi yazdıysan, `site.config.js` içindeki `defaults.konutKredisiAylikFaiz` değerini piyasanın yeni tipik oranına (ör. 2,89) güncelle ve haberde bu oranı kullan.
 
+## Enflasyon beklentisi (her ay)
+
+Araçlar kira artışını `data/enflasyon.js` dosyasındaki beklentiye göre hesaplar.
+
+- TCMB Piyasa Katılımcıları Anketi her ay yayımlanır. Yeni anket çıktıysa `beklenti.ay12` (12 ay sonrası TÜFE beklentisi), `beklenti.ay24` (24 ay sonrası) ve `beklenti.kaynak` (ör. `'TCMB Piyasa Katılımcıları Anketi, Kasım 2026'`) alanlarını güncelle. İsteğe bağlı olarak "2027'de kira artışı ne olur?" türünden bir haber yaz.
+- TCMB Enflasyon Raporu (yılda 4 kez) yayımlandıysa `beklenti.tcmb` içindeki yıl tahminlerini ve kaynağını güncelle.
+- Ocak ayında TÜİK aralık enflasyonunu açıkladığında, biten yılın yıl sonu (yıllık) TÜFE'sini `gecmis` listesine ekle.
+- Rakamları en az iki kaynaktan veya doğrudan TCMB/TÜİK'ten doğrula.
+
 ## Teknik adımlar
 
 1. `node build.js` çalıştır; hata vermeden bitmeli ("Tamam: N sayfa").

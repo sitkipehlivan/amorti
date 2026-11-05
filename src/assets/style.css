@@ -216,3 +216,46 @@ table.data tr.current td { background: var(--tapu-soft); font-weight: 600; }
   .years span { animation: fill .35s ease-out both; animation-delay: calc(var(--i, 0) * 18ms); }
   @keyframes fill { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
 }
+
+/* Anasayfa: haber odaklı */
+.home { padding: 8px 0 24px; }
+.home-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; align-items: start; }
+@media (max-width: 960px) { .home-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
+.home .meta { font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
+.cat { display: inline-block; font-weight: 600; color: var(--tapu); margin-right: 6px; }
+.lead { padding: 8px 0 24px; border-bottom: 1px solid var(--line); }
+.lead h2 { font-size: clamp(1.8rem, 4.2vw, 2.7rem); line-height: 1.1; margin: 0 0 12px; }
+.lead h2 a, .second h3 a { color: var(--ink); text-decoration: none; }
+.lead h2 a:hover, .second h3 a:hover { color: var(--tapu); text-decoration: underline; text-decoration-thickness: 2px; }
+.lead p { font-size: 1.12rem; color: var(--muted); max-width: 62ch; margin: 0; }
+.second { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.second h3 { font-size: 1.2rem; margin: 0 0 6px; }
+.second p { color: var(--muted); font-size: .95rem; margin: 0; }
+@media (max-width: 620px) { .second { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
+.news-compact { list-style: none; margin: 0; padding: 0; }
+.news-compact li { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.news-compact .meta { margin: 0; }
+.news-compact a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.news-compact a:hover { color: var(--tapu); text-decoration: underline; }
+@media (max-width: 620px) { .news-compact li { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.home-side { display: flex; flex-direction: column; gap: 14px; }
+.home-side .ad { margin: 0 auto; }
+.calc.mini { padding: 16px 18px; border-radius: 12px; }
+.calc.mini h3 { font-size: 1.05rem; margin: 0 0 8px; }
+.calc.mini h3 a { color: var(--ink); text-decoration: none; }
+.calc.mini h3 a:hover { color: var(--tapu); }
+.calc.mini .field { margin-top: 10px; }
+.calc.mini .input input, .calc.mini .input select { min-height: 40px; padding: 8px 10px; }
+.calc.mini .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.calc.mini .result { margin-top: 12px; padding-top: 12px; }
+.calc.mini .mid { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; line-height: 1.1; font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+.calc.mini .mid small { font-size: .5em; color: var(--muted); margin-left: 4px; font-weight: 600; }
+.calc.mini.links { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
+.calc.mini.links a { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center; padding: 8px; border-radius: 8px; text-decoration: none; color: var(--ink); }
+.calc.mini.links a:hover { background: var(--tapu-soft); }
+.calc.mini.links b { display: block; font-size: .98rem; }
+.calc.mini.links .tool-icon { width: 40px; height: 40px; }
+.facts dl { margin: 0; }
+.facts dl div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: .9rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }

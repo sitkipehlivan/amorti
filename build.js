@@ -6,6 +6,7 @@ const cfg = require('./site.config');
 const ilceler = require('./data/ilceler');
 const haberler = require('./data/haberler');
 const oranlar = require('./data/kira-oranlari');
+const enf = require('./data/enflasyon');
 const { tools, amortismanForm, icons } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
@@ -102,6 +103,7 @@ ${body}
   </div>
   <div class="wrap"><p class="small" style="margin:24px 0 0">© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}</p></div>
 </footer>
+<script>window.AMORTI_ENF=${JSON.stringify(enf.yol)};</script>
 <script src="/assets/app.js" defer></script>
 </body>
 </html>`;
@@ -128,38 +130,75 @@ fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 for (const f of fs.readdirSync(path.join(__dirname, 'src/assets'))) fs.copyFileSync(path.join(__dirname, 'src/assets', f), path.join(OUT, 'assets', f));
 fs.writeFileSync(path.join(OUT, 'favicon.svg'), logoMark.replace('aria-hidden="true"', 'xmlns="http://www.w3.org/2000/svg"').replace(/var\(--tapu\)/g, '#234A8C'));
 
-// ---------- Anasayfa ----------
+// ---------- Anasayfa: haber odaklı, yanda araç widget'ları ----------
+const tr1 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const hidden = (o) => Object.entries(o).map(([k, v]) => `<input type="hidden" name="${k}" value="${v}">`).join('');
+const miniField = (name, label, o = {}) => `<div class="field"><label for="${o.id}">${label}</label><div class="input"><input id="${o.id}" name="${name}" type="text" inputmode="decimal" autocomplete="off"${o.money ? ' data-money' : ''} value="${o.value ?? ''}" class="has-unit"><span class="unit">${o.unit}</span></div></div>`;
+
+const widgets = `
+<form class="calc mini" data-tool="kira-artis" novalidate>
+  <h3><a href="/araclar/kira-artis-hesaplama/">Kira artış hesaplama</a></h3>
+  <p class="small muted">${oranlar[0].ay} tavanı <strong>%${tr2(oranlar[0].oran)}</strong></p>
+  ${miniField('kira', 'Mevcut kiran', { id: 'w-kira', unit: 'TL', money: true, value: '25.000' })}
+  <div class="field"><label for="w-ay">Yenileme ayı</label><div class="input"><select id="w-ay" name="ay">${oranlar.slice(0, 6).map((o, i) => `<option value="${o.oran}"${i === 0 ? ' selected' : ''}>${o.ay} (%${tr2(o.oran)})</option>`).join('')}</select></div></div>
+  <div class="result" aria-live="polite" hidden><span class="small muted">Yeni kira en fazla</span><div class="mid" data-out="yeni">–</div><span class="small muted">Artış: <span data-out="artis"></span></span></div>
+</form>
+<form class="calc mini" data-tool="amortisman" novalidate>
+  <h3><a href="/araclar/amortisman-hesaplama/">Ev kaç yılda kendini öder?</a></h3>
+  ${miniField('fiyat', 'Satış fiyatı', { id: 'w-fiyat', unit: 'TL', money: true, value: '6.500.000' })}
+  ${miniField('kira', 'Aylık kira', { id: 'w-akira', unit: 'TL', money: true, value: '30.000' })}
+  ${hidden({ masraf: '4,4', bos: '0,5', bakim: '5', gider: '0', fark: '0' })}
+  <div class="result" aria-live="polite" hidden><div class="mid" data-out="yil">–</div><span data-out="verdict" class="verdict"></span><p class="small muted" style="margin:6px 0 0">Masraflar dahil, bugünün parasıyla. <a href="/araclar/amortisman-hesaplama/">Detaylı hesapla</a></p></div>
+</form>
+${ad('mrec')}
+<form class="calc mini" data-tool="kredi" novalidate>
+  <h3><a href="/araclar/konut-kredisi-hesaplama/">Konut kredisi taksiti</a></h3>
+  ${miniField('tutar', 'Kredi tutarı', { id: 'w-tutar', unit: 'TL', money: true, value: '2.000.000' })}
+  <div class="pair">
+    ${miniField('vade', 'Vade', { id: 'w-vade', unit: 'ay', value: '120' })}
+    ${miniField('faiz', 'Aylık faiz', { id: 'w-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ',') })}
+  </div>
+  <div class="result" aria-live="polite" hidden><span class="small muted">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small muted">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
+</form>
+<div class="calc mini links">
+  <a href="/araclar/ilan-firsat-mi/"><span class="tool-icon">${icons.search}</span><span><b>Bu ilan fırsat mı?</b><span class="small muted">Benzer ilanlarla karşılaştır</span></span></a>
+  <a href="/araclar/kredi-mi-kira-mi/"><span class="tool-icon">${icons.scale}</span><span><b>Kredi mi kira mı?</b><span class="small muted">Yıllar içinde karşılaştır</span></span></a>
+</div>
+<div class="calc mini facts">
+  <h3>Güncel veriler</h3>
+  <dl>
+    <div><dt>Kira artış tavanı (${oranlar[0].ay})</dt><dd>%${tr2(oranlar[0].oran)}</dd></div>
+    <div><dt>Konut kredisi faizi (aylık, yaklaşık)</dt><dd>%${tr2(cfg.defaults.konutKredisiAylikFaiz)}</dd></div>
+    <div><dt>12 ay sonrası enflasyon beklentisi</dt><dd>%${tr2(enf.beklenti.ay12)}</dd></div>
+  </dl>
+</div>`;
+
+const [lead, ...rest] = haberler;
+const second = rest.slice(0, 2);
+const latest = rest.slice(2, 14);
 write('/', layout({
-  title: `${cfg.name}: Ev amortisman, kira artışı ve konut kredisi hesaplama`,
-  description: 'Bir evin kaç yılda kendini ödediğini, baktığın ilanın fırsat olup olmadığını, yeni kiranı ve kredi taksitini hesapla. İstanbul ilçe rehberleri ve emlak haberleri.',
+  title: `${cfg.name}: Emlak haberleri, kira artışı ve amortisman hesaplama`,
+  description: 'İstanbul ve Türkiye emlak haberleri, güncel kira artış oranı, konut kredisi faizleri ve konut fiyatları. Amortisman, kira artışı ve kredi hesaplama araçları.',
   path: '/',
   jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', name: cfg.name, url: abs('/'), inLanguage: 'tr' }],
-  body: `<section class="hero">
-  <div class="wrap hero-grid">
-    <div class="hero-intro">
-      <h1>Ev alırken kafandaki tek soru: kaç yılda kendini öder?</h1>
-      <p>Fiyatı ve kirayı yaz, amortisman süresini masraflarıyla birlikte gör. Baktığın ilanı bölgedeki benzerleriyle karşılaştır, yeni kiranı ve kredi taksitini hesapla.</p>
-      <p class="small muted">Güncel kira artış tavanı: <strong>%${tr2(oranlar[0].oran)}</strong> (${oranlar[0].ay}). <a href="/araclar/kira-artis-hesaplama/">Yeni kiranı hesapla</a></p>
+  body: `${adTop()}
+<div class="wrap home">
+  <h1 class="visually-hidden">${cfg.name}: emlak haberleri ve hesaplama araçları</h1>
+  <div class="home-grid">
+    <div class="home-main">
+      ${lead ? `<article class="lead">
+        <div class="meta"><span class="cat">${lead.kategori}</span> ${lead.tarihMetin}</div>
+        <h2><a href="/haberler/${lead.slug}/">${esc(lead.baslik)}</a></h2>
+        <p>${esc(lead.ozet)}</p>
+      </article>` : ''}
+      <div class="second">${second.map((h) => `<article><div class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></article>`).join('')}</div>
+      ${ad('mobile')}
+      <div class="section-head" style="margin-top:28px"><h2>Son haberler</h2><a href="/haberler/">Tüm haberler</a></div>
+      <ul class="news-compact">${latest.map((h) => `<li><span class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</span><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></li>`).join('')}</ul>
     </div>
-    ${amortismanForm({ idPrefix: 'home' })}
+    <aside class="home-side" aria-label="Hesaplama araçları">${widgets}</aside>
   </div>
-</section>
-${adTop()}
-<section class="section">
-  <div class="wrap">
-    <div class="section-head"><h2>Hesaplama araçları</h2></div>
-    ${toolList(tools.filter((t) => t.slug !== 'amortisman-hesaplama'))}
-  </div>
-</section>
-<section class="section">
-  <div class="wrap layout">
-    <div>
-      <div class="section-head"><h2>Emlak haberleri</h2><a href="/haberler/">Tüm haberler</a></div>
-      <ul class="news-list">${haberler.slice(0, 4).map(newsItem).join('')}</ul>
-    </div>
-    <aside>${ad('mrec')}</aside>
-  </div>
-</section>
+</div>
 <section class="section">
   <div class="wrap">
     <div class="section-head"><h2>İstanbul Anadolu yakası ilçe rehberleri</h2><a href="/istanbul/">Tüm ilçeler</a></div>

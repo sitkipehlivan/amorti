@@ -59,7 +59,7 @@
     var fiyat = val(form, 'fiyat'), kira = val(form, 'kira');
     var gider = val(form, 'gider') || 0, bos = val(form, 'bos') || 0;
     var bakim = val(form, 'bakim') || 0, masraf = val(form, 'masraf') || 0;
-    var artis = val(form, 'artis'); if (!isFinite(artis)) artis = 0;
+    var fark = val(form, 'fark'); if (!isFinite(fark)) fark = 0;
     if (!(fiyat > 0 && kira > 0)) { show(form, false); return; }
     show(form, true);
 
@@ -67,18 +67,12 @@
     var yillikBrut = kira * 12;
     var yillikNet = kira * Math.max(0, 12 - bos) - gider * 12 - yillikBrut * bakim / 100;
     var brutYil = fiyat / yillikBrut;
-    var netYil = yillikNet > 0 ? maliyet / yillikNet : Infinity;
     var getiri = yillikBrut / fiyat * 100;
 
-    // Kira her yıl artarsa (nominal) toplam net kira maliyeti kaçıncı yılda geçer
-    var artisYil = NaN;
-    if (artis !== 0 && yillikNet > 0) {
-      var top = 0, net = yillikNet;
-      for (var y = 1; y <= 100; y++) {
-        if (top + net >= maliyet) { artisYil = y - 1 + (maliyet - top) / net; break; }
-        top += net; net *= 1 + artis / 100;
-      }
-    }
+    // Bugünün parasıyla (reel): kira enflasyonu yılda "fark" puan geçerse
+    var netYil = geriDonus(maliyet, yillikNet, function () { return fark; });
+    // TL bazında (nominal): kira beklenen enflasyon + fark kadar artarsa
+    var nomYil = geriDonus(maliyet, yillikNet, function (y) { return enf(y) + fark; });
 
     set(form, 'yil', isFinite(netYil) ? nf1.format(netYil) + '<small>yıl</small>' : '—');
     yearsGrid($(form, '.years'), netYil);
@@ -95,8 +89,24 @@
     set(form, 'getiri', '%' + nf2.format(getiri));
     set(form, 'yillik', tl(yillikNet));
     set(form, 'maliyet', tl(maliyet));
-    set(form, 'artisyil', isFinite(artisYil) ? nf1.format(artisYil) + ' yıl' : '–');
-    set(form, 'artisoran', '%' + nf1.format(artis));
+    set(form, 'nomyil', isFinite(nomYil) ? nf1.format(nomYil) + ' yıl' : '–');
+  }
+
+  // Beklenen enflasyon yolu (build sırasında sayfaya eklenir): y. yıl için %
+  function enf(y) {
+    var yol = window.AMORTI_ENF || [];
+    return yol.length ? yol[Math.min(y, yol.length) - 1] : 0;
+  }
+  // Yıllık net kira her yıl "artis(y)" % büyürken toplam kiranın maliyeti geçtiği süre (yıl, ondalıklı)
+  function geriDonus(maliyet, ilkYil, artis) {
+    if (!(ilkYil > 0)) return Infinity;
+    var top = 0, net = ilkYil;
+    for (var y = 1; y <= 150; y++) {
+      if (top + net >= maliyet) return y - 1 + (maliyet - top) / net;
+      top += net; net *= 1 + artis(y) / 100;
+      if (net <= 0) return Infinity;
+    }
+    return Infinity;
   }
 
   // ---------- 2. İlan fırsat mı ----------
@@ -194,7 +204,7 @@
   function krediKira(form) {
     var fiyat = val(form, 'fiyat'), pesin = val(form, 'pesinat') || 0;
     var r = val(form, 'faiz') / 100, n = val(form, 'vade');
-    var kira = val(form, 'kira'), artis = (val(form, 'artis') || 0) / 100;
+    var kira = val(form, 'kira'), reel = val(form, 'fark'); if (!isFinite(reel)) reel = 0;
     var P = fiyat - pesin;
     if (!(fiyat > 0 && P > 0 && n > 0 && kira > 0)) { show(form, false); return; }
     show(form, true);
@@ -205,7 +215,7 @@
       var aySay = (y === yilSay && n % 12) ? n % 12 : 12;
       if (!kesisme && k >= t) kesisme = y;
       topKira += k * aySay;
-      k *= 1 + artis;
+      k *= 1 + (enf(y) + reel) / 100;
     }
     var topKredi = t * n + pesin;
     set(form, 'taksit', tl(t));

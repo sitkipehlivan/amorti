@@ -1,6 +1,8 @@
 // Araç sayfalarının içerikleri. build.js bunları sayfaya dönüştürür.
 const cfg = require('../site.config');
 const oranlar = require('../data/kira-oranlari');
+const enf = require('../data/enflasyon');
+const tr1 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const tr2 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -32,7 +34,7 @@ function amortismanForm({ fiyat = '6.500.000', kira = '30.000', heading = true, 
       ${field('bos', 'Yılda boş kalma', { id: id('bos'), unit: 'ay', value: '0,5', hint: 'Kiracı değişiminde boş geçen süre' })}
       ${field('bakim', 'Bakım ve onarım', { id: id('bakim'), unit: '%', value: '5', hint: 'Yıllık kiranın yüzdesi' })}
       ${field('gider', 'Ev sahibinin aylık gideri', { id: id('gider'), unit: 'TL', money: true, value: '0', hint: 'Aidatı sen ödüyorsan buraya yaz' })}
-      ${field('artis', 'Kiranın enflasyonu yıllık ne kadar geçeceği', { id: id('artis'), unit: '%', value: '2', full: true, hint: 'Reel artış senaryosu. Kira enflasyon kadar artacaksa 0 yaz.' })}
+      ${field('fark', 'Kira enflasyonun ne kadar üstünde artar?', { id: id('fark'), unit: 'puan', value: '0', full: true, hint: `0 = kira, beklenen enflasyonla aynı hızda artar (önümüzdeki 12 ay %${tr1(enf.yol[0])}, sonra kademeli olarak %${tr1(enf.medyan)}). Eksi değer de girilebilir.` })}
     </div>
   </details>
   <div class="result" aria-live="polite" hidden>
@@ -43,9 +45,9 @@ function amortismanForm({ fiyat = '6.500.000', kira = '30.000', heading = true, 
       ${stat('brut', 'Brüt amortisman (masrafsız)')}
       ${stat('getiri', 'Brüt yıllık kira getirisi')}
       ${stat('yillik', 'Yıllık net kira')}
-      ${stat('artisyil', 'Kira enflasyonu yılda <span data-out="artisoran"></span> geçerse')}
+      ${stat('nomyil', 'Beklenen enflasyonla TL bazında geri dönüş')}
     </div>
-    <p class="note">Net süre; alım masrafları, boş kalma ve bakım giderleri düşülerek hesaplanır. Kira geliri vergisi ve evin değer değişimi dahil değildir. Reel senaryo, kiranın her yıl enflasyonun belirttiğin oran kadar üstünde arttığını varsayar.</p>
+    <p class="note">Net süre; alım masrafları, boş kalma ve bakım giderleri düşülerek hesaplanır. Kira geliri vergisi ve evin değer değişimi dahil değildir. Ana sonuç bugünün parasıyladır. TL bazındaki süre, kiranın TCMB ve piyasa beklentilerine göre artacağını varsayar; o yıllarda paranın alım gücü daha düşük olacağı için kısa görünür.</p>
   </div>
 </form>`;
 }
@@ -128,7 +130,7 @@ function krediKiraForm() {
     ${field('vade', 'Vade', { id: 'kk-vade', unit: 'ay', value: '120' })}
     ${field('faiz', 'Aylık faiz', { id: 'kk-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ',') })}
     ${field('kira', 'Aynı ev için aylık kira', { id: 'kk-kira', unit: 'TL', money: true, value: '27.000' })}
-    ${field('artis', 'Yıllık kira artışı varsayımı', { id: 'kk-artis', unit: '%', value: String(cfg.defaults.kiraArtisVarsayimi) })}
+    ${field('fark', 'Kira enflasyonun ne kadar üstünde artar?', { id: 'kk-fark', unit: 'puan', value: '0', hint: 'Kira, beklenen enflasyonla artar. 0 = aynı hız.' })}
   </div>
   <div class="result" aria-live="polite" hidden>
     <div class="result-head"><div class="big" data-out="kesisme">–</div><span data-out="verdict" class="verdict"></span></div>
@@ -169,8 +171,20 @@ const tools = [
 <p>Gerçek hayatta bu süre biraz daha uzundur. Ev alırken tapu harcı ve emlakçı komisyonu ödersin, kiracı değişirken ev birkaç hafta boş kalabilir, bakım ve onarım masrafları çıkar. Bu araç bunları da hesaba katarak net süreyi gösterir.</p>
 <h2>Kaç yıl iyi sayılır?</h2>
 <p>Kesin bir doğru yok ama yatırımcılar genelde süreyi bölgedeki diğer evlerle karşılaştırır. Aynı ilçede benzer bir ev 22 yılda amorti ederken baktığın ev 17 yılda ediyorsa, ya fiyatı uygundur ya da kira potansiyeli yüksektir. Bu yüzden tek bir sayıya değil, karşılaştırmaya bak.</p>
-<h2>Kira artışı neden ayrı gösteriliyor?</h2>
-<p>Enflasyonun yüksek olduğu dönemlerde kiranın nominal artışı amortismanı olduğundan kısa gösterir, çünkü paranın değeri de düşer. Bu yüzden araç artışı reel olarak sorar: kira enflasyonla aynı hızda artıyorsa 0 yaz, enflasyonu yılda 2 puan geçeceğini düşünüyorsan 2 yaz. Sonuç bugünün parasıyla kaç yılda geri döneceğini gösterir.</p>`,
+<h2>Kira artışını nasıl tahmin ediyoruz?</h2>
+<p>Kiralar yasa gereği TÜFE'nin 12 aylık ortalamasına göre arttığı için, gelecekteki kira artışını enflasyon beklentisine bağladık. Varsayım şöyle kuruluyor:</p>
+<ul>
+<li><strong>1. yıl: %${tr1(enf.yol[0])}</strong> — ${enf.beklenti.kaynak}, 12 ay sonrası TÜFE beklentisi</li>
+<li><strong>2. yıl: %${tr1(enf.yol[1])}</strong> — aynı ankette 24 ay sonrası beklentisi</li>
+<li><strong>3–6. yıl:</strong> kademeli olarak uzun vadeli seviyeye iner (${enf.yol.slice(2, 6).map((v) => '%' + tr1(v)).join(', ')})</li>
+<li><strong>Sonraki yıllar: %${tr1(enf.medyan)}</strong> — 2000–2025 arasında gerçekleşen yıl sonu enflasyonun medyanı</li>
+</ul>
+<p>Uzun vadeli seviye için TCMB'nin %5 hedefi yerine Türkiye'nin 2000'den bu yana yaşadığı tipik enflasyonu kullandık; TCMB'nin 2028 tahmini %${enf.beklenti.tcmb[2028]}. Aynı dönemin yıllık bileşik ortalaması ise %${tr1(enf.geoOrt)}; 2001, 2022 ve 2023 gibi yüksek yıllar bu ortalamayı yukarı çekiyor. Beklentiler her ay güncellenir.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Yıl</th><th>Yıl sonu TÜFE</th><th>Yıl</th><th>Yıl sonu TÜFE</th></tr></thead><tbody>
+${(() => { const ys = Object.keys(enf.gecmis); const half = Math.ceil(ys.length / 2); const rows = []; for (let i = 0; i < half; i++) { const a = ys[i], b = ys[i + half]; rows.push(`<tr><td>${a}</td><td>%${tr2(enf.gecmis[a])}</td><td>${b || ''}</td><td>${b ? '%' + tr2(enf.gecmis[b]) : ''}</td></tr>`); } return rows.join(''); })()}
+</tbody></table></div>
+<p class="muted small">Kaynak: TÜİK yıl sonu TÜFE (2003'e kadar 1994 bazlı TÜFE), ${enf.beklenti.kaynak}, ${enf.beklenti.tcmb.kaynak}.</p>
+<p>Ana sonuç <strong>bugünün parasıyla</strong> gösterilir: kira enflasyonla aynı hızda artarsa evin kendini ödeme süresi, enflasyon hiç yokmuş gibi hesaplanan süreyle aynıdır. Kiranın enflasyondan hızlı ya da yavaş artacağını düşünüyorsan farkı puan olarak girebilirsin. <strong>TL bazındaki süre</strong> ise kira gelirlerinin nominal toplamının alış maliyetini kaçıncı yılda geçtiğini gösterir.</p>`,
     faq: [
       ['Amortisman hesabına kira geliri vergisi dahil mi?', 'Hayır. Kira geliri vergisi kişinin toplam gelirine ve istisna tutarına göre değiştiği için hesaba katılmadı.'],
       ['Aidatı kim öder?', 'Kiralık dairelerde aidatı genelde kiracı öder. Sen ödüyorsan veya ev boş kaldığında ödemek zorunda kalacaksan "Ev sahibinin aylık gideri" alanına yaz.'],
@@ -260,7 +274,7 @@ ${oranlar.map((o, i) => `<tr${i === 0 ? ' class="current"' : ''}><td>${o.ay}</td
 <h2>Hesaba katılmayanlar</h2>
 <p>Peşinatı bankada tutsan alacağın faiz geliri, evin yıllar içindeki değer artışı, emlak vergisi ve bakım giderleri bu hesapta yok. Karar vermeden önce özellikle peşinatın alternatif getirisini de düşün.</p>`,
     faq: [
-      ['Kira artışını yüzde kaç girmeliyim?', `Son aylarda yasal kira artış tavanı %31 civarında. Önümüzdeki yıllar için daha düşük bir oran girmek daha temkinli bir senaryo olur.`],
+      ['Kira artışı nasıl tahmin ediliyor?', `Kira her yıl beklenen enflasyon kadar artar: önümüzdeki 12 ay için %${tr1(enf.yol[0])}, ardından kademeli düşüşle uzun vadede %${tr1(enf.medyan)} (2000–2025 medyan enflasyonu). Kiranın enflasyondan hızlı artacağını düşünüyorsan farkı puan olarak gir.`],
     ],
   },
 ];
