@@ -35,15 +35,23 @@ function ad(kind) {
 }
 const adTop = () => (cfg.showAdPlaceholders ? `<div class="wrap">${ad('masthead')}${ad('mobile')}</div>` : '');
 
-const logoMark = `<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><g fill="var(--tapu)"><rect x="1" y="1" width="8" height="8" rx="2"/><rect x="11" y="1" width="8" height="8" rx="2"/><rect x="21" y="1" width="8" height="8" rx="2"/><rect x="1" y="11" width="8" height="8" rx="2"/><rect x="11" y="11" width="8" height="8" rx="2"/><rect x="1" y="21" width="8" height="8" rx="2"/></g><g fill="none" stroke="var(--tapu)" stroke-width="1.6"><rect x="21.8" y="11.8" width="6.4" height="6.4" rx="1.6"/><rect x="11.8" y="21.8" width="6.4" height="6.4" rx="1.6"/><rect x="21.8" y="21.8" width="6.4" height="6.4" rx="1.6"/></g></svg>`;
+const logoMark = `<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><g fill="var(--accent)"><rect x="1" y="1" width="8" height="8" rx="1"/><rect x="11" y="1" width="8" height="8" rx="1"/><rect x="21" y="1" width="8" height="8" rx="1"/><rect x="1" y="11" width="8" height="8" rx="1"/><rect x="11" y="11" width="8" height="8" rx="1"/><rect x="1" y="21" width="8" height="8" rx="1"/></g><g fill="none" stroke="var(--accent)" stroke-width="1.6"><rect x="21.8" y="11.8" width="6.4" height="6.4" rx="0.8"/><rect x="11.8" y="21.8" width="6.4" height="6.4" rx="0.8"/><rect x="21.8" y="21.8" width="6.4" height="6.4" rx="0.8"/></g></svg>`;
 
+const KATEGORILER = [
+  ['kira', 'Kira'], ['konut-fiyatlari', 'Konut fiyatları'], ['kredi', 'Kredi'], ['piyasa', 'Piyasa'], ['ulasim', 'Ulaşım'],
+];
+const katSlug = (ad) => (KATEGORILER.find(([, a]) => a === ad) || [ad.toLowerCase()])[0];
 const navItems = [
+  ['/', 'Gündem'],
+  ...KATEGORILER.map(([s, a]) => [`/haberler/kategori/${s}/`, a]),
+  'sep',
+  ['/konut-kredisi-faiz-oranlari/', 'Kredi faizleri'],
   ['/araclar/', 'Araçlar'],
   ['/istanbul/', 'İlçeler'],
-  ['/haberler/', 'Haberler'],
-  ['/konut-kredisi-faiz-oranlari/', 'Kredi faizleri'],
-  ['/kira-paylas/', 'Kiranı paylaş'],
 ];
+const GUNLER = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+const AYLAR_ = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+const bugun = (() => { const d = new Date(Date.now() + 3 * 3600e3); return `${d.getUTCDate()} ${AYLAR_[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${GUNLER[d.getUTCDay()]}`; })();
 
 function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website' }) {
   urls.push(p);
@@ -65,24 +73,25 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${abs(p)}">
 <meta property="og:locale" content="tr_TR">
-<meta name="theme-color" content="#234A8C">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Schibsted+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css?v=${V.css}">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 ${ga}
 </head>
 <body>
-<header class="site-head">
-  <div class="wrap">
-    <a class="logo" href="/">${logoMark}<span>${cfg.name.toLowerCase()}</span></a>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menü</button>
-    <nav class="nav" id="nav" aria-label="Ana menü">
-      ${navItems.map(([href, label]) => `<a href="${href}"${active === href ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
-    </nav>
+<header class="masthead">
+  <div class="wrap mast-top">
+    <div class="mast-date">${bugun}</div>
+    <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="36" height="36"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span><span class="logo-tag">Emlak haberleri ve hesaplama araçları</span></a>
+    <div class="mast-side"><a href="/kira-paylas/">Kiranı paylaş</a></div>
   </div>
+  <nav class="catnav" aria-label="Kategoriler"><div class="wrap">
+    ${navItems.map((n) => (n === 'sep' ? '<span class="sep" aria-hidden="true"></span>' : `<a href="${n[0]}"${active === n[0] ? ' aria-current="page"' : ''}>${n[1]}</a>`)).join('')}
+  </div></nav>
 </header>
 <main>
 ${body}
@@ -90,8 +99,8 @@ ${body}
 <footer class="site-foot">
   <div class="wrap foot-grid">
     <div>
-      <a class="logo" href="/">${logoMark}<span>${cfg.name.toLowerCase()}</span></a>
-      <p style="margin-top:10px">${cfg.tagline}. Hesaplamalar bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
+      <a class="foot-name" href="/">${cfg.name.toLowerCase()}</a>
+      <p style="margin-top:8px">${cfg.tagline}. Hesaplamalar bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
     </div>
     <div>
       <h4>Araçlar</h4>
@@ -126,7 +135,9 @@ const faqLd = (faq) => ({
   mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
 });
 
-const newsItem = (h) => `<li class="with-thumb"><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div><div class="meta">${h.kategori}, ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></div></li>`;
+const catLink = (h) => `<a class="cat" data-k="${h.kategori}" href="/haberler/kategori/${katSlug(h.kategori)}/">${h.kategori}</a>`;
+const meta = (h) => `<div class="meta">${catLink(h)}<span>${h.tarihMetin}</span></div>`;
+const newsItem = (h) => `<li class="with-thumb"><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div>${meta(h)}<h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></div></li>`;
 const toolList = (list = tools) => `<ul class="tool-list">${list.map((t) => `<li><a href="/araclar/${t.slug}/"><span class="tool-icon">${t.icon}</span><span><h3>${t.menu}</h3><p>${t.kisa}</p></span></a></li>`).join('')}</ul>`;
 const ilceGrid = (except) => `<div class="ilce-grid">${ilceler.filter((i) => i.slug !== except).map((i) => `<a href="/istanbul/${i.slug}/">${i.ad}</a>`).join('')}</div>`;
 const sidebar = () => `<aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar</h3>${toolList()}</div></aside>`;
@@ -139,81 +150,106 @@ for (const h of haberler) h.kapak = `/haberler/${h.slug}/` + kapakYaz(h, path.jo
 const img = (h, cls = '', lazy = true) => `<img class="${cls}" src="${h.kapak}" alt="${esc((h.gorsel && h.gorsel.etiket) || h.baslik)}" width="1200" height="630"${lazy ? ' loading="lazy"' : ''}>`;
 fs.writeFileSync(path.join(OUT, 'favicon.svg'), logoMark.replace('aria-hidden="true"', 'xmlns="http://www.w3.org/2000/svg"').replace(/var\(--tapu\)/g, '#234A8C'));
 
-// ---------- Anasayfa: haber odaklı, yanda araç widget'ları ----------
+// ---------- Anasayfa: önce haberler, sonra araç bandı ve detaylar ----------
 const tr1 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const hidden = (o) => Object.entries(o).map(([k, v]) => `<input type="hidden" name="${k}" value="${v}">`).join('');
 const miniField = (name, label, o = {}) => `<div class="field"><label for="${o.id}">${label}</label><div class="input"><input id="${o.id}" name="${name}" type="text" inputmode="decimal" autocomplete="off"${o.money ? ' data-money' : ''} value="${o.value ?? ''}" class="has-unit"><span class="unit">${o.unit}</span></div></div>`;
 
 const widgets = `
 <form class="calc mini" data-tool="kira-artis" novalidate>
-  <h3><a href="/araclar/kira-artis-hesaplama/">Kira artış hesaplama</a></h3>
-  <p class="small muted">${oranlar[0].ay} tavanı <strong>%${tr2(oranlar[0].oran)}</strong></p>
-  ${miniField('kira', 'Mevcut kiran', { id: 'w-kira', unit: 'TL', money: true, value: '25.000' })}
-  <div class="field"><label for="w-ay">Yenileme ayı</label><div class="input"><select id="w-ay" name="ay">${oranlar.slice(0, 6).map((o, i) => `<option value="${o.oran}"${i === 0 ? ' selected' : ''}>${o.ay} (%${tr2(o.oran)})</option>`).join('')}</select></div></div>
-  <div class="result" aria-live="polite" hidden><span class="small muted">Yeni kira en fazla</span><div class="mid" data-out="yeni">–</div><span class="small muted">Artış: <span data-out="artis"></span></span></div>
+  <h3><a href="/araclar/kira-artis-hesaplama/">Kiran ne kadar artacak?</a></h3>
+  <p class="small muted" style="margin:0">${oranlar[0].ay} yasal tavanı %${tr2(oranlar[0].oran)}</p>
+  ${miniField('kira', 'Şu anki kiran', { id: 'w-kira', unit: 'TL', money: true, value: '25.000' })}
+  <div class="field"><label for="w-ay">Sözleşme yenileme ayı</label><div class="input"><select id="w-ay" name="ay">${oranlar.slice(0, 6).map((o, i) => `<option value="${o.oran}"${i === 0 ? ' selected' : ''}>${o.ay} (%${tr2(o.oran)})</option>`).join('')}</select></div></div>
+  <div class="result" aria-live="polite" hidden><span class="small">Yeni kiran en fazla</span><div class="mid" data-out="yeni">–</div><span class="small">Aylık artış: <span data-out="artis"></span></span></div>
 </form>
 <form class="calc mini" data-tool="amortisman" novalidate>
   <h3><a href="/araclar/amortisman-hesaplama/">Ev kaç yılda kendini öder?</a></h3>
+  <p class="small muted" style="margin:0">Masraflar dahil, bugünün parasıyla</p>
   ${miniField('fiyat', 'Satış fiyatı', { id: 'w-fiyat', unit: 'TL', money: true, value: '6.500.000' })}
-  ${miniField('kira', 'Aylık kira', { id: 'w-akira', unit: 'TL', money: true, value: '30.000' })}
+  ${miniField('kira', 'Alınabilecek aylık kira', { id: 'w-akira', unit: 'TL', money: true, value: '30.000' })}
   ${hidden({ masraf: '4,4', bos: '0,5', bakim: '5', gider: '0', fark: '0' })}
-  <div class="result" aria-live="polite" hidden><div class="mid" data-out="yil">–</div><span data-out="verdict" class="verdict"></span><p class="small muted" style="margin:6px 0 0">Masraflar dahil, bugünün parasıyla. <a href="/araclar/amortisman-hesaplama/">Detaylı hesapla</a></p></div>
+  <div class="result" aria-live="polite" hidden><div class="mid" data-out="yil">–</div><span data-out="verdict" class="verdict"></span> <a class="small" href="/araclar/amortisman-hesaplama/">Detaylı hesapla</a></div>
 </form>
-${ad('mrec')}
 <form class="calc mini" data-tool="kredi" novalidate>
-  <h3><a href="/araclar/konut-kredisi-hesaplama/">Konut kredisi taksiti</a></h3>
+  <h3><a href="/araclar/konut-kredisi-hesaplama/">Kredi taksitin ne olur?</a></h3>
+  <p class="small muted" style="margin:0">Bankaların ortanca faiziyle (%${tr2(faiz.tipik)})</p>
   ${miniField('tutar', 'Kredi tutarı', { id: 'w-tutar', unit: 'TL', money: true, value: '2.000.000' })}
   <div class="pair">
     ${miniField('vade', 'Vade', { id: 'w-vade', unit: 'ay', value: '120' })}
     ${miniField('faiz', 'Aylık faiz', { id: 'w-faiz', unit: '%', value: String(faiz.tipik).replace('.', ',') })}
   </div>
-  <div class="result" aria-live="polite" hidden><span class="small muted">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small muted">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
-</form>
-<div class="calc mini faizler">
-  <h3><a href="/konut-kredisi-faiz-oranlari/">Bankaların konut kredisi faizleri</a></h3>
-  <ol>${faiz.olan.slice(0, 5).map((b) => `<li><span>${b.banka}</span><b>%${tr2(b.oran)}</b></li>`).join('')}</ol>
-  <p class="small muted" style="margin:6px 0 0">Aylık oran, bankaların kendi sitelerinden. ${faiz.sonKontrolMetin}. <a href="/konut-kredisi-faiz-oranlari/">Tümünü gör</a></p>
-</div>
-<div class="calc mini links">
-  <a href="/araclar/ilan-firsat-mi/"><span class="tool-icon">${icons.search}</span><span><b>Bu ilan fırsat mı?</b><span class="small muted">Benzer ilanlarla karşılaştır</span></span></a>
-  <a href="/araclar/kredi-mi-kira-mi/"><span class="tool-icon">${icons.scale}</span><span><b>Kredi mi kira mı?</b><span class="small muted">Yıllar içinde karşılaştır</span></span></a>
-</div>
-<div class="calc mini facts">
-  <h3>Güncel veriler</h3>
-  <dl>
-    <div><dt>Kira artış tavanı (${oranlar[0].ay})</dt><dd>%${tr2(oranlar[0].oran)}</dd></div>
-    <div><dt>En düşük konut kredisi faizi (${faiz.enDusuk ? faiz.enDusuk.banka : ''})</dt><dd>%${tr2(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)}</dd></div>
-    <div><dt>12 ay sonrası enflasyon beklentisi</dt><dd>%${tr2(enf.beklenti.ay12)}</dd></div>
-  </dl>
-</div>`;
+  <div class="result" aria-live="polite" hidden><span class="small">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
+</form>`;
 
 const [lead, ...rest] = haberler;
-const second = rest.slice(0, 2);
-const latest = rest.slice(2, 14);
+const basliklar = rest.slice(0, 5);
+const kartlar = rest.slice(5, 8);
+const dahaFazla = rest.slice(8, 18);
 write('/', layout({
-  title: `${cfg.name}: Emlak haberleri, kira artışı ve amortisman hesaplama`,
-  description: 'İstanbul ve Türkiye emlak haberleri, güncel kira artış oranı, konut kredisi faizleri ve konut fiyatları. Amortisman, kira artışı ve kredi hesaplama araçları.',
-  path: '/', image: lead ? lead.kapak : '',
+  title: `${cfg.name}: Emlak haberleri, kira artışı ve konut kredisi faizleri`,
+  description: 'İstanbul ve Türkiye emlak haberleri, güncel kira artış oranı, bankaların konut kredisi faizleri ve konut fiyatları. Amortisman, kira artışı ve kredi hesaplama araçları.',
+  path: '/', active: '/', image: lead ? lead.kapak : '',
   jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', name: cfg.name, url: abs('/'), inLanguage: 'tr' }],
-  body: `${adTop()}
-<div class="wrap home">
-  <h1 class="visually-hidden">${cfg.name}: emlak haberleri ve hesaplama araçları</h1>
-  <div class="home-grid">
-    <div class="home-main">
-      ${lead ? `<article class="lead">
-        <a class="lead-img" href="/haberler/${lead.slug}/" tabindex="-1" aria-hidden="true">${img(lead, '', false)}</a>
-        <div class="meta"><span class="cat">${lead.kategori}</span> ${lead.tarihMetin}</div>
-        <h2><a href="/haberler/${lead.slug}/">${esc(lead.baslik)}</a></h2>
-        <p>${esc(lead.ozet)}</p>
-      </article>` : ''}
-      <div class="second">${second.map((h) => `<article><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></article>`).join('')}</div>
-      ${ad('mobile')}
-      <div class="section-head" style="margin-top:28px"><h2>Son haberler</h2><a href="/haberler/">Tüm haberler</a></div>
-      <ul class="news-compact">${latest.map((h) => `<li><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><span class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</span><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></li>`).join('')}</ul>
+  body: `<h1 class="visually-hidden">${cfg.name}: emlak haberleri ve hesaplama araçları</h1>
+<div class="wrap">
+  <section class="front" aria-label="Manşet">
+    ${lead ? `<article class="lead">
+      <a class="lead-img" href="/haberler/${lead.slug}/" tabindex="-1" aria-hidden="true">${img(lead, '', false)}</a>
+      ${meta(lead)}
+      <h2><a href="/haberler/${lead.slug}/">${esc(lead.baslik)}</a></h2>
+      <p>${esc(lead.ozet)}</p>
+    </article>` : ''}
+    <div class="headlines">
+      <h2>Son haberler</h2>
+      <ol>${basliklar.map((h) => `<li><div>${meta(h)}<a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></div></li>`).join('')}</ol>
+      ${ad('mrec')}
     </div>
-    <aside class="home-side" aria-label="Hesaplama araçları">${widgets}</aside>
-  </div>
+  </section>
+  <section class="cards" aria-label="Öne çıkanlar">
+    ${kartlar.map((h) => `<article class="card"><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div>${meta(h)}<h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></div></article>`).join('')}
+  </section>
+  ${ad('mobile')}
+  <section class="more" aria-label="Diğer haberler">
+    <div>
+      <div class="section-head" style="margin-top:20px"><h2 class="block-title" style="border:0;padding:0">Daha fazla haber</h2><a href="/haberler/">Tüm haberler</a></div>
+      <ul class="more-list">${dahaFazla.map((h) => `<li>${meta(h)}<a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></li>`).join('')}</ul>
+    </div>
+    <div>${ad('mrec')}</div>
+  </section>
 </div>
+${adTop()}
+<section class="tool-band" aria-label="Hesaplama araçları">
+  <div class="wrap">
+    <div class="tool-band-head">
+      <div><h2>Rakamlarla karar ver</h2><p>Kira artışını, bir evin kendini kaç yılda ödediğini ve kredi taksitini saniyeler içinde hesapla.</p></div>
+      <a href="/araclar/">Tüm araçlar</a>
+    </div>
+    <div class="tool-grid">${widgets}</div>
+    <div class="tool-links">
+      <a class="tool-link" href="/araclar/ilan-firsat-mi/"><span class="tool-icon">${icons.search}</span><span><b>Bu ilan fırsat mı?</b><span class="small">Baktığın ilanı aynı bölgedeki benzerleriyle karşılaştır</span></span><span class="go">Karşılaştır</span></a>
+      <a class="tool-link" href="/araclar/kredi-mi-kira-mi/"><span class="tool-icon">${icons.scale}</span><span><b>Kredi mi, kira mı?</b><span class="small">Taksit ile kirayı yıllar içinde karşılaştır</span></span><span class="go">Hesapla</span></a>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap split">
+    <div class="faizler">
+      <div class="section-head"><h2>Konut kredisi faizleri</h2><a href="/konut-kredisi-faiz-oranlari/">Tüm bankalar</a></div>
+      <ol>${faiz.olan.slice(0, 6).map((b) => `<li><span>${b.banka} <span class="small muted">${b.urun}</span></span><b>%${tr2(b.oran)}</b></li>`).join('')}</ol>
+      <p class="small muted" style="margin-top:8px">Aylık oranlar, bankaların kendi sitelerinden. Son kontrol: ${faiz.sonKontrolMetin}.</p>
+    </div>
+    <div class="facts">
+      <div class="section-head"><h2>Güncel veriler</h2></div>
+      <dl>
+        <div><dt>Kira artış tavanı, ${oranlar[0].ay}</dt><dd>%${tr2(oranlar[0].oran)}</dd></div>
+        <div><dt>En düşük konut kredisi faizi${faiz.enDusuk ? ', ' + faiz.enDusuk.banka : ''}</dt><dd>%${tr2(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)}</dd></div>
+        <div><dt>12 ay sonrası enflasyon beklentisi</dt><dd>%${tr2(enf.beklenti.ay12)}</dd></div>
+        <div><dt>2000–2025 medyan yıllık enflasyon</dt><dd>%${tr2(enf.medyan)}</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
 <section class="section">
   <div class="wrap">
     <div class="section-head"><h2>İstanbul Anadolu yakası ilçe rehberleri</h2><a href="/istanbul/">Tüm ilçeler</a></div>
@@ -381,7 +417,7 @@ for (const h of haberler) {
   const p = `/haberler/${h.slug}/`;
   const c = [['/', 'Anasayfa'], ['/haberler/', 'Haberler'], [p, h.kategori]];
   write(p, layout({
-    title: h.baslik, description: h.ozet, path: p, active: '/haberler/', image: h.kapak, ogType: 'article',
+    title: h.baslik, description: h.ozet, path: p, active: `/haberler/kategori/${katSlug(h.kategori)}/`, image: h.kapak, ogType: 'article',
     jsonld: [crumbLd(c), {
       '@context': 'https://schema.org', '@type': 'NewsArticle', headline: h.baslik, description: h.ozet,
       datePublished: h.tarih, dateModified: h.tarih, image: [abs(h.kapak)], inLanguage: 'tr', mainEntityOfPage: abs(p),
@@ -389,15 +425,31 @@ for (const h of haberler) {
     }],
     body: `${adTop()}<div class="wrap page">${crumbs(c)}
 <div class="layout"><article class="prose">
-<p class="muted small">${h.kategori}, ${h.tarihMetin}</p>
+${meta(h)}
 <h1>${esc(h.baslik)}</h1>
 <p class="lede">${esc(h.ozet)}</p>
+<div class="byline">Amorti haber masası, ${h.tarihMetin}</div>
 <figure class="kapak">${img(h, '', false)}</figure>
 ${h.body}
 ${ad('mobile')}
 </article>${sidebar()}</div>
 <section class="section"><h2>Diğer haberler</h2><ul class="news-list">${haberler.filter((x) => x.slug !== h.slug).slice(0, 3).map(newsItem).join('')}</ul></section>
 </div>`,
+  }));
+}
+
+// ---------- Haber kategorileri ----------
+for (const [slug, ad] of KATEGORILER) {
+  const p = `/haberler/kategori/${slug}/`;
+  const list = haberler.filter((h) => h.kategori === ad);
+  const c = [['/', 'Anasayfa'], ['/haberler/', 'Haberler'], [p, ad]];
+  write(p, layout({
+    title: `${ad} haberleri`, description: `${ad} kategorisindeki güncel emlak haberleri: ${list.slice(0, 3).map((h) => h.baslik).join('; ')}`.slice(0, 300),
+    path: p, active: p, jsonld: [crumbLd(c)],
+    body: `${adTop()}<div class="wrap page">${crumbs(c)}
+<div class="layout"><div><h1>${ad}</h1>
+${list.length ? `<ul class="news-list" style="margin-top:20px">${list.map(newsItem).join('')}</ul>` : '<div class="empty"><p>Bu kategoride henüz haber yok.</p></div>'}
+</div>${sidebar()}</div></div>`,
   }));
 }
 

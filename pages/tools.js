@@ -29,7 +29,7 @@ function amortismanForm({ fiyat = '6.500.000', kira = '30.000', heading = true, 
     ${field('fiyat', 'Satış fiyatı', { id: id('fiyat'), unit: 'TL', money: true, value: fiyat })}
     ${field('kira', 'Aylık kira', { id: id('kira'), unit: 'TL', money: true, value: kira, hint: 'Aynı bölgede benzer dairelerin kira ilanlarına bak.' })}
   </div>
-  <details class="more">
+  <details class="more-opts">
     <summary>Giderleri ve senaryoyu ayarla</summary>
     <div class="fields">
       ${field('masraf', 'Alım masrafları', { id: id('masraf'), unit: '%', value: '4,4', hint: 'Tapu harcı %2 + emlakçı komisyonu %2 + KDV' })}
@@ -66,7 +66,7 @@ function ilanForm() {
   <h3 style="margin-top:20px">Aynı bölgedeki benzer satılık ilanlar</h3>
   <p class="muted small">Aynı mahallede, benzer yaş ve büyüklükteki en az 3 ilanı yaz.</p>
   <table class="comps"><thead><tr><th>Fiyat (TL)</th><th>Net m²</th></tr></thead><tbody>${satisRows}</tbody></table>
-  <details class="more">
+  <details class="more-opts">
     <summary>Kira ilanlarıyla amortismanı da hesapla</summary>
     <table class="comps"><thead><tr><th>Aylık kira (TL)</th><th>Net m²</th></tr></thead><tbody>${kiraRows}</tbody></table>
   </details>

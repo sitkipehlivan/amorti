@@ -1,1 +1,1 @@
-Bricolage Grotesque ve IBM Plex Sans, SIL Open Font License 1.1 ile dağıtılır (github.com/google/fonts). Haber kapak görsellerini üretmek için kullanılır.
+Newsreader ve Schibsted Grotesk, SIL Open Font License 1.1 ile dağıtılır (github.com/google/fonts). Haber kapak görsellerini üretmek için sabit ağırlıklı kopyaları kullanılır.
