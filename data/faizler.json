@@ -1,0 +1,113 @@
+{
+  "aciklama": "Bankaların kendi sitelerinde yayınladığı konut kredisi aylık faiz oranları. Günlük banka taraması günceller; kurallar docs/faiz-botu.md.",
+  "bankalar": [
+    {
+      "banka": "ING",
+      "urun": "Avantajlı Konut Kredisi, eşit taksitli",
+      "oran": 2.70,
+      "kosul": "120 ay, sayfadaki örnek ödeme tablosu",
+      "url": "https://www.ing.com.tr/tr/sizin-icin/krediler/avantajli-konut-kredisi-kampanyasi",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "Yapı Kredi",
+      "urun": "Konut Kredisi",
+      "oran": 2.88,
+      "kosul": "60–120 ay (36 ay: %3,44)",
+      "url": "https://www.yapikredi.com.tr/kredi/konut-kredisi/",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "Ziraat Bankası",
+      "urun": "Konut Kredisi Ürün Paketi",
+      "oran": 2.89,
+      "kosul": "120 aya kadar, hesaplama aracı",
+      "url": "https://www.ziraatbank.com.tr/tr/bireysel/krediler/konut-gayrimenkul/konut-kredisi",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "Halkbank",
+      "urun": "Hesaplı Evim Konut Kredisi",
+      "oran": 2.99,
+      "kosul": "60 ve 120 ay örnek maliyet tablosu",
+      "url": "https://www.halkbank.com.tr/tr/bireysel/krediler/konut-kredileri/hesapli-evim-konut",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "QNB",
+      "urun": "Standart Konut Kredisi",
+      "oran": 2.99,
+      "kosul": "Hesaplama aracı",
+      "url": "https://www.qnb.com.tr/standart-konut-kredisi",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "İş Bankası",
+      "urun": "Ev Kredisi Kampanyası",
+      "oran": 3.10,
+      "kosul": "1–120 ay, hayat sigortalı (sigortasız %3,45)",
+      "url": "https://www.isbank.com.tr/konut-kredisi",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "Garanti BBVA",
+      "urun": "Konut Kredisi",
+      "oran": 3.13,
+      "kosul": "Hesaplama aracı (500.000 TL, 72 ay)",
+      "url": "https://www.garantibbva.com.tr/krediler/konut-kredisi",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "Akbank",
+      "urun": "Konut Kredisi",
+      "oran": 3.40,
+      "kosul": "Hayat sigortalı, hesaplama aracı 36 ay (sigortasız %3,50)",
+      "url": "https://www.akbank.com/krediler/konut-kredisi-hesaplama",
+      "kontrol": "2026-11-05",
+      "durum": "ok"
+    },
+    {
+      "banka": "VakıfBank",
+      "urun": "Konut Kredisi",
+      "oran": null,
+      "kosul": "",
+      "url": "https://www.vakifbank.com.tr/",
+      "kontrol": null,
+      "durum": "bekliyor"
+    },
+    {
+      "banka": "DenizBank",
+      "urun": "Konut Kredisi",
+      "oran": null,
+      "kosul": "",
+      "url": "https://www.denizbank.com/kredi-hesaplama-araci/konut-kredisi-hesaplama-araci",
+      "kontrol": null,
+      "durum": "bekliyor"
+    },
+    {
+      "banka": "TEB",
+      "urun": "Konut Kredisi",
+      "oran": null,
+      "kosul": "",
+      "url": "https://www.teb.com.tr/konut-kredisi-kampanya/",
+      "kontrol": null,
+      "durum": "bekliyor"
+    },
+    {
+      "banka": "Kuveyt Türk",
+      "urun": "Konut Finansmanı",
+      "oran": null,
+      "kosul": "Katılım bankası, kâr payı oranı",
+      "url": "https://www.kuveytturk.com.tr/",
+      "kontrol": null,
+      "durum": "bekliyor"
+    }
+  ]
+}

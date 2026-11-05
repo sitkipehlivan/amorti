@@ -7,6 +7,7 @@ const ilceler = require('./data/ilceler');
 const haberler = require('./data/haberler');
 const oranlar = require('./data/kira-oranlari');
 const enf = require('./data/enflasyon');
+const faiz = require('./data/faizler');
 const { kapakYaz } = require('./lib/kapak');
 const { tools, amortismanForm, icons } = require('./pages/tools');
 
@@ -40,6 +41,7 @@ const navItems = [
   ['/araclar/', 'Araçlar'],
   ['/istanbul/', 'İlçeler'],
   ['/haberler/', 'Haberler'],
+  ['/konut-kredisi-faiz-oranlari/', 'Kredi faizleri'],
   ['/kira-paylas/', 'Kiranı paylaş'],
 ];
 
@@ -163,10 +165,15 @@ ${ad('mrec')}
   ${miniField('tutar', 'Kredi tutarı', { id: 'w-tutar', unit: 'TL', money: true, value: '2.000.000' })}
   <div class="pair">
     ${miniField('vade', 'Vade', { id: 'w-vade', unit: 'ay', value: '120' })}
-    ${miniField('faiz', 'Aylık faiz', { id: 'w-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ',') })}
+    ${miniField('faiz', 'Aylık faiz', { id: 'w-faiz', unit: '%', value: String(faiz.tipik).replace('.', ',') })}
   </div>
   <div class="result" aria-live="polite" hidden><span class="small muted">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small muted">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
 </form>
+<div class="calc mini faizler">
+  <h3><a href="/konut-kredisi-faiz-oranlari/">Bankaların konut kredisi faizleri</a></h3>
+  <ol>${faiz.olan.slice(0, 5).map((b) => `<li><span>${b.banka}</span><b>%${tr2(b.oran)}</b></li>`).join('')}</ol>
+  <p class="small muted" style="margin:6px 0 0">Aylık oran, bankaların kendi sitelerinden. ${faiz.sonKontrolMetin}. <a href="/konut-kredisi-faiz-oranlari/">Tümünü gör</a></p>
+</div>
 <div class="calc mini links">
   <a href="/araclar/ilan-firsat-mi/"><span class="tool-icon">${icons.search}</span><span><b>Bu ilan fırsat mı?</b><span class="small muted">Benzer ilanlarla karşılaştır</span></span></a>
   <a href="/araclar/kredi-mi-kira-mi/"><span class="tool-icon">${icons.scale}</span><span><b>Kredi mi kira mı?</b><span class="small muted">Yıllar içinde karşılaştır</span></span></a>
@@ -175,7 +182,7 @@ ${ad('mrec')}
   <h3>Güncel veriler</h3>
   <dl>
     <div><dt>Kira artış tavanı (${oranlar[0].ay})</dt><dd>%${tr2(oranlar[0].oran)}</dd></div>
-    <div><dt>Konut kredisi faizi (aylık, yaklaşık)</dt><dd>%${tr2(cfg.defaults.konutKredisiAylikFaiz)}</dd></div>
+    <div><dt>En düşük konut kredisi faizi (${faiz.enDusuk ? faiz.enDusuk.banka : ''})</dt><dd>%${tr2(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)}</dd></div>
     <div><dt>12 ay sonrası enflasyon beklentisi</dt><dd>%${tr2(enf.beklenti.ay12)}</dd></div>
   </dl>
 </div>`;
@@ -257,6 +264,44 @@ ${crumbs(c)}
   </div>
   <aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar</h3>${toolList(tools.filter((x) => x.slug !== t.slug))}</div></aside>
 </div></div>`,
+  }));
+}
+
+// ---------- Konut kredisi faiz oranları ----------
+{
+  const P = '/konut-kredisi-faiz-oranlari/';
+  const ay = faiz.sonKontrolMetin.split(' ').slice(1).join(' ');
+  const taksit = (o, P0 = 2000000, n = 120) => { const r = o / 100; return P0 * r / (1 - Math.pow(1 + r, -n)); };
+  const tl0 = (n) => Math.round(n).toLocaleString('tr-TR') + ' TL';
+  const c = [['/', 'Anasayfa'], [P, 'Konut kredisi faiz oranları']];
+  const kf = tools.find((t) => t.slug === 'konut-kredisi-hesaplama');
+  const faq = [
+    ['En düşük konut kredisi faizi hangi bankada?', faiz.enDusuk ? `${faiz.sonKontrolMetin} itibarıyla bankaların sitelerinde yayınlanan en düşük aylık oran %${tr2(faiz.enDusuk.oran)} ile ${faiz.enDusuk.banka}'da. Oranlar vade, tutar, hayat sigortası ve müşteri durumuna göre değişebilir.` : 'Oranlar güncelleniyor.'],
+    ['Tablodaki oranlar bana uygulanacak oran mı?', 'Hayır, bunlar bankaların sitelerinde ilan ettiği oranlar. Banka; kredi notu, gelir, maaş müşterisi olup olmama, hayat sigortası ve konutun enerji sınıfına göre farklı bir teklif yapabilir. Başvuru öncesinde bankadan sana özel teklifi al.'],
+    ['Konut kredisinde BSMV var mı?', 'İlk konutunu alanlar için konut kredisinde BSMV ve KKDF uygulanmaz. Halihazırda üzerine kayıtlı konutu olanların kullandığı konut kredisinde ise bankalar faize %15 BSMV ekliyor.'],
+    ['Oranlar ne sıklıkla güncelleniyor?', 'Bankaların sayfaları hafta içi her gün kontrol edilir. Her satırda son kontrol tarihi yazar; o gün okunamayan bankada en son doğrulanan oran gösterilir.'],
+  ];
+  write(P, layout({
+    title: `Konut Kredisi Faiz Oranları ${ay}: Banka Banka Güncel Oranlar`,
+    description: `Bankaların güncel konut kredisi faiz oranları. En düşük aylık oran %${tr2(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)}${faiz.enDusuk ? ' (' + faiz.enDusuk.banka + ')' : ''}. 2 milyon TL, 120 ay taksit karşılaştırması ve kredi hesaplama.`,
+    path: P, active: P,
+    jsonld: [crumbLd(c), faqLd(faq)],
+    body: `${adTop()}<div class="wrap page">${crumbs(c)}
+<div class="layout"><div>
+<h1>Konut kredisi faiz oranları</h1>
+<p class="lede">Bankaların kendi sitelerinde yayınladığı güncel konut kredisi faiz oranları. ${faiz.enDusuk ? `En düşük aylık oran <strong>%${tr2(faiz.enDusuk.oran)}</strong> (${faiz.enDusuk.banka}), bankaların ortanca oranı <strong>%${tr2(faiz.ortanca)}</strong>.` : ''} Son kontrol: ${faiz.sonKontrolMetin}.</p>
+<div class="table-wrap"><table class="data faiz-tablo">
+<thead><tr><th>Banka</th><th>Aylık faiz</th><th>2 milyon TL, 120 ay taksit</th><th>Koşul</th><th>Son kontrol</th></tr></thead>
+<tbody>
+${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td class="num"><b>%${tr2(b.oran)}</b></td><td class="num">${tl0(taksit(b.oran))}</td><td class="small">${b.kosul}</td><td class="small muted">${b.kontrolMetin}</td></tr>`).join('\n')}
+${faiz.bekleyen.map((b) => `<tr><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td colspan="4" class="small muted">Oran henüz alınamadı. Güncel oran için bankanın sayfasına bak.</td></tr>`).join('\n')}
+</tbody></table></div>
+<p class="small muted">Taksit, ilk konutunu alanlar için (BSMV'siz) eşit taksitli formülle hesaplanmıştır; dosya masrafı, ekspertiz ve sigorta dahil değildir. Oranlar bankaların ilan ettiği oranlardır, sana özel teklif farklı olabilir.</p>
+${ad('mobile')}
+<h2 style="margin-top:32px">Taksitini hesapla</h2>
+${kf.form()}
+<div class="prose faq" style="margin-top:32px"><h2>Sık sorulanlar</h2>${faq.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
+</div>${sidebar()}</div></div>`,
   }));
 }
 

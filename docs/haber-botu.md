@@ -108,7 +108,7 @@ TÜİK her ayın 3'ünde (hafta sonu/tatile denk gelirse sonraki iş günü) enf
 
 ## Konut kredisi faizi varsayılanı
 
-Bankaların konut kredisi faizlerinde belirgin ve genel bir değişiklik haberi yazdıysan, `site.config.js` içindeki `defaults.konutKredisiAylikFaiz` değerini piyasanın yeni tipik oranına (ör. 2,89) güncelle ve haberde bu oranı kullan.
+Bankaların oranları `data/faizler.json` dosyasında tutulur ve ayrı bir banka taraması günceller (`docs/faiz-botu.md`). Haber botu bu dosyaya dokunmaz; konut kredisi haberlerinde güncel oranları bu dosyadan alır ve `/konut-kredisi-faiz-oranlari/` sayfasına link verir.
 
 ## Enflasyon beklentisi (her ay)
 

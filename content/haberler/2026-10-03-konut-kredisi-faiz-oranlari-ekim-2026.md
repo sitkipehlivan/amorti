@@ -14,10 +14,10 @@ Ekim 2026 başında kredi karşılaştırma platformlarında 120 ay vadeli konut
 
 ## 1 milyon TL'nin taksiti ne kadar?
 
-Aylık %2,87 faizle 1 milyon TL, 120 ay vadede yaklaşık 29.696 TL taksitle geri ödeniyor. Toplam geri ödeme yaklaşık 3,56 milyon TL'ye ulaşıyor. Konut kredilerinde BSMV ve KKDF uygulanmadığı için taksit doğrudan bu formülle hesaplanabiliyor.
+Aylık %2,87 faizle 1 milyon TL, 120 ay vadede yaklaşık 29.696 TL taksitle geri ödeniyor. Toplam geri ödeme yaklaşık 3,56 milyon TL'ye ulaşıyor. İlk konutunu alanlar için konut kredisinde BSMV ve KKDF uygulanmadığından taksit doğrudan bu oranla hesaplanıyor; halihazırda konutu olanlarda ise faize %15 BSMV ekleniyor.
 
 Banka kampanyalarında düşük oranlar genellikle maaş müşterisi olma, sigorta veya otomatik ödeme talimatı gibi koşullara bağlı. Başvuru öncesinde bankanın sana özel teklifini görmek gerekiyor.
 
 ## Kredi mi, kira mı?
 
-Aynı ev için ödeyeceğin kirayla kredi taksitini karşılaştırmak için [kredi mi kira mı aracını](/araclar/kredi-mi-kira-mi/), sadece taksit hesaplamak için [konut kredisi hesaplama aracını](/araclar/konut-kredisi-hesaplama/) kullanabilirsin.
+Bankaların güncel oranlarını [konut kredisi faiz oranları](/konut-kredisi-faiz-oranlari/) sayfasında görebilirsin. Aynı ev için ödeyeceğin kirayla kredi taksitini karşılaştırmak için [kredi mi kira mı aracını](/araclar/kredi-mi-kira-mi/), sadece taksit hesaplamak için [konut kredisi hesaplama aracını](/araclar/konut-kredisi-hesaplama/) kullanabilirsin.

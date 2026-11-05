@@ -189,6 +189,7 @@
   function taksitHesapla(P, r, n) { return r > 0 ? P * r / (1 - Math.pow(1 + r, -n)) : P / n; }
   function kredi(form) {
     var P = val(form, 'tutar'), n = val(form, 'vade'), r = val(form, 'faiz') / 100;
+    if (form.elements.bsmv && form.elements.bsmv.checked) r *= 1.15; // konutu olanlarda faize %15 BSMV
     if (!(P > 0 && n > 0 && r >= 0)) { show(form, false); return; }
     show(form, true);
     var t = taksitHesapla(P, r, n);

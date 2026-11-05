@@ -2,6 +2,8 @@
 const cfg = require('../site.config');
 const oranlar = require('../data/kira-oranlari');
 const enf = require('../data/enflasyon');
+const faiz = require('../data/faizler');
+const virg = (n) => String(n).replace('.', ',');
 const tr1 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const tr2 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -107,7 +109,8 @@ function krediForm() {
   <div class="fields">
     ${field('tutar', 'Kredi tutarı', { id: 'k-tutar', unit: 'TL', money: true, value: '2.000.000', full: true })}
     ${field('vade', 'Vade', { id: 'k-vade', unit: 'ay', value: '120' })}
-    ${field('faiz', 'Aylık faiz oranı', { id: 'k-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ','), hint: 'Ekim 2026: teklifler yaklaşık %2,87\'den başlıyor' })}
+    ${field('faiz', 'Aylık faiz oranı', { id: 'k-faiz', unit: '%', value: virg(faiz.tipik), hint: `Bankaların ortanca oranı. En düşük: %${virg(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)} (${faiz.enDusuk ? faiz.enDusuk.banka : ''}). <a href="/konut-kredisi-faiz-oranlari/">Tüm bankalar</a>` })}
+    <div class="field full"><label style="font-weight:400"><input type="checkbox" name="bsmv"> Üzerime kayıtlı başka bir konut var (faize %15 BSMV eklenir)</label></div>
   </div>
   <div class="result" aria-live="polite" hidden>
     <div class="result-head"><div class="big" data-out="taksit">–</div></div>
@@ -117,7 +120,7 @@ function krediForm() {
       ${stat('oranx', 'Çekilen tutarın katı')}
       ${stat('gelir', 'Önerilen en az aylık gelir')}
     </div>
-    <p class="note">Konut kredilerinde BSMV ve KKDF uygulanmaz. Dosya masrafı, ekspertiz ve sigorta ücretleri dahil değildir. Gelir tahmini, taksitin net gelirin yarısını aşmaması varsayımıyla yaklaşık hesaplanır; her bankanın kendi kriteri vardır.</p>
+    <p class="note">İlk konutunu alanlar için konut kredisinde BSMV ve KKDF uygulanmaz; halihazırda konutu olanlarda faize %15 BSMV eklenir. Dosya masrafı, ekspertiz ve sigorta ücretleri dahil değildir. Gelir tahmini, taksitin net gelirin yarısını aşmaması varsayımıyla yaklaşık hesaplanır; her bankanın kendi kriteri vardır.</p>
   </div>
 </form>`;
 }
@@ -128,7 +131,7 @@ function krediKiraForm() {
     ${field('fiyat', 'Ev fiyatı', { id: 'kk-fiyat', unit: 'TL', money: true, value: '5.000.000' })}
     ${field('pesinat', 'Peşinat', { id: 'kk-pesinat', unit: 'TL', money: true, value: '2.000.000' })}
     ${field('vade', 'Vade', { id: 'kk-vade', unit: 'ay', value: '120' })}
-    ${field('faiz', 'Aylık faiz', { id: 'kk-faiz', unit: '%', value: String(cfg.defaults.konutKredisiAylikFaiz).replace('.', ',') })}
+    ${field('faiz', 'Aylık faiz', { id: 'kk-faiz', unit: '%', value: virg(faiz.tipik), hint: '<a href="/konut-kredisi-faiz-oranlari/">Bankaların güncel oranları</a>' })}
     ${field('kira', 'Aynı ev için aylık kira', { id: 'kk-kira', unit: 'TL', money: true, value: '27.000' })}
     ${field('fark', 'Kira enflasyonun ne kadar üstünde artar?', { id: 'kk-fark', unit: 'puan', value: '0', hint: 'Kira, beklenen enflasyonla artar. 0 = aynı hız.' })}
   </div>
@@ -252,11 +255,12 @@ ${oranlar.map((o, i) => `<tr${i === 0 ? ' class="current"' : ''}><td>${o.ay}</td
     form: krediForm,
     content: `<h2>Taksit nasıl hesaplanır?</h2>
 <p>Konut kredilerinde taksit, eşit taksitli kredi formülüyle hesaplanır ve vade boyunca sabit kalır. İlk yıllarda taksitin büyük bölümü faize, son yıllarda anaparaya gider.</p>
-<p>Konut kredileri BSMV ve KKDF'den muaf olduğu için bu araçtaki hesap bankanın göstereceği taksite oldukça yakındır. Fark genelde dosya masrafı, ekspertiz ücreti ve zorunlu sigortalardan gelir.</p>
+<p>İlk konutunu alanların konut kredisi BSMV ve KKDF'den muaftır; halihazırda üzerine kayıtlı konutu olanların kredisinde ise bankalar faize %15 BSMV ekliyor. Bu durumdaysan hesaplayıcıdaki kutuyu işaretle. Kalan farklar genelde dosya masrafı, ekspertiz ücreti ve zorunlu sigortalardan gelir.</p>
+<p>Bankaların güncel oranlarını <a href="/konut-kredisi-faiz-oranlari/">konut kredisi faiz oranları</a> sayfasında karşılaştırabilirsin.</p>
 <h2>Faiz oranı nereden bulunur?</h2>
 <p>Bankalar konut kredisi faizini aylık oran olarak açıklar. Kampanyalı oranlar genelde maaş müşterisi olma veya ek ürün alma şartına bağlıdır. Başvuru öncesinde bankanın sana özel teklifini al ve buraya gir.</p>`,
     faq: [
-      ['Konut kredisinde vergi var mı?', 'Konut kredileri BSMV ve KKDF\'den muaftır. İhtiyaç ve taşıt kredilerinde ise bu vergiler uygulanır.'],
+      ['Konut kredisinde vergi var mı?', 'İlk konutunu alanların konut kredisinde BSMV ve KKDF uygulanmaz. Halihazırda konutu olanların kullandığı konut kredisinde ise bankalar faize %15 BSMV ekliyor.'],
       ['Vadeyi uzatmak mantıklı mı?', 'Vade uzadıkça taksit düşer ama toplam faiz artar. Enflasyonun yüksek olduğu dönemlerde sabit taksit gelirine göre zamanla hafifler; bu yüzden karar gelir beklentine bağlıdır.'],
     ],
   },

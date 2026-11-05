@@ -274,3 +274,11 @@ table.data tr.current td { background: var(--tapu-soft); font-weight: 600; }
 .news-list li.with-thumb h3 { margin-top: 0; }
 @media (max-width: 620px) { .news-list li.with-thumb { grid-template-columns: 110px minmax(0, 1fr); gap: 12px; } .news-list li.with-thumb p { display: none; } }
 .kapak { margin: 8px 0 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+
+/* Faiz tablosu */
+.faiz-tablo td a { font-weight: 600; }
+.faiz-tablo td span.small { display: block; }
+.faizler ol { list-style: none; margin: 0; padding: 0; counter-reset: f; }
+.faizler li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: .93rem; }
+.faizler li b { font-variant-numeric: tabular-nums; }
+.faizler li:first-child b { color: var(--parsel); }
