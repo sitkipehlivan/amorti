@@ -5,6 +5,10 @@ tarih: 2026-09-16
 kategori: Konut fiyatları
 ilceler: istanbul
 kaynak: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, Ağustos 2026
+gorsel: karsilastirma
+gorsel_etiket: Konut fiyatlarında yıllık artış, Ağustos 2026
+gorsel_veri: İstanbul=26,3; Ankara=24,8; İzmir=23,3; Türkiye=23
+gorsel_birim: %
 ---
 Merkez Bankası'nın ağustos verilerine göre Konut Fiyat Endeksi aylık **%0,9** artarak 236,8'e yükseldi. Yıllık artış **%23** oldu ve fiyatlar reel olarak **%6,5** geriledi. Konut fiyatlarındaki reel düşüş Aralık 2025'ten bu yana dokuz aydır sürüyor.
 

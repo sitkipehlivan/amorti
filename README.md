@@ -17,3 +17,6 @@ Repo Netlify'a bağlanınca `netlify.toml` build ayarlarını otomatik okur. "Ki
 
 ## Haberler
 Her haber `content/haberler/YYYY-MM-DD-slug.md` dosyasıdır. Biçim ve günlük haber botunun kuralları: `docs/haber-botu.md`.
+
+## Haber kapakları
+Her haberin kapak infografiği ön bilgideki `gorsel` alanlarından derleme sırasında `lib/kapak.js` ile çizilir (`dist/haberler/<slug>/kapak.png`). Şablonlar ve alanlar: `docs/haber-botu.md`.

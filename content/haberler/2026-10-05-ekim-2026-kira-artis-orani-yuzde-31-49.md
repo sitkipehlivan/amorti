@@ -5,6 +5,10 @@ tarih: 2026-10-05
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Eylül 2026
+gorsel: rakam
+gorsel_rakam: %31,49
+gorsel_etiket: Ekim 2026 kira artış tavanı
+gorsel_alt: Eylülde yıllık enflasyon %29,73
 ---
 TÜİK'in eylül ayı enflasyon verilerine göre tüketici fiyatları aylık **%1,84**, yıllık **%29,73** arttı. Kira artışında esas alınan 12 aylık ortalama TÜFE ise **%31,49** oldu. Ekimde yenilenecek konut ve iş yeri kira sözleşmelerinde artış bu oranı geçemiyor.
 

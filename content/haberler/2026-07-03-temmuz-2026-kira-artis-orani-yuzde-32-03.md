@@ -5,6 +5,10 @@ tarih: 2026-07-03
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Haziran 2026
+gorsel: rakam
+gorsel_rakam: %32,03
+gorsel_etiket: Temmuz 2026 kira artış tavanı
+gorsel_alt: 20.000 TL kira en fazla 26.406 TL olur
 ---
 TÜİK'in haziran ayı enflasyon verileriyle temmuz ayında yenilenecek kira sözleşmelerinin artış tavanı belli oldu. TÜFE'nin 12 aylık ortalamalara göre değişimi **%32,03** olarak gerçekleşti.
 

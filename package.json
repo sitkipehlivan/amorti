@@ -1,0 +1,7 @@
+{
+  "name": "amorti",
+  "private": true,
+  "description": "Amorti - emlak haberleri ve hesaplama araçları",
+  "scripts": { "build": "node build.js" },
+  "dependencies": { "@resvg/resvg-js": "2.6.2" }
+}

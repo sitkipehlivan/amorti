@@ -5,6 +5,10 @@ tarih: 2026-10-16
 kategori: Kira
 ilceler: istanbul
 kaynak: TCMB Piyasa Katılımcıları Anketi, Ekim 2026
+gorsel: karsilastirma
+gorsel_etiket: Piyasanın enflasyon beklentisi, Ekim 2026
+gorsel_veri: 2026 sonu=29,63; 12 ay sonra=23,89; 24 ay sonra=17,94
+gorsel_birim: %
 ---
 Merkez Bankası'nın ekim ayı Piyasa Katılımcıları Anketi'ne göre ekonomistlerin 2026 yıl sonu enflasyon beklentisi **%29,63** oldu (önceki ay %29,61). 12 ay sonrası için beklenti **%23,89**, 24 ay sonrası için **%17,94**.
 

@@ -5,6 +5,11 @@ tarih: 2026-10-30
 kategori: Ulaşım
 ilceler: umraniye, atasehir, kadikoy
 kaynak: İBB açıklaması, 30 Ekim 2026
+gorsel: hat
+gorsel_rakam: 19 Aralık
+gorsel_etiket: Ümraniye–Ataşehir–Göztepe metrosunda hedeflenen açılış
+gorsel_duraklar: Ümraniye; Ataşehir; Göztepe
+gorsel_alt: 13 km, 11 istasyon
 ---
 İstanbul Büyükşehir Belediyesi'nin yapımını sürdürdüğü Ümraniye–Ataşehir–Göztepe metro hattında sona yaklaşıldı. 13 kilometre uzunluğundaki 11 istasyonlu hattın **19 Aralık 2026'da** hizmete alınması hedefleniyor. Hatta fiziki ilerleme %97'ye ulaştı ve sürücüsüz test sürüşleri başladı.
 

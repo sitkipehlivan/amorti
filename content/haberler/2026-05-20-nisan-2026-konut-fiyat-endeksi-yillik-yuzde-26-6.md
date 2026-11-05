@@ -5,6 +5,10 @@ tarih: 2026-05-20
 kategori: Konut fiyatları
 ilceler: istanbul
 kaynak: TCMB Konut Fiyat Endeksi, Nisan 2026
+gorsel: rakam
+gorsel_rakam: %26,6
+gorsel_etiket: Konut fiyatlarında yıllık artış, Nisan 2026
+gorsel_alt: Reel olarak %4,3 düşüş
 ---
 Türkiye Cumhuriyet Merkez Bankası'nın nisan ayı Konut Fiyat Endeksi'ne göre konut fiyatları bir önceki aya göre **%1,8**, bir önceki yılın aynı ayına göre **%26,6** arttı. Aynı dönemde enflasyon daha yüksek olduğu için konut fiyatları reel olarak **%4,3** geriledi.
 

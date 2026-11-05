@@ -5,6 +5,10 @@ tarih: 2026-09-03
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Ağustos 2026
+gorsel: seri
+gorsel_etiket: Eylül 2026 kira artış tavanı ve önceki aylar
+gorsel_veri: Kas=37,15; Ara=35,91; Oca=34,88; Şub=33,98; Mar=33,39; Nis=32,82; May=32,43; Haz=32,24; Tem=32,03; Ağu=31,90; Eyl=31,79
+gorsel_birim: %
 ---
 TÜİK'in ağustos ayı verilerine göre TÜFE'nin 12 aylık ortalamalara göre değişimi **%31,79** oldu. Böylece eylül ayında yenilenecek konut ve iş yeri kira sözleşmelerinde yasal artış tavanı belli oldu. Ağustosta yıllık enflasyon %31,51 olarak gerçekleşti.
 

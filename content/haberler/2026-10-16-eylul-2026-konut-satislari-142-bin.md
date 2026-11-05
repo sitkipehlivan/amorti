@@ -5,6 +5,10 @@ tarih: 2026-10-16
 kategori: Piyasa
 ilceler: istanbul
 kaynak: TÜİK Konut Satış İstatistikleri, Eylül 2026
+gorsel: karsilastirma
+gorsel_etiket: Eylül 2026 konut satışları
+gorsel_veri: İkinci el=90.871; İlk el=51.519; İpotekli=23.397; Yabancıya=2.167
+gorsel_birim: adet
 ---
 TÜİK'in eylül ayı verilerine göre Türkiye genelinde **142.390** konut satıldı. Satışlar bir önceki yılın aynı ayına göre **%9,3** azaldı.
 

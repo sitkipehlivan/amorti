@@ -7,6 +7,7 @@ const ilceler = require('./data/ilceler');
 const haberler = require('./data/haberler');
 const oranlar = require('./data/kira-oranlari');
 const enf = require('./data/enflasyon');
+const { kapakYaz } = require('./lib/kapak');
 const { tools, amortismanForm, icons } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
@@ -42,7 +43,7 @@ const navItems = [
   ['/kira-paylas/', 'Kiranı paylaş'],
 ];
 
-function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false }) {
+function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website' }) {
   urls.push(p);
   const fullTitle = title.includes(cfg.name) ? title : `${title} | ${cfg.name}`;
   const ga = cfg.ga4 ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${cfg.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${cfg.ga4}');</script>` : '';
@@ -55,7 +56,8 @@ function layout({ title, description, path: p, body, jsonld = [], active = '', n
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${abs(p)}">
 ${noindex ? '<meta name="robots" content="noindex">' : ''}
-<meta property="og:type" content="website">
+<meta property="og:type" content="${ogType}">
+${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="${abs(image)}">` : ''}
 <meta property="og:site_name" content="${cfg.name}">
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(description)}">
@@ -122,7 +124,7 @@ const faqLd = (faq) => ({
   mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
 });
 
-const newsItem = (h) => `<li><div class="meta">${h.kategori}, ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></li>`;
+const newsItem = (h) => `<li class="with-thumb"><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div><div class="meta">${h.kategori}, ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></div></li>`;
 const toolList = (list = tools) => `<ul class="tool-list">${list.map((t) => `<li><a href="/araclar/${t.slug}/"><span class="tool-icon">${t.icon}</span><span><h3>${t.menu}</h3><p>${t.kisa}</p></span></a></li>`).join('')}</ul>`;
 const ilceGrid = (except) => `<div class="ilce-grid">${ilceler.filter((i) => i.slug !== except).map((i) => `<a href="/istanbul/${i.slug}/">${i.ad}</a>`).join('')}</div>`;
 const sidebar = () => `<aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar</h3>${toolList()}</div></aside>`;
@@ -131,6 +133,8 @@ const sidebar = () => `<aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar<
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 for (const f of fs.readdirSync(path.join(__dirname, 'src/assets'))) fs.copyFileSync(path.join(__dirname, 'src/assets', f), path.join(OUT, 'assets', f));
+for (const h of haberler) h.kapak = `/haberler/${h.slug}/` + kapakYaz(h, path.join(OUT, 'haberler', h.slug));
+const img = (h, cls = '', lazy = true) => `<img class="${cls}" src="${h.kapak}" alt="${esc((h.gorsel && h.gorsel.etiket) || h.baslik)}" width="1200" height="630"${lazy ? ' loading="lazy"' : ''}>`;
 fs.writeFileSync(path.join(OUT, 'favicon.svg'), logoMark.replace('aria-hidden="true"', 'xmlns="http://www.w3.org/2000/svg"').replace(/var\(--tapu\)/g, '#234A8C'));
 
 // ---------- Anasayfa: haber odaklı, yanda araç widget'ları ----------
@@ -182,7 +186,7 @@ const latest = rest.slice(2, 14);
 write('/', layout({
   title: `${cfg.name}: Emlak haberleri, kira artışı ve amortisman hesaplama`,
   description: 'İstanbul ve Türkiye emlak haberleri, güncel kira artış oranı, konut kredisi faizleri ve konut fiyatları. Amortisman, kira artışı ve kredi hesaplama araçları.',
-  path: '/',
+  path: '/', image: lead ? lead.kapak : '',
   jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', name: cfg.name, url: abs('/'), inLanguage: 'tr' }],
   body: `${adTop()}
 <div class="wrap home">
@@ -190,14 +194,15 @@ write('/', layout({
   <div class="home-grid">
     <div class="home-main">
       ${lead ? `<article class="lead">
+        <a class="lead-img" href="/haberler/${lead.slug}/" tabindex="-1" aria-hidden="true">${img(lead, '', false)}</a>
         <div class="meta"><span class="cat">${lead.kategori}</span> ${lead.tarihMetin}</div>
         <h2><a href="/haberler/${lead.slug}/">${esc(lead.baslik)}</a></h2>
         <p>${esc(lead.ozet)}</p>
       </article>` : ''}
-      <div class="second">${second.map((h) => `<article><div class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></article>`).join('')}</div>
+      <div class="second">${second.map((h) => `<article><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></article>`).join('')}</div>
       ${ad('mobile')}
       <div class="section-head" style="margin-top:28px"><h2>Son haberler</h2><a href="/haberler/">Tüm haberler</a></div>
-      <ul class="news-compact">${latest.map((h) => `<li><span class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</span><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></li>`).join('')}</ul>
+      <ul class="news-compact">${latest.map((h) => `<li><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><span class="meta"><span class="cat">${h.kategori}</span> ${h.tarihMetin}</span><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></li>`).join('')}</ul>
     </div>
     <aside class="home-side" aria-label="Hesaplama araçları">${widgets}</aside>
   </div>
@@ -331,10 +336,10 @@ for (const h of haberler) {
   const p = `/haberler/${h.slug}/`;
   const c = [['/', 'Anasayfa'], ['/haberler/', 'Haberler'], [p, h.kategori]];
   write(p, layout({
-    title: h.baslik, description: h.ozet, path: p, active: '/haberler/',
+    title: h.baslik, description: h.ozet, path: p, active: '/haberler/', image: h.kapak, ogType: 'article',
     jsonld: [crumbLd(c), {
       '@context': 'https://schema.org', '@type': 'NewsArticle', headline: h.baslik, description: h.ozet,
-      datePublished: h.tarih, dateModified: h.tarih, inLanguage: 'tr', mainEntityOfPage: abs(p),
+      datePublished: h.tarih, dateModified: h.tarih, image: [abs(h.kapak)], inLanguage: 'tr', mainEntityOfPage: abs(p),
       author: { '@type': 'Organization', name: cfg.name }, publisher: { '@type': 'Organization', name: cfg.publisher },
     }],
     body: `${adTop()}<div class="wrap page">${crumbs(c)}
@@ -342,6 +347,7 @@ for (const h of haberler) {
 <p class="muted small">${h.kategori}, ${h.tarihMetin}</p>
 <h1>${esc(h.baslik)}</h1>
 <p class="lede">${esc(h.ozet)}</p>
+<figure class="kapak">${img(h, '', false)}</figure>
 ${h.body}
 ${ad('mobile')}
 </article>${sidebar()}</div>

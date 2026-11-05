@@ -5,6 +5,10 @@ tarih: 2026-06-16
 kategori: Konut fiyatları
 ilceler: istanbul
 kaynak: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, Mayıs 2026
+gorsel: karsilastirma
+gorsel_etiket: İstanbul'da yıllık artış, Mayıs 2026
+gorsel_veri: Yeni kiralar=36,7; Konut fiyatları=25,4
+gorsel_birim: %
 ---
 TCMB'nin mayıs ayı verileri İstanbul'da kiralarla satış fiyatları arasındaki makasın açıldığını gösterdi. Yeni Kiracı Kira Endeksi İstanbul'da yıllık **%36,7** artarak bölgeler arasında ilk sırada yer aldı. Aynı dönemde İstanbul'da konut fiyatları yıllık **%25,4** yükseldi.
 

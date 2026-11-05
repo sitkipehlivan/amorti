@@ -59,6 +59,11 @@ function parse(file) {
     tarihMetin: `${d} ${AYLAR[mo - 1]} ${y}`,
     kategori: fm.kategori,
     ilceler: (fm.ilceler || 'istanbul').split(',').map((s) => s.trim()).filter(Boolean),
+    kaynakDuz: (fm.kaynak || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'),
+    gorsel: fm.gorsel ? {
+      tip: fm.gorsel, rakam: fm.gorsel_rakam, etiket: fm.gorsel_etiket, alt: fm.gorsel_alt,
+      veri: fm.gorsel_veri, birim: fm.gorsel_birim, duraklar: fm.gorsel_duraklar,
+    } : null,
     body: md(m[2]) + '\n' + kaynak,
   };
 }

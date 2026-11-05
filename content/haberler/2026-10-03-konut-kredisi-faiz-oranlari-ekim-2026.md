@@ -5,6 +5,10 @@ tarih: 2026-10-03
 kategori: Kredi
 ilceler: istanbul
 kaynak: Ekim 2026 kredi karşılaştırma verileri
+gorsel: rakam
+gorsel_rakam: %2,87
+gorsel_etiket: Konut kredisinde en düşük aylık teklifler
+gorsel_alt: 1 milyon TL, 120 ay: yaklaşık 29.696 TL taksit
 ---
 Ekim 2026 başında kredi karşılaştırma platformlarında 120 ay vadeli konut kredisi ve konut finansmanı teklifleri aylık yaklaşık **%2,87**'den başlıyor. Bankaların internet sitelerindeki standart oranlar ise çoğunlukla %2,89 ile %3,50'nin üzerinde arasında.
 

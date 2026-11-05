@@ -5,6 +5,10 @@ tarih: 2026-08-19
 kategori: Kredi
 ilceler: istanbul
 kaynak: Ağustos 2026 basın haberleri
+gorsel: rakam
+gorsel_rakam: %1,20
+gorsel_etiket: İlk Evim kredisinde konuşulan aylık faiz
+gorsel_alt: Resmi şartlar henüz açıklanmadı
 ---
 İlk kez ev alacaklara yönelik düşük faizli "İlk Evim" konut kredisi bir süredir gündemde. Ancak ağustos ortası itibarıyla kredi kullanıma sunulmadı, başvurular başlamadı ve resmi bir takvim açıklanmadı.
 

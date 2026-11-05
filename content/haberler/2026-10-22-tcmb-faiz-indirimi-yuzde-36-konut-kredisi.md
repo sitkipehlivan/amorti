@@ -5,6 +5,10 @@ tarih: 2026-10-22
 kategori: Kredi
 ilceler: istanbul
 kaynak: TCMB Para Politikası Kurulu kararı, 22 Ekim 2026
+gorsel: rakam
+gorsel_rakam: %36
+gorsel_etiket: Yeni politika faizi
+gorsel_alt: 22 Ekim'de 100 baz puan indirim (önceki %37)
 ---
 Türkiye Cumhuriyet Merkez Bankası, 22 Ekim'deki Para Politikası Kurulu toplantısında politika faizini **100 baz puan** indirerek **%37'den %36'ya** çekti. Gecelik borç verme faizi %39'a, gecelik borçlanma faizi %34,5'e düşürüldü.
 

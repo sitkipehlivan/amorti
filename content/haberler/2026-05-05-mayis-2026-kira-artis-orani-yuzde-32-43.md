@@ -5,6 +5,10 @@ tarih: 2026-05-05
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Nisan 2026
+gorsel: rakam
+gorsel_rakam: %32,43
+gorsel_etiket: Mayıs 2026 kira artış tavanı
+gorsel_alt: 20.000 TL kira en fazla 26.486 TL olur
 ---
 TÜİK'in nisan ayı enflasyon verileriyle mayısta yenilenecek kira sözleşmeleri için yasal üst sınır netleşti. Tüketici fiyatlarının 12 aylık ortalamalara göre değişimi **%32,43** oldu. Mayıs ayında sözleşmesi yenilenen konut ve çatılı iş yerlerinde kiraya bu oranın üzerinde zam yapılamıyor.
 

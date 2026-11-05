@@ -5,6 +5,10 @@ tarih: 2026-08-18
 kategori: Konut fiyatları
 ilceler: istanbul
 kaynak: TCMB Konut Fiyat Endeksi, Temmuz 2026
+gorsel: karsilastirma
+gorsel_etiket: Temmuz 2026, yıllık değişim
+gorsel_veri: Yeni kiralar=28,4; Konut fiyatları=25,0
+gorsel_birim: %
 ---
 Merkez Bankası'nın temmuz verilerine göre Konut Fiyat Endeksi bir önceki aya göre **%1,5** artarak **234,8** seviyesine yükseldi. Yıllık nominal artış **%25,0** oldu. Aynı dönemde enflasyon daha yüksek seyrettiği için fiyatlar reel olarak **%5,1** düştü.
 

@@ -5,6 +5,10 @@ tarih: 2026-08-03
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Temmuz 2026
+gorsel: rakam
+gorsel_rakam: %31,90
+gorsel_etiket: Ağustos 2026 kira artış tavanı
+gorsel_alt: Temmuzda yıllık enflasyon %31,75
 ---
 TÜİK'in temmuz ayı verilerine göre tüketici fiyatları aylık **%1,78**, yıllık **%31,75** arttı. Kira artışında esas alınan 12 aylık ortalama TÜFE ise **%31,90** oldu. Ağustosta yenilenen konut ve iş yeri kira sözleşmelerinde bu oranın üzerinde artış yapılamıyor.
 

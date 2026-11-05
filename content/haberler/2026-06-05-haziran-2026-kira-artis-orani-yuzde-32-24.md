@@ -5,6 +5,10 @@ tarih: 2026-06-05
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Mayıs 2026
+gorsel: seri
+gorsel_etiket: Haziran 2026 kira artış tavanı ve önceki aylar
+gorsel_veri: Kas=37,15; Ara=35,91; Oca=34,88; Şub=33,98; Mar=33,39; Nis=32,82; May=32,43; Haz=32,24
+gorsel_birim: %
 ---
 TÜİK'in mayıs ayı enflasyon verilerinin ardından haziranda yenilenecek kira sözleşmelerine uygulanabilecek en yüksek artış oranı **%32,24** oldu. Mayısta tüketici fiyatları aylık **%1,71** arttı.
 

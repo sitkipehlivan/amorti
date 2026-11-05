@@ -5,6 +5,10 @@ tarih: 2026-08-13
 kategori: Piyasa
 ilceler: istanbul
 kaynak: TCMB 2026 Yılı Üçüncü Enflasyon Raporu
+gorsel: karsilastirma
+gorsel_etiket: TCMB yıl sonu enflasyon tahminleri
+gorsel_veri: 2026=28; 2027=15; 2028=9; Hedef=5
+gorsel_birim: %
 ---
 Türkiye Cumhuriyet Merkez Bankası, yılın üçüncü Enflasyon Raporu'nda 2026 yıl sonu enflasyon tahminini **%26'dan %28'e** yükseltti. 2026 için ara hedef %24 olarak değiştirilmedi.
 

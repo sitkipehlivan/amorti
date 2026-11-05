@@ -5,6 +5,10 @@ tarih: 2026-11-03
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Ekim 2026
+gorsel: seri
+gorsel_etiket: Kira artış tavanı son 12 ayda nasıl geriledi
+gorsel_veri: Ara=35,91; Oca=34,88; Şub=33,98; Mar=33,39; Nis=32,82; May=32,43; Haz=32,24; Tem=32,03; Ağu=31,90; Eyl=31,79; Eki=31,49; Kas=31,23
+gorsel_birim: %
 ---
 TÜİK'in 3 Kasım'da açıkladığı ekim ayı enflasyon verileriyle kasımda yenilenecek kira sözleşmeleri için yasal üst sınır belli oldu. Tüketici fiyatlarının 12 aylık ortalamalara göre değişimi **%31,23** olarak gerçekleşti. Kasım ayında sözleşmesi yenilenen bir kiracıya bu oranın üzerinde zam yapılamıyor.
 

@@ -5,6 +5,10 @@ tarih: 2026-10-20
 kategori: Konut fiyatları
 ilceler: istanbul
 kaynak: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, 2026
+gorsel: karsilastirma
+gorsel_etiket: Konut fiyatlarında yıllık artış, Eylül 2026
+gorsel_veri: İstanbul=26,8; Ankara=22; İzmir=21
+gorsel_birim: %
 ---
 Türkiye Cumhuriyet Merkez Bankası'nın Eylül 2026 Konut Fiyat Endeksi verilerine göre üç büyükşehirde konut fiyatları yıllık bazda şöyle değişti:
 

@@ -64,6 +64,10 @@ tarih: 2026-11-05
 kategori: Kira
 ilceler: istanbul
 kaynak: TÜİK Tüketici Fiyat Endeksi, Ekim 2026
+gorsel: rakam
+gorsel_rakam: %31,23
+gorsel_etiket: Kasım 2026 kira artış tavanı
+gorsel_alt: 20.000 TL kira en fazla 26.246 TL olur
 ---
 İlk paragraf...
 
@@ -76,8 +80,22 @@ Metin. [Link metni](/araclar/kira-artis-hesaplama/) ve **kalın** kullanılabili
 
 - `kategori` şu değerlerden biri: `Kira`, `Konut fiyatları`, `Kredi`, `Mevzuat`, `Ulaşım`, `Kentsel dönüşüm`, `Projeler`, `Piyasa`.
 - `ilceler`: virgülle ayrılmış ilçe slug'ları. Genel (tüm İstanbul'u ilgilendiren) haberlerde `istanbul`. İlçeye özel haberlerde ilgili ilçe slug'ları; slug listesi `data/ilceler.js` içindedir (adalar, atasehir, beykoz, cekmekoy, kadikoy, kartal, maltepe, pendik, sancaktepe, sultanbeyli, sile, tuzla, umraniye, uskudar). Listede olmayan bir ilçe (ör. Avrupa yakası) için `istanbul` yaz.
+- `gorsel` ve `gorsel_*` alanları: haberin kapak infografiği (aşağıdaki "Kapak görseli" bölümü). Her haberde zorunlu.
 - `kaynak`: kaynağın adı; birincil kaynak linki varsa markdown link olarak: `[TÜİK TÜFE Ekim 2026](https://data.tuik.gov.tr/...)`.
 - Gövdede yalnızca: paragraf, `## ` / `### ` başlık, `- ` liste, `**kalın**`, `[link](url)`. HTML yazma.
+
+## Kapak görseli
+
+Her haberin kapağı, ön bilgideki `gorsel` alanlarından derleme sırasında otomatik çizilir (`lib/kapak.js`). Görsel indirme, yapay zekâ ile görsel üretme veya dosya ekleme yapma; sadece aşağıdaki alanları doldur. Rakamlar haber metniyle birebir aynı olmalı.
+
+Şablonlar:
+
+- `gorsel: rakam` — tek bir çarpıcı sayı. `gorsel_rakam` (en fazla 9 karakter, ör. `%31,23`, `127.410`, `%36`), `gorsel_etiket` (sayının ne olduğu, en fazla ~45 karakter), isteğe bağlı `gorsel_alt` (tek cümlelik ek bilgi, ~50 karakter).
+- `gorsel: karsilastirma` — 2–5 kalemin yatay çubuk grafiği. `gorsel_etiket` (grafik başlığı), `gorsel_veri` (`Ad=değer; Ad=değer`, en büyük değer önce, ör. `İstanbul=26,3; Ankara=24,8; İzmir=23,3`), `gorsel_birim` (`%` veya `adet`, `TL` gibi).
+- `gorsel: seri` — zaman içindeki değişim, en fazla 12 çubuk, son çubuk vurgulanır. `gorsel_veri` (`Oca=34,88; Şub=33,98; ...`, kısa ay adlarıyla eskiden yeniye), `gorsel_etiket`, `gorsel_birim`, isteğe bağlı `gorsel_rakam` (büyük yazılacak değer; boşsa son değer).
+- `gorsel: hat` — ulaşım/metro haberleri. `gorsel_rakam` (ör. açılış tarihi `19 Aralık`), `gorsel_etiket`, `gorsel_duraklar` (`Durak; Durak; Durak`, 2–6 durak), isteğe bağlı `gorsel_alt` (ör. `13 km, 11 istasyon`).
+
+Hangi şablon: aylık kira oranı haberlerinde `seri` (son 12 ayın oranları `data/kira-oranlari.js` içinde) veya `rakam`; şehir/kalem karşılaştırmalarında `karsilastirma`; tek bir yeni rakamı öne çıkaran haberlerde `rakam`; metro ve yol haberlerinde `hat`. Rakam içermeyen haberlerde `gorsel` alanını boş bırakma; en uygun sayıyı (tarih, adet, oran) seç.
 
 ## Kira artış oranı tablosu (her ay)
 
@@ -103,7 +121,7 @@ Araçlar kira artışını `data/enflasyon.js` dosyasındaki beklentiye göre he
 
 ## Teknik adımlar
 
-1. `node build.js` çalıştır; hata vermeden bitmeli ("Tamam: N sayfa").
+1. `npm ci` (ilk seferde) ve `node build.js` çalıştır; hata vermeden bitmeli ("Tamam: N sayfa"). Yeni haberin kapağını `dist/haberler/<slug>/kapak.png` dosyasını açarak kontrol et: yazılar taşmamalı, rakam doğru olmalı.
 2. Değişiklik varsa hepsini `main` dalına TEK commit ile ekle ve push et. Commit mesajı: `Haberler: N yeni` (oran güncellemesi varsa `+ kira oranı <Ay Yıl>`).
 3. Netlify push sonrası siteyi otomatik derler; ayrıca deploy yapma.
 4. Yeni haber ve oran güncellemesi yoksa hiçbir değişiklik yapma, commit atma.

@@ -5,6 +5,10 @@ tarih: 2026-09-21
 kategori: Piyasa
 ilceler: istanbul
 kaynak: TÜİK Konut Satış İstatistikleri, Ağustos 2026
+gorsel: rakam
+gorsel_rakam: 127.410
+gorsel_etiket: Ağustos 2026'da satılan konut
+gorsel_alt: Yıllık %14,7 düşüş, İstanbul'da 20.426
 ---
 TÜİK'in ağustos ayı konut satış istatistiklerine göre Türkiye genelinde **127.410** konut satıldı. Satışlar bir önceki yılın aynı ayına göre **%14,7** azaldı, temmuza göre ise %3,1 arttı.
 

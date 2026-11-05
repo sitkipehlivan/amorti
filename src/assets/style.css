@@ -218,7 +218,7 @@ table.data tr.current td { background: var(--tapu-soft); font-weight: 600; }
 }
 
 /* Anasayfa: haber odaklı */
-.home { padding: 8px 0 24px; }
+.home { padding-top: 8px; padding-bottom: 24px; }
 .home-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; align-items: start; }
 @media (max-width: 960px) { .home-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
 .home .meta { font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
@@ -259,3 +259,18 @@ table.data tr.current td { background: var(--tapu-soft); font-weight: 600; }
 .facts dl div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: .9rem; }
 .facts dt { color: var(--muted); }
 .facts dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Haber görselleri */
+.thumb { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+.thumb img, .lead-img img, .kapak img { width: 100%; height: auto; display: block; }
+.lead-img { display: block; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 16px; }
+.second .thumb { margin-bottom: 10px; }
+.news-compact li { grid-template-columns: 128px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 16px; row-gap: 2px; align-items: start; }
+.news-compact li .thumb { grid-row: 1 / span 2; border-radius: 8px; }
+.news-compact li .meta { grid-column: 2; }
+.news-compact li > a:not(.thumb) { grid-column: 2; }
+@media (max-width: 620px) { .news-compact li { grid-template-columns: 104px minmax(0, 1fr); } }
+.news-list li.with-thumb { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 18px; align-items: start; }
+.news-list li.with-thumb h3 { margin-top: 0; }
+@media (max-width: 620px) { .news-list li.with-thumb { grid-template-columns: 110px minmax(0, 1fr); gap: 12px; } .news-list li.with-thumb p { display: none; } }
+.kapak { margin: 8px 0 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }

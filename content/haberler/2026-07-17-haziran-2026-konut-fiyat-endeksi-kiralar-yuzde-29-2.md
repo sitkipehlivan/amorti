@@ -5,6 +5,10 @@ tarih: 2026-07-17
 kategori: Konut fiyatları
 ilceler: istanbul
 kaynak: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, Haziran 2026
+gorsel: karsilastirma
+gorsel_etiket: Yeni kiracı kiralarında yıllık artış, Haziran 2026
+gorsel_veri: İstanbul=33,4; Ankara=30,7; Türkiye=29,2; İzmir=28,4
+gorsel_birim: %
 ---
 Merkez Bankası'nın haziran verilerine göre Konut Fiyat Endeksi bir önceki aya göre **%2,0** artarak 231,5'e yükseldi. Yıllık artış **%24,5** oldu; enflasyondan arındırılmış reel değişim ise **-%5,8**.
 
