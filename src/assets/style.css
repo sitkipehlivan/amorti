@@ -34,6 +34,7 @@
     --paper: #111318; --paper-2: #1A1C22; --ink: #EDEEF0; --ink-2: #CACCD2; --muted: #9A9DA6;
     --rule: #2A2D35; --rule-strong: #EDEEF0; --accent-soft: rgba(255,255,255,.08);
     --good: #6CC79A; --good-soft: #163024; --warn: #E2B55A; --warn-soft: #33290F; --bad: #F08A73; --bad-soft: #3A1E19;
+    --band-2: rgba(255,255,255,.07);
     color-scheme: dark;
   }
 }
@@ -41,6 +42,7 @@
   --paper: #111318; --paper-2: #1A1C22; --ink: #EDEEF0; --ink-2: #CACCD2; --muted: #9A9DA6;
   --rule: #2A2D35; --rule-strong: #EDEEF0; --accent-soft: rgba(255,255,255,.08);
   --good: #6CC79A; --good-soft: #163024; --warn: #E2B55A; --warn-soft: #33290F; --bad: #F08A73; --bad-soft: #3A1E19;
+  --band-2: rgba(255,255,255,.07);
   color-scheme: dark;
 }
 
@@ -325,7 +327,7 @@ article.prose > p:first-of-type:not(.meta):not(.lede) { font-size: 1.08rem; }
 
 
 /* ---------- Kayan en yeni haber şeridi ---------- */
-.ticker { background: var(--ink); color: #fff; overflow: hidden; }
+.ticker { background: #111318; color: #fff; border-bottom: 1px solid var(--rule); overflow: hidden; }
 .ticker .wrap { display: flex; align-items: stretch; gap: 0; padding-left: 0; padding-right: 0; }
 .ticker-label { flex: none; background: var(--accent); color: #fff; font-family: var(--serif); font-weight: 700; font-size: .9rem; padding: 10px 16px; display: flex; align-items: center; gap: 8px; z-index: 1; }
 .ticker-label::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: blink 1.4s infinite; }
