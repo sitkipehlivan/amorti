@@ -390,3 +390,12 @@ article.prose > p:first-of-type:not(.meta):not(.lede) { font-size: 1.08rem; }
 .btn-hesapla.on { background: var(--accent-2); }
 form.calc.flash { animation: flash .9s ease; }
 @keyframes flash { 0% { box-shadow: 0 0 0 0 var(--accent); } 40% { box-shadow: 0 0 0 6px var(--accent-soft); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+/* ---------- Banka logoları ---------- */
+.bank-logo { flex: none; display: inline-grid; place-items: center; width: 88px; height: 30px; padding: 4px 8px; background: #fff; border: 1px solid #E6E7EA; border-radius: 6px; }
+.bank-logo img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.bank-name { display: inline-flex; align-items: center; gap: 10px; }
+.side-box.faizler .bank-logo { width: 70px; height: 26px; padding: 3px 6px; }
+.bank-cell { display: flex; align-items: center; gap: 12px; }
+.bank-cell > span { display: flex; flex-direction: column; }
+.faiz-row.on .bank-logo { border-color: transparent; }

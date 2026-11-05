@@ -5,7 +5,12 @@ const cfg = require('../site.config');
 const AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const tarihMetin = (t) => { if (!t) return ''; const [y, m, d] = t.split('-').map(Number); return `${d} ${AYLAR[m - 1]} ${y}`; };
 
-const bankalar = raw.bankalar.map((b) => ({ ...b, kontrolMetin: tarihMetin(b.kontrol) }));
+// Logolar: src/assets/bankalar/ (bankaların tescilli markaları)
+const LOGO = {
+  'ING': 'ing.png', 'Yapı Kredi': 'yapikredi.png', 'Ziraat Bankası': 'ziraat.svg', 'Halkbank': 'halkbank.svg',
+  'QNB': 'qnb.svg', 'İş Bankası': 'isbank.svg', 'Garanti BBVA': 'garanti.svg', 'Akbank': 'akbank.svg',
+};
+const bankalar = raw.bankalar.map((b) => ({ ...b, kontrolMetin: tarihMetin(b.kontrol), logo: LOGO[b.banka] ? `/assets/bankalar/${LOGO[b.banka]}` : null }));
 const olan = bankalar.filter((b) => typeof b.oran === 'number').sort((a, b) => a.oran - b.oran);
 const bekleyen = bankalar.filter((b) => typeof b.oran !== 'number');
 

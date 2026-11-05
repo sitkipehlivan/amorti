@@ -28,6 +28,8 @@ function write(urlPath, html) {
   fs.writeFileSync(file, html);
 }
 
+const bankLogo = (b) => (b.logo ? `<span class="bank-logo"><img src="${b.logo}" alt="" width="72" height="20" loading="lazy" decoding="async"></span>` : '');
+
 function ad(kind) {
   if (!cfg.showAdPlaceholders) return '';
   const labels = { masthead: 'Reklam alanı · 970×250', mrec: 'Reklam alanı · 300×250', mobile: 'Reklam alanı · 320×100' };
@@ -191,7 +193,7 @@ ${ad('mrec')}
 </div>
 <div class="side-box faizler">
   <h3><a href="/konut-kredisi-faiz-oranlari/" style="color:inherit;text-decoration:none">Konut kredisi faizleri</a></h3>
-  <ol>${faiz.olan.map((b) => `<li><button type="button" class="faiz-row" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#w-faiz" title="${b.banka} oranıyla taksiti hesapla"><span>${b.banka}</span><b>%${tr2(b.oran)}</b></button></li>`).join('')}</ol>
+  <ol>${faiz.olan.map((b) => `<li><button type="button" class="faiz-row" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#w-faiz" title="${b.banka} oranıyla taksiti hesapla"><span class="bank-name">${bankLogo(b)}${b.banka}</span><b>%${tr2(b.oran)}</b></button></li>`).join('')}</ol>
   <p class="small muted" style="margin:8px 0 0">Bir bankaya dokun, taksitin yukarıda hesaplansın. Aylık oran, bankaların sitelerinden, ${faiz.sonKontrolMetin}. <a href="/konut-kredisi-faiz-oranlari/">Karşılaştırma tablosu</a></p>
 </div>
 <div class="side-box facts">
@@ -315,10 +317,10 @@ ${crumbs(c)}
 <div class="table-wrap"><table class="data faiz-tablo">
 <thead><tr><th>Banka</th><th>Aylık faiz</th><th>2 milyon TL, 120 ay taksit</th><th>Koşul</th><th>Son kontrol</th><th></th></tr></thead>
 <tbody>
-${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td class="num"><b>%${tr2(b.oran)}</b></td><td class="num">${tl0(taksit(b.oran))}</td><td class="small">${b.kosul}</td><td class="small muted">${b.kontrolMetin}</td><td><button type="button" class="btn-hesapla" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#k-faiz">Hesapla</button></td></tr>`).join('\n')}
+${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td class="bank-cell">${bankLogo(b)}<span><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></span></td><td class="num"><b>%${tr2(b.oran)}</b></td><td class="num">${tl0(taksit(b.oran))}</td><td class="small">${b.kosul}</td><td class="small muted">${b.kontrolMetin}</td><td><button type="button" class="btn-hesapla" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#k-faiz">Hesapla</button></td></tr>`).join('\n')}
 ${faiz.bekleyen.map((b) => `<tr><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td colspan="5" class="small muted">Oran henüz alınamadı. Güncel oran için bankanın sayfasına bak.</td></tr>`).join('\n')}
 </tbody></table></div>
-<p class="small muted">Taksit, ilk konutunu alanlar için (BSMV'siz) eşit taksitli formülle hesaplanmıştır; dosya masrafı, ekspertiz ve sigorta dahil değildir. Oranlar bankaların ilan ettiği oranlardır, sana özel teklif farklı olabilir.</p>
+<p class="small muted">Banka logoları ilgili bankaların tescilli markalarıdır; ${cfg.name}'nin bankalarla ticari ilişkisi yoktur. Taksit, ilk konutunu alanlar için (BSMV'siz) eşit taksitli formülle hesaplanmıştır; dosya masrafı, ekspertiz ve sigorta dahil değildir. Oranlar bankaların ilan ettiği oranlardır, sana özel teklif farklı olabilir.</p>
 ${ad('mobile')}
 <h2 style="margin-top:32px" id="hesapla">Taksitini hesapla</h2>
 ${kf.form()}
