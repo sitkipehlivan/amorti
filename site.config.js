@@ -7,6 +7,9 @@ module.exports = {
   publisher: 'Advance Dijital Medya Reklam Hizmetleri A.Ş.',
   editor: 'Sıtkı Pehlivan',
   contactEmail: 'iletisim@amorti.com.tr',
+  address: 'İstiklal Mah. Şehit Ali Çelik Sk. Asran Apt. No: 33 İç Kapı No: 3, Ümraniye / İstanbul',
+  mersis: '0008193677700001',
+  hosting: 'Netlify, Inc. (ABD)',
   // Reklam alanlarını önizlemede göstermek için true. Ad Manager bağlanınca
   // her alanın içine GPT slot kodu konacak.
   showAdPlaceholders: false,

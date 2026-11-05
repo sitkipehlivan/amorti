@@ -58,7 +58,9 @@ const bugun = (() => { const d = new Date(Date.now() + 3 * 3600e3); return `${d.
 function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website' }) {
   urls.push(p);
   const fullTitle = title.includes(cfg.name) ? title : `${title} | ${cfg.name}`;
-  const ga = cfg.ga4 ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${cfg.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${cfg.ga4}');</script>` : '';
+  // KVKK: Google Analytics Consent Mode ile; izin verilmeden analiz çerezi yazılmaz. Çerez bandı aşağıda (cerezBandi).
+  const ga = cfg.ga4 ? `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}(function(){var c=null;try{c=localStorage.getItem('am-cerez')}catch(e){}var a=c==='evet'?'granted':'denied';gtag('consent','default',{analytics_storage:a,ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500})})();gtag('js',new Date());gtag('config','${cfg.ga4}');</script><script async src="https://www.googletagmanager.com/gtag/js?id=${cfg.ga4}"></script>` : '';
+  const cerezBandi = cfg.ga4 ? `<div id="cerez" role="dialog" aria-label="Çerez tercihi" hidden style="position:fixed;z-index:99;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:#141414;color:#f5f5f5;border-radius:14px;padding:14px 16px;box-shadow:0 14px 40px rgba(0,0,0,.3);font-size:14px;line-height:1.45"><p style="margin:0 0 10px">Sitenin nasıl kullanıldığını ölçmek için <b>Google Analytics</b> istatistik çerezlerini kullanmak istiyoruz. İzin vermezsen istatistik çerezi yazılmaz. <a href="/gizlilik/" style="color:#ffb27a">Gizlilik ve çerezler</a></p><div style="display:flex;gap:8px"><button type="button" data-v="evet" style="flex:1;height:38px;border-radius:999px;border:1px solid #fff;background:#fff;color:#141414;font-weight:700;cursor:pointer">Kabul et</button><button type="button" data-v="hayir" style="flex:1;height:38px;border-radius:999px;border:1px solid #fff;background:#fff;color:#141414;font-weight:700;cursor:pointer">Reddet</button></div></div><script>(function(){var b=document.getElementById('cerez'),K='am-cerez';function al(){try{return localStorage.getItem(K)}catch(e){return null}}if(!al())b.hidden=false;b.querySelectorAll('button').forEach(function(x){x.addEventListener('click',function(){var v=x.getAttribute('data-v');try{localStorage.setItem(K,v)}catch(e){}b.hidden=true;if(window.gtag)gtag('consent','update',{analytics_storage:v==='evet'?'granted':'denied'})})});document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-cerez-ac]')){e.preventDefault();b.hidden=false}})})();</script>` : '';
   return `<!doctype html>
 <html lang="${cfg.lang}" data-palette="${cfg.palette || 'elektrik'}">
 <head>
@@ -115,7 +117,7 @@ ${body}
         <li><a href="/istanbul/">İstanbul ilçeleri</a></li>
         <li><a href="/haberler/">Emlak haberleri</a></li>
         <li><a href="/kira-paylas/">Kiranı paylaş</a></li>
-        <li><a href="/kunye/">Künye</a></li>
+        <li><a href="/kunye/">Künye</a></li>${cfg.ga4 ? '<li><a href="#" data-cerez-ac>Çerez tercihleri</a></li>' : ''}
         <li><a href="/gizlilik/">Gizlilik ve KVKK</a></li>
       </ul>
     </div>
@@ -124,6 +126,7 @@ ${body}
 </footer>
 <script>window.AMORTI_ENF=${JSON.stringify(enf.yol)};</script>
 <script src="/assets/app.js?v=${V.js}" defer></script>
+${cerezBandi}
 </body>
 </html>`;
 }
@@ -482,19 +485,26 @@ write('/kunye/', layout({
   body: `<div class="wrap page prose"><h1>Künye</h1>
 <p><strong>Yayıncı:</strong> ${cfg.publisher}</p>
 <p><strong>Genel Yayın Yönetmeni:</strong> ${cfg.editor}</p>
+<p><strong>Adres:</strong> ${cfg.address}</p>
+<p><strong>MERSİS No:</strong> ${cfg.mersis}</p>
 <p><strong>İletişim:</strong> <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a></p>
-<p>${cfg.name}, ev alma ve kiralama kararlarını kolaylaştırmak için hesaplama araçları, ilçe rehberleri ve emlak haberleri yayınlar. Sitedeki hesaplamalar bilgilendirme amaçlıdır ve yatırım tavsiyesi niteliği taşımaz.</p></div>`,
+<p><strong>Yer sağlayıcı:</strong> ${cfg.hosting}</p>
+<p>${cfg.name}, ev alma ve kiralama kararlarını kolaylaştırmak için hesaplama araçları, ilçe rehberleri ve emlak haberleri yayınlar. Sitedeki hesaplamalar bilgilendirme amaçlıdır ve yatırım tavsiyesi niteliği taşımaz; yatırım danışmanlığı yalnızca yetkili kuruluşlarca verilir.</p>
+<h2>Düzeltme ve cevap hakkı</h2><p>Hakkınızda yer alan bir haber veya yorumla ilgili düzeltme ve cevap talebinizi, ilgili sayfanın adresini belirterek <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a> adresine gönderebilirsiniz. 5187 sayılı Basın Kanunu'na uygun talepler gecikmeksizin yayımlanır. Haberlerin yayın tarihleri her haberde gösterilir.</p>
+<h2>Telif hakkı ve içerik bildirimi</h2><p>Hakkınızı ihlal ettiğini düşündüğünüz bir içerik varsa, sayfanın adresini ve hak sahipliğinizi gösteren bilgiyle <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a> adresine yazın. 5651 sayılı Kanun ve 5846 sayılı FSEK kapsamındaki bildirimleri inceler, haklı bulunan içeriği en geç 24 saat içinde yayından kaldırırız.</p></div>`,
 }));
 
 write('/gizlilik/', layout({
   title: 'Gizlilik ve KVKK aydınlatma metni', description: `${cfg.name} gizlilik politikası ve KVKK aydınlatma metni.`, path: '/gizlilik/',
   body: `<div class="wrap page prose"><h1>Gizlilik ve KVKK</h1>
-<p>Bu metin, ${cfg.publisher} ("Şirket") tarafından işletilen ${cfg.name} sitesinde kişisel verilerin nasıl işlendiğini açıklar.</p>
+<p>Bu aydınlatma metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) 10. maddesi uyarınca, veri sorumlusu sıfatıyla ${cfg.publisher} ("Şirket"; adres: ${cfg.address}; MERSİS: ${cfg.mersis}) tarafından işletilen ${cfg.name} sitesinde kişisel verilerin nasıl işlendiğini açıklar.</p>
 <h2>Hesaplama araçları</h2><p>Araçlara girdiğin rakamlar yalnızca tarayıcında işlenir, sunucularımıza gönderilmez ve saklanmaz.</p>
-<h2>Kira paylaşım formu</h2><p>Formda ad, telefon veya adres gibi kimlik bilgisi istenmez. Paylaştığın ilçe, mahalle, kira, m² ve bina bilgileri isimsiz olarak saklanır ve yalnızca toplu istatistik (ortalama, ortanca) olarak yayınlanır.</p>
-<h2>Çerezler ve reklam</h2><p>Site, ziyaret istatistikleri ve reklam gösterimi için çerezler kullanabilir. Tarayıcı ayarlarından çerezleri yönetebilirsin.</p>
-<h2>Haklarınız</h2><p>6698 sayılı KVKK'nın 11. maddesi kapsamındaki taleplerini <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a> adresine iletebilirsin.</p>
-<p class="small muted">Bu metin taslaktır; yayına almadan önce hukuki kontrolden geçirilmelidir.</p></div>`,
+<h2>Kira paylaşım formu</h2><p>Formda ad, telefon veya adres gibi kimlik bilgisi istenmez. Paylaştığın ilçe, mahalle, kira, m² ve bina bilgileri isimsiz olarak saklanır ve yalnızca toplu istatistik (ortalama, ortanca) olarak yayınlanır. Form, barındırma hizmetimiz Netlify üzerinden iletilir ve orada saklanır.</p>
+<h2>Teknik kayıtlar</h2><p>Siteyi görüntüleyebilmen için IP adresin ve tarayıcı bilgilerin teknik olarak barındırma hizmeti sağlayıcımıza iletilir; bu kayıtlar sağlayıcı tarafından güvenlik ve hizmetin sunulması amacıyla, kısa süreli tutulur (KVKK m.5/2-f, meşru menfaat). Yazı tipleri kendi sunucumuzdan yüklenir.</p>
+<h2>Çerezler</h2><p>Zorunlu olmayan hiçbir çerez izin vermeden kullanılmaz. Ziyaret istatistikleri için Google Analytics kullanılırsa, yalnızca çerez bandında "Kabul et" seçersen analiz çerezi yazılır; izin vermezsen Google'a yalnızca sayfa adresi, zaman ve tarayıcı türü gibi seni tanımlamayan, çerezsiz sinyaller gönderilir. Tercihini sayfanın altındaki <a href="#" data-cerez-ac>Çerez tercihleri</a> bağlantısından değiştirebilirsin.</p>
+<h2>Yurt dışına aktarım</h2><p>Site, yurt dışında bulunan hizmet sağlayıcıların altyapısında çalışır: barındırma ve form hizmeti Netlify (ABD), ziyaret istatistiği Google (İrlanda/ABD). Aktarımlar KVKK'nın 9. maddesine uygun olarak, yalnızca belirtilen amaçlarla ve gerektiği kadar yapılır.</p>
+<h2>Haklarınız</h2><p>KVKK'nın 11. maddesi kapsamında kişisel verilerinin işlenip işlenmediğini öğrenme, bilgi talep etme, işlenme amacını öğrenme, aktarıldığı kişileri bilme, düzeltilmesini ya da silinmesini isteme, itiraz etme ve zararın giderilmesini talep etme haklarına sahipsin. Taleplerini <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a> adresine iletebilirsin; en geç 30 gün içinde yanıtlarız.</p>
+<p class="small muted">Son güncelleme: ${cfg.updated}</p></div>`,
 }));
 
 write('/404.html', layout({
