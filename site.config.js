@@ -17,5 +17,6 @@ module.exports = {
     konutKredisiAylikFaiz: 2.89, // % aylık, Ekim 2026 piyasası: avantajlı teklifler ~%2,87'den başlıyor
     kiraArtisVarsayimi: 30,       // % yıllık, senaryo hesapları için
   },
+  palette: 'turuncu', // renk paleti: elektrik | pembe | turuncu | zumrut
   updated: '5 Kasım 2026',
 };

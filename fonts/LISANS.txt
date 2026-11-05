@@ -1,1 +1,1 @@
-Newsreader ve Schibsted Grotesk, SIL Open Font License 1.1 ile dağıtılır (github.com/google/fonts). Haber kapak görsellerini üretmek için sabit ağırlıklı kopyaları kullanılır.
+League Spartan ve Questrial (Advance Digital kurumsal fontları), SIL Open Font License 1.1 ile dağıtılır. Haber kapak görsellerini üretmek için sabit ağırlıklı kopyaları kullanılır.
