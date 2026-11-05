@@ -4,7 +4,7 @@
     {
       "banka": "ING",
       "urun": "Avantajlı Konut Kredisi, eşit taksitli",
-      "oran": 2.70,
+      "oran": 2.7,
       "kosul": "120 ay, sayfadaki örnek ödeme tablosu",
       "url": "https://www.ing.com.tr/tr/sizin-icin/krediler/avantajli-konut-kredisi-kampanyasi",
       "kontrol": "2026-11-05",
@@ -49,7 +49,7 @@
     {
       "banka": "İş Bankası",
       "urun": "Ev Kredisi Kampanyası",
-      "oran": 3.10,
+      "oran": 3.1,
       "kosul": "1–120 ay, hayat sigortalı (sigortasız %3,45)",
       "url": "https://www.isbank.com.tr/konut-kredisi",
       "kontrol": "2026-11-05",
@@ -67,47 +67,11 @@
     {
       "banka": "Akbank",
       "urun": "Konut Kredisi",
-      "oran": 3.40,
+      "oran": 3.4,
       "kosul": "Hayat sigortalı, hesaplama aracı 36 ay (sigortasız %3,50)",
       "url": "https://www.akbank.com/krediler/konut-kredisi-hesaplama",
       "kontrol": "2026-11-05",
       "durum": "ok"
-    },
-    {
-      "banka": "VakıfBank",
-      "urun": "Konut Kredisi",
-      "oran": null,
-      "kosul": "",
-      "url": "https://www.vakifbank.com.tr/",
-      "kontrol": null,
-      "durum": "bekliyor"
-    },
-    {
-      "banka": "DenizBank",
-      "urun": "Konut Kredisi",
-      "oran": null,
-      "kosul": "",
-      "url": "https://www.denizbank.com/kredi-hesaplama-araci/konut-kredisi-hesaplama-araci",
-      "kontrol": null,
-      "durum": "bekliyor"
-    },
-    {
-      "banka": "TEB",
-      "urun": "Konut Kredisi",
-      "oran": null,
-      "kosul": "",
-      "url": "https://www.teb.com.tr/konut-kredisi-kampanya/",
-      "kontrol": null,
-      "durum": "bekliyor"
-    },
-    {
-      "banka": "Kuveyt Türk",
-      "urun": "Konut Finansmanı",
-      "oran": null,
-      "kosul": "Katılım bankası, kâr payı oranı",
-      "url": "https://www.kuveytturk.com.tr/",
-      "kontrol": null,
-      "durum": "bekliyor"
     }
   ]
 }

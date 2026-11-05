@@ -30,10 +30,6 @@ Bankaların çoğu oranı sayfaya JavaScript ile yüklüyor; düz sayfa okuma (W
 | İş Bankası | https://www.isbank.com.tr/konut-kredisi | "Güncel Konut Kredisi Faizleri" tablosunda "Ev Kredisi Kampanyası – Hayat Sigortalı" satırı |
 | Garanti BBVA | https://webforms.garantibbva.com.tr/mortgage/mortgage-calculator/white?lang=tr | Hesaplama aracındaki "FAİZ ORANI" (varsayılan tutar ve vadeyi koşula yaz) |
 | Akbank | https://www.akbank.com/krediler/konut-kredisi-hesaplama | Hesaplama aracındaki "Hayat Sigortalı Faiz Oranı" (varsayılan vadeyi koşula yaz) |
-| VakıfBank | bankanın konut kredisi sayfası | Erişim izni varsa ana konut kredisi ürününün aylık faizi |
-| DenizBank | https://www.denizbank.com/kredi-hesaplama-araci/konut-kredisi-hesaplama-araci | Erişim izni varsa hesaplama aracındaki aylık faiz |
-| TEB | https://www.teb.com.tr/konut-kredisi-kampanya/ | Erişim izni varsa kampanya sayfasındaki aylık faiz |
-| Kuveyt Türk | bankanın konut finansmanı sayfası | Erişim izni varsa aylık kâr payı oranı (koşula "kâr payı" yaz) |
 
 Bir sayfanın yapısı değişmişse, aynı bankanın sitesinde konut kredisi hesaplama sayfasını bulup oradan oku ve `url` alanını yeni sayfayla güncelle. Tarayıcı bir alan adına "izin verilmiyor" diyorsa o bankayı atla ve raporla.
 
