@@ -244,6 +244,40 @@
     run();
   });
 
+  // Banka oranı düğmeleri: faiz alanını doldur, hesabı yenile
+  function faizAlani(btn) {
+    var h = btn.getAttribute('data-hedef');
+    if (h) return document.querySelector(h);
+    var f = btn.closest('form');
+    return f ? f.querySelector('[name="faiz"]') : null;
+  }
+  function isaretle(input, banka) {
+    document.querySelectorAll('[data-oran]').forEach(function (b) {
+      if (faizAlani(b) !== input) return;
+      var on = !!banka && b.getAttribute('data-banka') === banka;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-oran]');
+    if (!btn) return;
+    var input = faizAlani(btn);
+    if (!input) return;
+    input.value = parseFloat(btn.getAttribute('data-oran')).toFixed(2).replace('.', ',');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    isaretle(input, btn.getAttribute('data-banka'));
+    if (btn.hasAttribute('data-hedef')) {
+      var form = input.closest('form');
+      var r = form.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      form.classList.remove('flash'); void form.offsetWidth; form.classList.add('flash');
+    }
+  });
+  document.querySelectorAll('input[name="faiz"]').forEach(function (i) {
+    i.addEventListener('input', function (e) { if (e.isTrusted) isaretle(i, null); });
+  });
+
   // Mobil menü
   var toggle = document.querySelector('.nav-toggle'), nav = document.querySelector('.nav');
   if (toggle && nav) toggle.addEventListener('click', function () {

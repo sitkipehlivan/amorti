@@ -368,3 +368,25 @@ article.prose > p:first-of-type:not(.meta):not(.lede) { font-size: 1.08rem; }
 .home-side .ad { margin: 0 auto; }
 @media (max-width: 1020px) { .home-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 960px) { .home-main .cards { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Banka oranı düğmeleri ---------- */
+.bank-pick { margin-top: 10px; }
+.bank-pick-label { display: block; font-size: .85rem; font-weight: 700; margin-bottom: 8px; }
+.bank-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bank-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 11px; border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: .88rem; cursor: pointer; transition: border-color .15s, background .15s; }
+.bank-chip b { color: var(--accent); font-weight: 700; }
+.bank-chip:hover { border-color: var(--accent); }
+.bank-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.bank-chip.on b { color: #fff; }
+.bank-chip:focus-visible, .faiz-row:focus-visible, .btn-hesapla:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+.side-box.faizler ol li { padding: 2px 0; display: block; }
+.faiz-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; padding: 9px 8px; margin: 0 -8px; width: calc(100% + 16px); border: 0; border-radius: 6px; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.faiz-row:hover { background: var(--accent-soft); }
+.faiz-row:hover b { color: var(--accent); }
+.faiz-row.on { background: var(--accent); color: #fff; }
+.faiz-row.on b, .faizler li:first-child .faiz-row.on b { color: #fff; }
+.btn-hesapla { padding: 7px 14px; border: 0; border-radius: 6px; background: var(--accent); color: #fff; font: inherit; font-weight: 700; font-size: .88rem; cursor: pointer; white-space: nowrap; }
+.btn-hesapla:hover { filter: brightness(1.08); }
+.btn-hesapla.on { background: var(--accent-2); }
+form.calc.flash { animation: flash .9s ease; }
+@keyframes flash { 0% { box-shadow: 0 0 0 0 var(--accent); } 40% { box-shadow: 0 0 0 6px var(--accent-soft); } 100% { box-shadow: 0 0 0 0 transparent; } }

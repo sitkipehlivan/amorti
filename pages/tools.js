@@ -18,6 +18,13 @@ function field(name, label, o = {}) {
 </div>`;
 }
 
+// Banka oranı düğmeleri: tıklayınca faiz alanını doldurur ve hesabı yeniler (app.js).
+function bankaSec({ hedef = '', limit = 0, etiket = 'Bankanın oranıyla hesapla' } = {}) {
+  const list = limit ? faiz.olan.slice(0, limit) : faiz.olan;
+  const h = hedef ? ` data-hedef="${hedef}"` : '';
+  return `<div class="bank-pick"><span class="bank-pick-label">${etiket}</span><div class="bank-chips">${list.map((b) => `<button type="button" class="bank-chip" data-oran="${b.oran}" data-banka="${b.banka}"${h}><span>${b.banka}</span><b>%${tr2(b.oran)}</b></button>`).join('')}</div></div>`;
+}
+
 const stat = (key, label) => `<div class="stat"><b data-out="${key}">–</b><span>${label}</span></div>`;
 
 // ---------- Amortisman formu (anasayfa ve ilçe sayfalarında da kullanılır) ----------
@@ -109,7 +116,8 @@ function krediForm() {
   <div class="fields">
     ${field('tutar', 'Kredi tutarı', { id: 'k-tutar', unit: 'TL', money: true, value: '2.000.000', full: true })}
     ${field('vade', 'Vade', { id: 'k-vade', unit: 'ay', value: '120' })}
-    ${field('faiz', 'Aylık faiz oranı', { id: 'k-faiz', unit: '%', value: virg(faiz.tipik), hint: `Bankaların ortanca oranı. En düşük: %${virg(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)} (${faiz.enDusuk ? faiz.enDusuk.banka : ''}). <a href="/konut-kredisi-faiz-oranlari/">Tüm bankalar</a>` })}
+    ${field('faiz', 'Aylık faiz oranı', { id: 'k-faiz', unit: '%', value: virg(faiz.tipik), hint: 'Varsayılan: bankaların ortanca oranı. Aşağıdan bir banka seç ya da kendi teklifini yaz.' })}
+    <div class="field full">${bankaSec()}</div>
     <div class="field full"><label style="font-weight:400"><input type="checkbox" name="bsmv"> Üzerime kayıtlı başka bir konut var (faize %15 BSMV eklenir)</label></div>
   </div>
   <div class="result" aria-live="polite" hidden>
@@ -131,7 +139,8 @@ function krediKiraForm() {
     ${field('fiyat', 'Ev fiyatı', { id: 'kk-fiyat', unit: 'TL', money: true, value: '5.000.000' })}
     ${field('pesinat', 'Peşinat', { id: 'kk-pesinat', unit: 'TL', money: true, value: '2.000.000' })}
     ${field('vade', 'Vade', { id: 'kk-vade', unit: 'ay', value: '120' })}
-    ${field('faiz', 'Aylık faiz', { id: 'kk-faiz', unit: '%', value: virg(faiz.tipik), hint: '<a href="/konut-kredisi-faiz-oranlari/">Bankaların güncel oranları</a>' })}
+    ${field('faiz', 'Aylık faiz', { id: 'kk-faiz', unit: '%', value: virg(faiz.tipik), hint: 'Varsayılan: bankaların ortanca oranı.' })}
+    <div class="field full">${bankaSec()}</div>
     ${field('kira', 'Aynı ev için aylık kira', { id: 'kk-kira', unit: 'TL', money: true, value: '27.000' })}
     ${field('fark', 'Kira enflasyonun ne kadar üstünde artar?', { id: 'kk-fark', unit: 'puan', value: '0', hint: 'Kira, beklenen enflasyonla artar. 0 = aynı hız.' })}
   </div>
@@ -283,4 +292,4 @@ ${oranlar.map((o, i) => `<tr${i === 0 ? ' class="current"' : ''}><td>${o.ay}</td
   },
 ];
 
-module.exports = { tools, amortismanForm, icons };
+module.exports = { bankaSec, tools, amortismanForm, icons };

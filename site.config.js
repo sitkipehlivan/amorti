@@ -9,7 +9,7 @@ module.exports = {
   contactEmail: 'iletisim@amorti.com.tr',
   // Reklam alanlarını önizlemede göstermek için true. Ad Manager bağlanınca
   // her alanın içine GPT slot kodu konacak.
-  showAdPlaceholders: true,
+  showAdPlaceholders: false,
   // GA4 ölçüm kimliği gelince buraya yazılacak (ör. 'G-XXXXXXX')
   ga4: '',
   // Güncel oranlar (araçların varsayılanları). Her ay güncellenmeli.

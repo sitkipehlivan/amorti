@@ -9,7 +9,7 @@ const oranlar = require('./data/kira-oranlari');
 const enf = require('./data/enflasyon');
 const faiz = require('./data/faizler');
 const { kapakYaz } = require('./lib/kapak');
-const { tools, amortismanForm, icons } = require('./pages/tools');
+const { tools, amortismanForm, icons, bankaSec } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
 // Önbellek kırıcı: dosya içeriği değişince adres değişir
@@ -182,6 +182,7 @@ ${ad('mrec')}
     ${miniField('vade', 'Vade', { id: 'w-vade', unit: 'ay', value: '120' })}
     ${miniField('faiz', 'Aylık faiz', { id: 'w-faiz', unit: '%', value: String(faiz.tipik).replace('.', ',') })}
   </div>
+  ${bankaSec({ limit: 4, etiket: 'Banka oranıyla hesapla' })}
   <div class="result" aria-live="polite" hidden><span class="small">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
 </form>
 <div class="side-links">
@@ -190,8 +191,8 @@ ${ad('mrec')}
 </div>
 <div class="side-box faizler">
   <h3><a href="/konut-kredisi-faiz-oranlari/" style="color:inherit;text-decoration:none">Konut kredisi faizleri</a></h3>
-  <ol>${faiz.olan.slice(0, 5).map((b) => `<li><span>${b.banka}</span><b>%${tr2(b.oran)}</b></li>`).join('')}</ol>
-  <p class="small muted" style="margin:8px 0 0">Aylık oran, bankaların sitelerinden. ${faiz.sonKontrolMetin}. <a href="/konut-kredisi-faiz-oranlari/">Tümü</a></p>
+  <ol>${faiz.olan.map((b) => `<li><button type="button" class="faiz-row" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#w-faiz" title="${b.banka} oranıyla taksiti hesapla"><span>${b.banka}</span><b>%${tr2(b.oran)}</b></button></li>`).join('')}</ol>
+  <p class="small muted" style="margin:8px 0 0">Bir bankaya dokun, taksitin yukarıda hesaplansın. Aylık oran, bankaların sitelerinden, ${faiz.sonKontrolMetin}. <a href="/konut-kredisi-faiz-oranlari/">Karşılaştırma tablosu</a></p>
 </div>
 <div class="side-box facts">
   <h3>Güncel veriler</h3>
@@ -312,14 +313,14 @@ ${crumbs(c)}
 <h1>Konut kredisi faiz oranları</h1>
 <p class="lede">Bankaların kendi sitelerinde yayınladığı güncel konut kredisi faiz oranları. ${faiz.enDusuk ? `En düşük aylık oran <strong>%${tr2(faiz.enDusuk.oran)}</strong> (${faiz.enDusuk.banka}), bankaların ortanca oranı <strong>%${tr2(faiz.ortanca)}</strong>.` : ''} Son kontrol: ${faiz.sonKontrolMetin}.</p>
 <div class="table-wrap"><table class="data faiz-tablo">
-<thead><tr><th>Banka</th><th>Aylık faiz</th><th>2 milyon TL, 120 ay taksit</th><th>Koşul</th><th>Son kontrol</th></tr></thead>
+<thead><tr><th>Banka</th><th>Aylık faiz</th><th>2 milyon TL, 120 ay taksit</th><th>Koşul</th><th>Son kontrol</th><th></th></tr></thead>
 <tbody>
-${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td class="num"><b>%${tr2(b.oran)}</b></td><td class="num">${tl0(taksit(b.oran))}</td><td class="small">${b.kosul}</td><td class="small muted">${b.kontrolMetin}</td></tr>`).join('\n')}
-${faiz.bekleyen.map((b) => `<tr><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td colspan="4" class="small muted">Oran henüz alınamadı. Güncel oran için bankanın sayfasına bak.</td></tr>`).join('\n')}
+${faiz.olan.map((b, i) => `<tr${i === 0 ? ' class="current"' : ''}><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td class="num"><b>%${tr2(b.oran)}</b></td><td class="num">${tl0(taksit(b.oran))}</td><td class="small">${b.kosul}</td><td class="small muted">${b.kontrolMetin}</td><td><button type="button" class="btn-hesapla" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#k-faiz">Hesapla</button></td></tr>`).join('\n')}
+${faiz.bekleyen.map((b) => `<tr><td><a href="${b.url}" rel="nofollow noopener" target="_blank">${b.banka}</a><span class="small muted">${b.urun}</span></td><td colspan="5" class="small muted">Oran henüz alınamadı. Güncel oran için bankanın sayfasına bak.</td></tr>`).join('\n')}
 </tbody></table></div>
 <p class="small muted">Taksit, ilk konutunu alanlar için (BSMV'siz) eşit taksitli formülle hesaplanmıştır; dosya masrafı, ekspertiz ve sigorta dahil değildir. Oranlar bankaların ilan ettiği oranlardır, sana özel teklif farklı olabilir.</p>
 ${ad('mobile')}
-<h2 style="margin-top:32px">Taksitini hesapla</h2>
+<h2 style="margin-top:32px" id="hesapla">Taksitini hesapla</h2>
 ${kf.form()}
 <div class="prose faq" style="margin-top:32px"><h2>Sık sorulanlar</h2>${faq.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
 </div>${sidebar()}</div></div>`,
