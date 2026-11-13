@@ -253,8 +253,16 @@
       return { url: 'https://www.sahibinden.com/' + s.islem + '-daire/istanbul-' + s.ilce + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda ve bina yaşını sitede seç' : '' };
     } },
     { ad: 'Hepsiemlak', url: function (s) {
-      var secili = s.min || s.max || s.odalar.length || s.yas;
-      return { url: 'https://www.hepsiemlak.com/' + s.ilce + '-' + s.islem + '/daire', eksik: secili ? 'Fiyat, oda ve yaşı sitede seç' : '' };
+      var q = [], eksik = false;
+      var y = iaBul(IA.yaslar, s.yas);
+      if (y && y.k) { if (y.hp && y.hp.length) q.push('buildingAges=' + y.hp.join(',')); else eksik = true; }
+      var od = [];
+      s.odalar.forEach(function (k) { var o = iaBul(IA.odalar, k); if (o && o.hp && o.hp.length) od = od.concat(o.hp); else eksik = true; });
+      if (od.length) q.push('p63=' + od.join('-'));
+      if (s.min) q.push('p31=' + s.min);
+      if (s.max) q.push('p32=' + s.max);
+      if (s.min || s.max) q.push('p33=1');
+      return { url: 'https://www.hepsiemlak.com/' + s.ilce + '-' + s.islem + '/daire' + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda sayısını sitede seç' : '' };
     } },
     { ad: 'Emlakjet', url: function (s) {
       var f = [];
