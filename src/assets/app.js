@@ -262,7 +262,7 @@
       if (s.min) q.push('p31=' + s.min);
       if (s.max) q.push('p32=' + s.max);
       if (s.min || s.max) q.push('p33=1');
-      return { url: 'https://www.hepsiemlak.com/' + s.ilce + '-' + s.islem + '/daire' + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda sayısını sitede seç' : '' };
+      return { url: 'https://www.hepsiemlak.com/' + s.ilce + '-' + s.islem + '/daire' + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda sayısını sitede seç' : (y && y.hpNot) || '' };
     } },
     { ad: 'Emlakjet', url: function (s) {
       var f = [];

@@ -5,7 +5,8 @@
 // sahibinden: /{satilik|kiralik}-daire/istanbul-{ilce}?price_min=..&price_max=..&a20=<oda kodu>&a812=<bina yaşı kodu>
 //   (kodlar her seçenek için ayrı; sb alanlarında. Boş kalanlar linke eklenmez, kullanıcıya "sitede seç" denir.)
 // Hepsiemlak: /{ilce}-{satilik|kiralik}/daire?buildingAges=0-0,1-5,6-10&p63=<oda kodu>-<oda kodu>&p31=<min>&p32=<max>&p33=1
-//   (kullanıcının paylaştığı linkten; 21-30 ve 31-999 yaş aralıkları varsayım)
+//   Yaş seçenekleri sabit: 0-0, 1-5, 6-10, 11-15, 16-20, 21-999. Oda kodları 180401… (1+1=180402, 2+1=180404,
+//   3+1=180407, 4+1=180411; 5+1 ve üzeri henüz eşlenmedi)
 // Emlakjet biçimi 13 Kasım 2026'da tarayıcıda denenerek doğrulandı:
 //   /{satilik|kiralik}-daire/istanbul-{ilce}?filtreler=binanin-yasi=..&max-fiyat=..&min-fiyat=..&oda-sayisi=2-1,3-1
 
@@ -29,10 +30,10 @@ const ilceler = [
 ].map(([slug, ad, yaka]) => ({ slug, ad, yaka }));
 
 const odalar = [
-  { k: '1+1', ej: ['1-1'], sb: [], hp: [] },
+  { k: '1+1', ej: ['1-1'], sb: [], hp: ['180402'] },
   { k: '2+1', ej: ['2-1'], sb: [], hp: ['180404'] },
   { k: '3+1', ej: ['3-1'], sb: [], hp: ['180407'] },
-  { k: '4+1', ej: ['4-1'], sb: [], hp: [] },
+  { k: '4+1', ej: ['4-1'], sb: [], hp: ['180411'] },
   { k: '5+1 ve üzeri', ej: ['5-1', '5-2', '6-1', '6-2', '7-1', '8-1'], sb: [], hp: [] },
 ];
 
@@ -40,8 +41,8 @@ const yaslar = [
   { k: '', ad: 'Fark etmez', ej: [], sb: [], hp: [] },
   { k: '0-10', ad: '0–10 yaş', ej: ['0-oturuma-hazir', '0-yapim-asamasinda', '1', '2', '3', '4', '5', '6-10'], sb: [], hp: ['0-0', '1-5', '6-10'] },
   { k: '11-20', ad: '11–20 yaş', ej: ['11-15', '16-20'], sb: [], hp: ['11-15', '16-20'] },
-  { k: '21-30', ad: '21–30 yaş', ej: ['21-25', '26-30'], sb: [], hp: ['21-30'] },
-  { k: '31+', ad: '31 yaş ve üzeri', ej: ['31-ve-uzeri'], sb: [], hp: ['31-999'] },
+  { k: '21-30', ad: '21–30 yaş', ej: ['21-25', '26-30'], sb: [], hp: ['21-999'], hpNot: 'Yaş filtresi bu sitede 21 yaş ve üzeri olarak uygulanır' },
+  { k: '31+', ad: '31 yaş ve üzeri', ej: ['31-ve-uzeri'], sb: [], hp: ['21-999'], hpNot: 'Yaş filtresi bu sitede 21 yaş ve üzeri olarak uygulanır' },
 ];
 
 // Fiyat kısayolları (TL)
