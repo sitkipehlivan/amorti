@@ -1,0 +1,27 @@
+{
+  "name": "amorti-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Amorti iOS ve Android uygulaması (Capacitor)",
+  "scripts": {
+    "sync": "cap sync",
+    "assets": "capacitor-assets generate --android --ios --iconBackgroundColor '#E85D04' --iconBackgroundColorDark '#E85D04' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#0F1115'",
+    "android": "cap open android",
+    "ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.6.2",
+    "typescript": "^5.9.3"
+  }
+}

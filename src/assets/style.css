@@ -479,3 +479,16 @@ label.chip:has(input:focus-visible), button.chip:focus-visible { outline: 3px so
 .btn-ghost { background: transparent !important; color: var(--accent) !important; border: 1.5px solid var(--accent) !important; }
 .side-link-hot { border-color: var(--accent) !important; }
 .chip[hidden] { display: none; }
+
+/* ---------- Mobil/tablet anasayfa: manşetin hemen altında hesaplama araçları ---------- */
+@media (max-width: 1020px) {
+  .home-grid { display: flex; flex-direction: column; gap: 0; }
+  .home-main, .home-side { display: contents; }
+  .home-main > * { order: 3; }
+  .home-main > .lead { order: 1; }
+  .home-side > * { order: 4; margin-top: 16px; }
+  .home-side > .side-title, .home-side > form.calc, .home-side > .side-links { order: 2; }
+  .home-side > .side-title { margin-top: 26px; }
+  .home-main > .cards { margin-top: 30px; }
+  .home-side > .ad { order: 4; }
+}

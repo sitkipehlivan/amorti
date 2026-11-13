@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amorti</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; font-family: -apple-system, system-ui, sans-serif; background: #fff; color: #111318; text-align: center; padding: 24px; box-sizing: border-box; }
+  @media (prefers-color-scheme: dark) { body { background: #0F1115; color: #F3F4F6; } }
+  svg { width: 64px; height: 64px; }
+  h1 { font-size: 1.4rem; margin: 18px 0 8px; }
+  p { margin: 0 0 22px; opacity: .8; line-height: 1.5; }
+  button { font: inherit; font-weight: 700; border: 0; border-radius: 8px; background: #E85D04; color: #fff; padding: 12px 26px; }
+</style>
+</head>
+<body>
+<main>
+  <svg viewBox="0 0 30 30" aria-hidden="true"><g fill="#E85D04"><rect x="1" y="1" width="8" height="8" rx="1"/><rect x="11" y="1" width="8" height="8" rx="1"/><rect x="21" y="1" width="8" height="8" rx="1"/><rect x="1" y="11" width="8" height="8" rx="1"/><rect x="11" y="11" width="8" height="8" rx="1"/><rect x="1" y="21" width="8" height="8" rx="1"/></g><g fill="none" stroke="#E85D04" stroke-width="1.6"><rect x="21.8" y="11.8" width="6.4" height="6.4" rx="0.8"/><rect x="11.8" y="21.8" width="6.4" height="6.4" rx="0.8"/><rect x="21.8" y="21.8" width="6.4" height="6.4" rx="0.8"/></g></svg>
+  <h1>İnternet bağlantısı yok</h1>
+  <p>Amorti'yi kullanmak için internete bağlan.<br>Bağlantı gelince tekrar dene.</p>
+  <button type="button" onclick="location.href=(window.AMORTI_SITE||'https://amorti-mugw.netlify.app')">Tekrar dene</button>
+</main>
+</body>
+</html>

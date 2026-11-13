@@ -392,6 +392,24 @@
     i.addEventListener('input', function (e) { if (e.isTrusted) isaretle(i, null); });
   });
 
+  // ---------- Uygulama (PWA ve mağaza uygulaması) ----------
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
+  }
+  // Mağaza uygulamasında (Capacitor) dış siteler (sahibinden, banka sayfaları vb.) uygulama içi tarayıcıda açılır.
+  var CAP = window.Capacitor;
+  if (/AmortiApp\//.test(navigator.userAgent)) document.documentElement.classList.add('in-app');
+  if (CAP && CAP.isNativePlatform && CAP.isNativePlatform()) {
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || a.origin === location.origin || !/^https?:/.test(a.href)) return;
+      var B = CAP.Plugins && CAP.Plugins.Browser;
+      if (!B) return;
+      e.preventDefault();
+      B.open({ url: a.href, toolbarColor: '#E85D04' });
+    }, true);
+  }
+
   // Koyu / açık mod
   var themeBtn = document.querySelector('.theme-btn');
   if (themeBtn) themeBtn.addEventListener('click', function () {

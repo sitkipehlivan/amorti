@@ -81,6 +81,11 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <meta property="og:locale" content="tr_TR">
 <meta name="theme-color" content="#E85D04">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="apple-touch-icon" href="/assets/app/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="${cfg.name}">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preload" href="/assets/fonts/league-spartan-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/questrial-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>try{var t=localStorage.getItem('amorti-tema');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
@@ -160,7 +165,27 @@ fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 fs.cpSync(path.join(__dirname, 'src/assets'), path.join(OUT, 'assets'), { recursive: true });
 for (const h of haberler) h.kapak = `/haberler/${h.slug}/` + kapakYaz(h, path.join(OUT, 'haberler', h.slug));
 const img = (h, cls = '', lazy = true) => `<img class="${cls}" src="${h.kapak}" alt="${esc((h.gorsel && h.gorsel.etiket) || h.baslik)}" width="1200" height="630"${lazy ? ' loading="lazy"' : ''}>`;
-fs.writeFileSync(path.join(OUT, 'favicon.svg'), logoMark.replace('aria-hidden="true"', 'xmlns="http://www.w3.org/2000/svg"').replace(/var\(--tapu\)/g, '#234A8C'));
+fs.writeFileSync(path.join(OUT, 'favicon.svg'), logoMark.replace('aria-hidden="true"', 'xmlns="http://www.w3.org/2000/svg"').replace(/var\(--accent\)/g, '#E85D04'));
+
+// ---------- Uygulama (PWA): manifest, service worker, çevrimdışı sayfası ----------
+fs.writeFileSync(path.join(OUT, 'site.webmanifest'), JSON.stringify({
+  id: '/', name: `${cfg.name}: Emlak haberleri ve hesaplama araçları`, short_name: cfg.name,
+  description: 'Emlak haberleri, kira artış ve amortisman hesaplama, konut kredisi faizleri ve ilan sitelerinde hazır arama.',
+  lang: 'tr', dir: 'ltr', start_url: '/?kaynak=uygulama', scope: '/', display: 'standalone', orientation: 'portrait',
+  background_color: '#ffffff', theme_color: '#E85D04', categories: ['finance', 'news', 'lifestyle', 'utilities'],
+  icons: [
+    { src: '/assets/app/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+    { src: '/assets/app/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+    { src: '/assets/app/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+  ],
+  shortcuts: [
+    { name: 'İlan ara', url: '/ilan-ara/', icons: [{ src: '/assets/app/icon-192.png', sizes: '192x192' }] },
+    { name: 'Kira artışı hesapla', url: '/araclar/kira-artis-hesaplama/', icons: [{ src: '/assets/app/icon-192.png', sizes: '192x192' }] },
+    { name: 'Kredi faizleri', url: '/konut-kredisi-faiz-oranlari/', icons: [{ src: '/assets/app/icon-192.png', sizes: '192x192' }] },
+    { name: 'Amortisman hesapla', url: '/araclar/amortisman-hesaplama/', icons: [{ src: '/assets/app/icon-192.png', sizes: '192x192' }] },
+  ],
+}, null, 2));
+fs.writeFileSync(path.join(OUT, 'sw.js'), fs.readFileSync(path.join(__dirname, 'src/sw.js'), 'utf8').replace('__SURUM__', `${V.css}-${V.js}`));
 
 // ---------- Anasayfa: solda haberler, sağda alt alta hesaplama araçları ----------
 const tr1 = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -583,8 +608,13 @@ write('/404.html', layout({
   body: `<div class="wrap page"><div class="empty"><h1>Bu sayfa bulunamadı</h1><p>Adres değişmiş veya kaldırılmış olabilir. Araçlara ya da ilçe rehberlerine buradan ulaşabilirsin.</p><p><a class="btn" href="/araclar/">Araçlara git</a> <a class="btn secondary" href="/istanbul/">İlçe rehberleri</a></p></div></div>`,
 }));
 
+write('/offline/', layout({
+  title: 'İnternet bağlantısı yok', description: 'Şu an çevrimdışısın.', path: '/offline/', noindex: true,
+  body: `<div class="wrap page"><div class="empty"><h1>İnternet bağlantısı yok</h1><p>Bağlantın geri geldiğinde sayfa yenilenir. Daha önce açtığın sayfalar ve hesaplama araçları çevrimdışı da açılabilir.</p><p><button class="btn" type="button" onclick="location.reload()">Tekrar dene</button></p></div></div>`,
+}));
+
 // ---------- SEO dosyaları ----------
-const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html'].includes(u));
+const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/'].includes(u));
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexable.map((u) => `  <url><loc>${abs(u)}</loc></url>`).join('\n')}

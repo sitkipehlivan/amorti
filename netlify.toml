@@ -15,3 +15,16 @@
 # Görsel ve videolar Bunny CDN'den (scripts/cdn.mjs). Yalnızca canlı derlemede; önizlemeler etkilenmez.
 [context.production.environment]
   CDN_URL = "https://amortisite.b-cdn.net"
+
+# Uygulama: service worker her açılışta yeniden denetlensin; manifest doğru türle sunulsun
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json; charset=utf-8"
+    Cache-Control = "public, max-age=86400"
