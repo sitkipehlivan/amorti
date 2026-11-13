@@ -492,3 +492,22 @@ label.chip:has(input:focus-visible), button.chip:focus-visible { outline: 3px so
   .home-main > .cards { margin-top: 30px; }
   .home-side > .ad { order: 4; }
 }
+
+/* ---------- Anasayfa mini araçlar: seçmeli seçenekler ---------- */
+.calc.mini .mini-label { display: block; font-family: var(--serif); font-weight: 700; font-size: .85rem; margin: 12px 0 8px; }
+.calc.mini .chips { gap: 6px; }
+.calc.mini .chip { padding: 7px 12px; font-size: .88rem; }
+.seg-full { display: flex; width: 100%; margin: 4px 0 12px; box-sizing: border-box; }
+.seg-full label { flex: 1; text-align: center; }
+.ia-mini .ia-sonuc { margin: 16px -20px -20px; border-radius: 0 0 var(--r) var(--r); padding: 18px 20px; }
+.ia-mini .ia-siteler { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.ia-mini .site-btn { flex-direction: row; align-items: center; justify-content: space-between; padding: 11px 14px; }
+.ia-mini .site-not { display: none; }
+.ia-mini .ia-ozet { font-size: .95rem; }
+.ia-mini .mini-more { display: inline-block; margin-top: 12px; color: #fff; }
+.unit-s { font-size: .45em; font-weight: 600; }
+/* Mobilde araçlar kenarlara yakın, tam genişlik */
+@media (max-width: 1020px) {
+  .home-grid { align-items: stretch; }
+  .home-side > form.calc, .home-side > .side-title { width: 100%; box-sizing: border-box; }
+}

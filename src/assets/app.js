@@ -204,6 +204,8 @@
   // ---------- 5. Kredi mi kira mı ----------
   function krediKira(form) {
     var fiyat = val(form, 'fiyat'), pesin = val(form, 'pesinat') || 0;
+    var py = form.querySelector('input[name="pesinYuzde"]:checked');
+    if (py && fiyat > 0) pesin = fiyat * (+py.value) / 100;
     var r = val(form, 'faiz') / 100, n = val(form, 'vade');
     var kira = val(form, 'kira'), reel = val(form, 'fark'); if (!isFinite(reel)) reel = 0;
     var P = fiyat - pesin;
@@ -291,8 +293,8 @@
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    // Paylaşılabilir adres
-    try {
+    // Paylaşılabilir adres (yalnızca İlan ara sayfasında)
+    if (!form.classList.contains('ia-mini')) try {
       var q = new URLSearchParams();
       if (s.islem !== 'satilik') q.set('islem', s.islem);
       if (s.ilce) q.set('ilce', s.ilce);
@@ -304,7 +306,7 @@
       history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
     } catch (e) {}
     var out = form.querySelector('[data-out="siteler"]');
-    if (!s.ilce) { set(form, 'ozet', 'Aramaya başlamak için bir ilçe seç.'); out.innerHTML = ''; return; }
+    if (!s.ilce) { set(form, 'ozet', form.classList.contains('ia-mini') ? 'Bir ilçe seç, üç sitede hazır arama çıksın.' : 'Aramaya başlamak için bir ilçe seç.'); out.innerHTML = ''; return; }
     var parca = [];
     if (s.min && s.max) parca.push(iaPara(s.min, kira) + '–' + iaPara(s.max, kira) + ' TL arası');
     else if (s.max) parca.push(iaPara(s.max, kira) + ' TL’ye kadar');
@@ -331,7 +333,7 @@
     form.elements.max.value = +r[1] ? nf0.format(+r[1]) : '';
     form.dispatchEvent(new Event('input', { bubbles: true }));
   });
-  document.querySelectorAll('form[data-tool="ilan-ara"]').forEach(function (form) {
+  document.querySelectorAll('form[data-tool="ilan-ara"]:not(.ia-mini)').forEach(function (form) {
     try {
       var q = new URLSearchParams(location.search);
       if (q.get('islem') === 'kiralik') form.querySelector('input[name="islem"][value="kiralik"]').checked = true;
@@ -342,11 +344,32 @@
       var yi = form.querySelector('input[name="yas"][value="' + (q.get('yas') || '') + '"]'); if (yi) yi.checked = true;
     } catch (e) {}
     form.querySelectorAll('input[name="islem"]').forEach(function (r) {
-      r.addEventListener('change', function () { form.elements.min.value = ''; form.elements.max.value = ''; });
+      r.addEventListener('change', function () { if (form.elements.min) form.elements.min.value = ''; if (form.elements.max) form.elements.max.value = ''; });
     });
   });
 
-  var tools = { 'ilan-ara': ilanAra, amortisman: amortisman, ilan: ilan, 'kira-artis': kiraArtis, kredi: kredi, 'kredi-kira': krediKira };
+  function ilanMini(form) {
+    var fiyat = val(form, 'fiyat');
+    var m = form.querySelector('input[name="m2"]:checked');
+    var m2 = m ? +m.value : NaN;
+    if (!(fiyat > 0 && m2 > 0)) { show(form, false); return; }
+    show(form, true);
+    set(form, 'm2fiyat', tl(fiyat / m2) + '<span class="unit-s"> / m²</span>');
+    var a = form.querySelector('[data-out-href="detay"]');
+    if (a) a.href = '/araclar/ilan-firsat-mi/?fiyat=' + Math.round(fiyat) + '&m2=' + m2;
+  }
+
+  var tools = { 'ilan-mini': ilanMini, 'ilan-ara': ilanAra, amortisman: amortisman, ilan: ilan, 'kira-artis': kiraArtis, kredi: kredi, 'kredi-kira': krediKira };
+
+  try {
+    var onq = new URLSearchParams(location.search);
+    document.querySelectorAll('form[data-tool]:not(.mini)').forEach(function (form) {
+      onq.forEach(function (v, k) {
+        var el = form.elements[k];
+        if (el && el.tagName === 'INPUT' && el.type !== 'hidden' && el.type !== 'radio' && el.type !== 'checkbox' && isFinite(+v) && +v > 0) el.value = el.hasAttribute('data-money') ? nf0.format(+v) : String(v).replace('.', ',');
+      });
+    });
+  } catch (e) {}
 
   document.querySelectorAll('form[data-tool]').forEach(function (form) {
     var fn = tools[form.getAttribute('data-tool')];

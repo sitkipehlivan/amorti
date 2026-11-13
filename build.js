@@ -131,7 +131,7 @@ ${body}
   </div>
   <div class="wrap"><p class="small" style="margin:24px 0 0">© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}</p></div>
 </footer>
-<script>window.AMORTI_ENF=${JSON.stringify(enf.yol)};</script>
+<script>window.AMORTI_ENF=${JSON.stringify(enf.yol)};window.AMORTI_ILAN=${JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, ilceler: Object.fromEntries(ilanAra.ilceler.map((i) => [i.slug, i.ad])) })};</script>
 <script src="/assets/app.js?v=${V.js}" defer></script>
 ${cerezBandi}
 </body>
@@ -218,11 +218,37 @@ ${ad('mrec')}
   ${bankaSec({ limit: 4, etiket: 'Banka oranıyla hesapla' })}
   <div class="result" aria-live="polite" hidden><span class="small">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
 </form>
-<div class="side-links">
-  <a class="side-link side-link-hot" href="/ilan-ara/"><span class="tool-icon">${icons.home || icons.search}</span><span><b>Ev mi arıyorsun?</b><span class="small">sahibinden, Hepsiemlak ve Emlakjet'te hazır arama</span></span><span class="go" aria-hidden="true">›</span></a>
-  <a class="side-link" href="/araclar/ilan-firsat-mi/"><span class="tool-icon">${icons.search}</span><span><b>Bu ilan fırsat mı?</b><span class="small">Benzer ilanlarla karşılaştır</span></span><span class="go" aria-hidden="true">›</span></a>
-  <a class="side-link" href="/araclar/kredi-mi-kira-mi/"><span class="tool-icon">${icons.scale}</span><span><b>Kredi mi, kira mı?</b><span class="small">Yıllar içinde karşılaştır</span></span><span class="go" aria-hidden="true">›</span></a>
-</div>
+<form class="calc mini ilan-ara ia-mini" data-tool="ilan-ara" novalidate>
+  ${wHead('/ilan-ara/', icons.search, 'Ev mi arıyorsun?')}
+  <div class="seg seg-full" role="radiogroup" aria-label="Satılık veya kiralık">
+    <label><input type="radio" name="islem" value="satilik" checked><span>Satılık</span></label>
+    <label><input type="radio" name="islem" value="kiralik"><span>Kiralık</span></label>
+  </div>
+  <div class="field"><label for="w-ia-ilce">İlçe</label><div class="input"><select id="w-ia-ilce" name="ilce"><option value="">İlçe seç</option><optgroup label="Anadolu yakası">${ilanAra.ilceler.filter((i) => i.yaka === 'Anadolu').map((i) => `<option value="${i.slug}">${i.ad}</option>`).join('')}</optgroup><optgroup label="Avrupa yakası">${ilanAra.ilceler.filter((i) => i.yaka === 'Avrupa').map((i) => `<option value="${i.slug}">${i.ad}</option>`).join('')}</optgroup></select></div></div>
+  <span class="mini-label">Oda sayısı</span>
+  <div class="chips">${ilanAra.odalar.slice(0, 4).map((o) => `<label class="chip"><input type="checkbox" name="oda" value="${o.k}"><span>${o.k}</span></label>`).join('')}</div>
+  <div class="ia-sonuc" aria-live="polite">
+    <p class="ia-ozet" data-out="ozet">Bir ilçe seç, üç sitede hazır arama çıksın.</p>
+    <div class="ia-siteler" data-out="siteler"></div>
+    <a class="small mini-more" href="/ilan-ara/">Fiyat ve bina yaşıyla detaylı ara</a>
+  </div>
+</form>
+<form class="calc mini" data-tool="ilan-mini" novalidate>
+  ${wHead('/araclar/ilan-firsat-mi/', icons.search, 'Bu ilan fırsat mı?')}
+  ${miniField('fiyat', 'İlan fiyatı', { id: 'w-ilan-fiyat', unit: 'TL', money: true, value: '7.500.000' })}
+  <span class="mini-label">Net m²</span>
+  <div class="chips">${[75, 90, 110, 130, 160].map((m) => `<label class="chip"><input type="radio" name="m2" value="${m}"${m === 110 ? ' checked' : ''}><span>${m} m²</span></label>`).join('')}</div>
+  <div class="result" aria-live="polite" hidden><span class="small">m² fiyatı</span><div class="mid" data-out="m2fiyat">–</div><span class="small">Bölgedeki benzer ilanlarla karşılaştırıp fırsat mı, pahalı mı gör.</span> <a class="small" data-out-href="detay" href="/araclar/ilan-firsat-mi/">Benzer ilanlarla karşılaştır</a></div>
+</form>
+<form class="calc mini" data-tool="kredi-kira" novalidate>
+  ${wHead('/araclar/kredi-mi-kira-mi/', icons.scale, 'Kredi mi, kira mı?')}
+  ${miniField('fiyat', 'Ev fiyatı', { id: 'w-kk-fiyat', unit: 'TL', money: true, value: '6.500.000' })}
+  ${miniField('kira', 'Ödediğin aylık kira', { id: 'w-kk-kira', unit: 'TL', money: true, value: '30.000' })}
+  <span class="mini-label">Peşinat</span>
+  <div class="chips">${[10, 20, 30, 50].map((y) => `<label class="chip"><input type="radio" name="pesinYuzde" value="${y}"${y === 20 ? ' checked' : ''}><span>%${y}</span></label>`).join('')}</div>
+  ${hidden({ faiz: String(faiz.tipik).replace('.', ','), vade: '120', fark: '0' })}
+  <div class="result" aria-live="polite" hidden><span class="small">Aylık kredi taksiti</span><div class="mid" data-out="taksit">–</div><span data-out="verdict" class="verdict"></span> <a class="small" href="/araclar/kredi-mi-kira-mi/">Detaylı karşılaştır</a></div>
+</form>
 <div class="side-box faizler">
   <h3><a href="/konut-kredisi-faiz-oranlari/" style="color:inherit;text-decoration:none">Konut kredisi faizleri</a></h3>
   <ol>${faiz.olan.map((b) => `<li><button type="button" class="faiz-row" data-oran="${b.oran}" data-banka="${b.banka}" data-hedef="#w-faiz" title="${b.banka} oranıyla taksiti hesapla"><span class="bank-name">${bankLogo(b)}${b.banka}</span><b>%${tr2(b.oran)}</b></button></li>`).join('')}</ol>
@@ -363,7 +389,6 @@ function ilanAraForm({ ilce = '' } = {}) {
 {
   const P = '/ilan-ara/';
   const c = [['/', 'Anasayfa'], [P, 'İlan ara']];
-  const cfgJs = JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, ilceler: Object.fromEntries(ilanAra.ilceler.map((i) => [i.slug, i.ad])) });
   write(P, layout({
     title: 'Satılık ve kiralık ev ara: sahibinden, Hepsiemlak ve Emlakjet için hazır arama',
     description: 'İlçe, fiyat, oda sayısı ve bina yaşını seç; sahibinden, Hepsiemlak ve Emlakjet\'te filtreleri hazır aramaya tek tıkla git.',
@@ -383,7 +408,7 @@ ${crumbs(c)}
   </div>
   <aside><div class="box"><h3>Hesaplama araçları</h3>${toolList()}</div></aside>
 </div></div>
-<script>window.AMORTI_ILAN=${cfgJs};</script>`,
+`,
   }));
 }
 
