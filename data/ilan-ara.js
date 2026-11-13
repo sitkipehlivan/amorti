@@ -3,7 +3,7 @@
 // kod (app.js → ilanAra) window.AMORTI_ILAN üzerinden okur.
 //
 // sahibinden: /{satilik|kiralik}-daire/istanbul-{ilce}?price_min=..&price_max=..&a20=<oda kodu>&a812=<bina yaşı kodu>
-//   (kodlar her seçenek için ayrı; sb alanlarında. Boş kalanlar linke eklenmez, kullanıcıya "sitede seç" denir.)
+//   Kodlar 13 Kasım 2026'da kullanıcının paylaştığı linklerden eşlendi (sb alanları).
 // Hepsiemlak: /{ilce}-{satilik|kiralik}/daire?buildingAges=0-0,1-5,6-10&p63=<oda kodu>-<oda kodu>&p31=<min>&p32=<max>&p33=1
 //   Yaş seçenekleri sabit: 0-0, 1-5, 6-10, 11-15, 16-20, 21-999. Oda kodları 180401… (1+1=180402, 2+1=180404,
 //   3+1=180407, 4+1=180411; 5+1 ve üzeri henüz eşlenmedi)
@@ -30,19 +30,19 @@ const ilceler = [
 ].map(([slug, ad, yaka]) => ({ slug, ad, yaka }));
 
 const odalar = [
-  { k: '1+1', ej: ['1-1'], sb: [], hp: ['180402'] },
-  { k: '2+1', ej: ['2-1'], sb: [], hp: ['180404'] },
-  { k: '3+1', ej: ['3-1'], sb: [], hp: ['180407'] },
-  { k: '4+1', ej: ['4-1'], sb: [], hp: ['180411'] },
-  { k: '5+1 ve üzeri', ej: ['5-1', '5-2', '6-1', '6-2', '7-1', '8-1'], sb: [], hp: [] },
+  { k: '1+1', ej: ['1-1'], sb: ['38473'], hp: ['180402'] },
+  { k: '2+1', ej: ['2-1'], sb: ['38470'], hp: ['180404'] },
+  { k: '3+1', ej: ['3-1'], sb: ['38474'], hp: ['180407'] },
+  { k: '4+1', ej: ['4-1'], sb: ['38471'], hp: ['180411'] },
+  { k: '5+1 ve üzeri', ej: ['5-1', '5-2', '6-1', '6-2', '7-1', '8-1'], sb: ['38475'], hp: [] },
 ];
 
 const yaslar = [
   { k: '', ad: 'Fark etmez', ej: [], sb: [], hp: [] },
-  { k: '0-10', ad: '0–10 yaş', ej: ['0-oturuma-hazir', '0-yapim-asamasinda', '1', '2', '3', '4', '5', '6-10'], sb: [], hp: ['0-0', '1-5', '6-10'] },
-  { k: '11-20', ad: '11–20 yaş', ej: ['11-15', '16-20'], sb: [], hp: ['11-15', '16-20'] },
-  { k: '21-30', ad: '21–30 yaş', ej: ['21-25', '26-30'], sb: [], hp: ['21-999'], hpNot: 'Yaş filtresi bu sitede 21 yaş ve üzeri olarak uygulanır' },
-  { k: '31+', ad: '31 yaş ve üzeri', ej: ['31-ve-uzeri'], sb: [], hp: ['21-999'], hpNot: 'Yaş filtresi bu sitede 21 yaş ve üzeri olarak uygulanır' },
+  { k: '0-10', ad: '0–10 yaş', ej: ['0-oturuma-hazir', '0-yapim-asamasinda', '1', '2', '3', '4', '5', '6-10'], sb: ['40602', '40603', '40604', '40605', '40606', '1297863', '1297864', '1297865'], hp: ['0-0', '1-5', '6-10'] },
+  { k: '11-20', ad: '11–20 yaş', ej: ['11-15', '16-20'], sb: ['40607', '43901'], hp: ['11-15', '16-20'] },
+  { k: '21-30', ad: '21–30 yaş', ej: ['21-25', '26-30'], sb: ['43902', '43903'], hp: ['21-999'], hpNot: 'Yaş filtresi bu sitede 21 yaş ve üzeri olarak uygulanır' },
+  { k: '31+', ad: '31 yaş ve üzeri', ej: ['31-ve-uzeri'], sb: ['43904'], hp: ['21-999'], hpNot: 'Yaş filtresi bu sitede 21 yaş ve üzeri olarak uygulanır' },
 ];
 
 // Fiyat kısayolları (TL)
