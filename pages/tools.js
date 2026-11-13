@@ -292,4 +292,4 @@ ${oranlar.map((o, i) => `<tr${i === 0 ? ' class="current"' : ''}><td>${o.ay}</td
   },
 ];
 
-module.exports = { bankaSec, tools, amortismanForm, icons };
+module.exports = { bankaSec, tools, amortismanForm, icons, field };

@@ -4,12 +4,13 @@ const fs = require('fs');
 const path = require('path');
 const cfg = require('./site.config');
 const ilceler = require('./data/ilceler');
+const ilanAra = require('./data/ilan-ara');
 const haberler = require('./data/haberler');
 const oranlar = require('./data/kira-oranlari');
 const enf = require('./data/enflasyon');
 const faiz = require('./data/faizler');
 const { kapakYaz } = require('./lib/kapak');
-const { tools, amortismanForm, icons, bankaSec } = require('./pages/tools');
+const { tools, amortismanForm, icons, bankaSec, field } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
 // Önbellek kırıcı: dosya içeriği değişince adres değişir
@@ -48,6 +49,7 @@ const navItems = [
   ...KATEGORILER.map(([s, a]) => [`/haberler/kategori/${s}/`, a]),
   'sep',
   ['/konut-kredisi-faiz-oranlari/', 'Kredi faizleri'],
+  ['/ilan-ara/', 'İlan ara'],
   ['/araclar/', 'Hesaplama araçları'],
   ['/istanbul/', 'İlçeler'],
 ];
@@ -192,6 +194,7 @@ ${ad('mrec')}
   <div class="result" aria-live="polite" hidden><span class="small">Aylık taksit</span><div class="mid" data-out="taksit">–</div><span class="small">Toplam geri ödeme: <span data-out="toplam"></span></span></div>
 </form>
 <div class="side-links">
+  <a class="side-link side-link-hot" href="/ilan-ara/"><span class="tool-icon">${icons.home || icons.search}</span><span><b>Ev mi arıyorsun?</b><span class="small">sahibinden, Hepsiemlak ve Emlakjet'te hazır arama</span></span><span class="go" aria-hidden="true">›</span></a>
   <a class="side-link" href="/araclar/ilan-firsat-mi/"><span class="tool-icon">${icons.search}</span><span><b>Bu ilan fırsat mı?</b><span class="small">Benzer ilanlarla karşılaştır</span></span><span class="go" aria-hidden="true">›</span></a>
   <a class="side-link" href="/araclar/kredi-mi-kira-mi/"><span class="tool-icon">${icons.scale}</span><span><b>Kredi mi, kira mı?</b><span class="small">Yıllar içinde karşılaştır</span></span><span class="go" aria-hidden="true">›</span></a>
 </div>
@@ -295,6 +298,70 @@ ${crumbs(c)}
   }));
 }
 
+// ---------- Hazır ilan araması ----------
+function ilanAraForm({ ilce = '' } = {}) {
+  const grp = (yaka) => ilanAra.ilceler.filter((i) => i.yaka === yaka).map((i) => `<option value="${i.slug}"${i.slug === ilce ? ' selected' : ''}>${i.ad}</option>`).join('');
+  const fiyatChips = (tur) => ilanAra.fiyatlar[tur].map(([a, b, ad]) => `<button type="button" class="chip" data-fiyat="${a}-${b}" data-tur="${tur}"${tur === 'kiralik' ? ' hidden' : ''}>${ad}</button>`).join('');
+  return `<form class="calc ilan-ara" data-tool="ilan-ara" novalidate>
+  <div class="ia-row">
+    <span class="ia-label" id="ia-islem">Ne arıyorsun?</span>
+    <div class="seg" role="radiogroup" aria-labelledby="ia-islem">
+      <label><input type="radio" name="islem" value="satilik" checked><span>Satılık</span></label>
+      <label><input type="radio" name="islem" value="kiralik"><span>Kiralık</span></label>
+    </div>
+  </div>
+  <div class="field"><label for="ia-ilce">İlçe</label><div class="input"><select id="ia-ilce" name="ilce"><option value="">İlçe seç</option><optgroup label="Anadolu yakası">${grp('Anadolu')}</optgroup><optgroup label="Avrupa yakası">${grp('Avrupa')}</optgroup></select></div></div>
+  <div class="ia-row">
+    <span class="ia-label">Fiyat aralığı</span>
+    <div class="chips">${fiyatChips('satilik')}${fiyatChips('kiralik')}</div>
+    <div class="fields ia-fiyat">
+      ${field('min', 'En az', { id: 'ia-min', unit: 'TL', money: true, placeholder: 'Alt sınır yok' })}
+      ${field('max', 'En fazla', { id: 'ia-max', unit: 'TL', money: true, placeholder: 'Üst sınır yok' })}
+    </div>
+  </div>
+  <div class="ia-row">
+    <span class="ia-label" id="ia-oda">Oda sayısı <span class="muted small">(birden fazla seçebilirsin)</span></span>
+    <div class="chips" role="group" aria-labelledby="ia-oda">${ilanAra.odalar.map((o) => `<label class="chip"><input type="checkbox" name="oda" value="${o.k}"><span>${o.k}</span></label>`).join('')}</div>
+  </div>
+  <div class="ia-row">
+    <span class="ia-label" id="ia-yas">Bina yaşı</span>
+    <div class="chips" role="radiogroup" aria-labelledby="ia-yas">${ilanAra.yaslar.map((y, i) => `<label class="chip"><input type="radio" name="yas" value="${y.k}"${i === 0 ? ' checked' : ''}><span>${y.ad}</span></label>`).join('')}</div>
+  </div>
+  <div class="ia-sonuc" aria-live="polite">
+    <p class="ia-ozet" data-out="ozet">Aramaya başlamak için bir ilçe seç.</p>
+    <div class="ia-siteler" data-out="siteler"></div>
+    <p class="note">Linkler seçtiğin filtrelerle ilgili sitenin arama sayfasını yeni sekmede açar. ${cfg.name}'nin bu sitelerle ticari bir ilişkisi yoktur; ilanlar ve fiyatlar o sitelere aittir.</p>
+  </div>
+</form>`;
+}
+
+{
+  const P = '/ilan-ara/';
+  const c = [['/', 'Anasayfa'], [P, 'İlan ara']];
+  const cfgJs = JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, ilceler: Object.fromEntries(ilanAra.ilceler.map((i) => [i.slug, i.ad])) });
+  write(P, layout({
+    title: 'Satılık ve kiralık ev ara: sahibinden, Hepsiemlak ve Emlakjet için hazır arama',
+    description: 'İlçe, fiyat, oda sayısı ve bina yaşını seç; sahibinden, Hepsiemlak ve Emlakjet\'te filtreleri hazır aramaya tek tıkla git.',
+    path: P, active: P,
+    jsonld: [crumbLd(c), { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Hazır ilan araması', url: abs(P), applicationCategory: 'UtilitiesApplication', operatingSystem: 'Web', offers: { '@type': 'Offer', price: '0', priceCurrency: 'TRY' }, inLanguage: 'tr' }],
+    body: `<div class="wrap page">
+${crumbs(c)}
+<div class="layout">
+  <div>
+    <h1>İlan sitelerinde hazır arama</h1>
+    <p class="lede">Ne aradığını bir kez seç; sahibinden, Hepsiemlak ve Emlakjet'te aynı filtrelerle açılan aramalara tek tıkla git. Her sitede filtreleri baştan girmekle uğraşma.</p>
+    ${ilanAraForm()}
+    <div class="prose" style="margin-top:32px">
+      <h2>İlanı bulduktan sonra</h2>
+      <p>Beğendiğin bir ilanın fiyatı bölgeye göre makul mü, ${''}<a href="/araclar/ilan-firsat-mi/">ilan fırsat mı</a> aracıyla benzer ilanlarla karşılaştır. Yatırım için bakıyorsan <a href="/araclar/amortisman-hesaplama/">amortisman hesabı</a>, krediyle alacaksan <a href="/araclar/konut-kredisi-hesaplama/">konut kredisi hesaplama</a> işine yarar.</p>
+    </div>
+  </div>
+  <aside><div class="box"><h3>Hesaplama araçları</h3>${toolList()}</div></aside>
+</div></div>
+<script>window.AMORTI_ILAN=${cfgJs};</script>`,
+  }));
+}
+
 // ---------- Konut kredisi faiz oranları ----------
 {
   const P = '/konut-kredisi-faiz-oranlari/';
@@ -363,6 +430,10 @@ ${crumbs(c)}
     <h1>${i.ad} ev ve kira rehberi</h1>
     <p class="lede">${i.ozet}</p>
 
+    <div class="ilce-ilan">
+      <span><b>${i.ad}'da ev mi arıyorsun?</b> Fiyat, oda ve bina yaşını seç; üç ilan sitesinde hazır aramaya git.</span>
+      <span class="ilce-ilan-btns"><a class="btn" href="/ilan-ara/?ilce=${i.slug}">Satılık ara</a><a class="btn btn-ghost" href="/ilan-ara/?ilce=${i.slug}&amp;islem=kiralik">Kiralık ara</a></span>
+    </div>
     <h2 style="margin-top:28px">${i.ad}'da bir evin amortisman süresini hesapla</h2>
     ${amortismanForm({ heading: false, fiyat: '', kira: '', idPrefix: i.slug })}
 

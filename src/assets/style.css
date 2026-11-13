@@ -444,3 +444,38 @@ form.calc.flash { animation: flash .9s ease; }
   table.data.faiz-tablo tr.current td { background: none; }
   .faiz-tablo .c-taksit { white-space: nowrap; }
 }
+
+/* ---------- Hazır ilan araması ---------- */
+.ilan-ara .ia-row { margin: 18px 0; }
+.ilan-ara .ia-row:first-child { margin-top: 0; }
+.ia-label { display: block; font-family: var(--serif); font-weight: 700; font-size: .95rem; margin-bottom: 10px; }
+.seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--paper-2); border: 1px solid var(--rule); }
+.seg label { cursor: pointer; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg span { display: block; padding: 8px 22px; border-radius: 999px; font-weight: 700; font-family: var(--serif); color: var(--ink-2); }
+.seg input:checked + span { background: var(--accent); color: #fff; }
+.seg input:focus-visible + span { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; padding: 8px 14px; border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: .92rem; cursor: pointer; position: relative; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip:hover { border-color: var(--accent); }
+label.chip:has(input:checked), button.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+label.chip:has(input:focus-visible), button.chip:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+.ia-fiyat { margin-top: 12px; }
+.ia-sonuc { margin-top: 24px; padding: 20px; border-radius: var(--r); background: var(--band); color: #fff; }
+.ia-ozet { margin: 0 0 14px; font-size: 1.05rem; }
+.ia-siteler { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ia-siteler:empty { display: none; }
+.site-btn { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: var(--r); background: #fff; color: #111318; text-decoration: none; border: 2px solid transparent; transition: transform .15s, border-color .15s; }
+.site-btn:hover { border-color: #111318; transform: translateY(-1px); }
+.site-ad { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; }
+.site-git { font-size: .9rem; color: #B84A03; font-weight: 600; }
+.site-not { font-size: .78rem; color: #5B606B; }
+.ia-sonuc .note { color: rgba(255,255,255,.85); margin: 14px 0 0; font-size: .8rem; }
+@media (max-width: 760px) { .ia-siteler { grid-template-columns: minmax(0, 1fr); } }
+
+.ilce-ilan { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin: 24px 0 8px; padding: 16px 18px; border-radius: var(--r); background: var(--band-2); border-left: 4px solid var(--accent); }
+.ilce-ilan-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-ghost { background: transparent !important; color: var(--accent) !important; border: 1.5px solid var(--accent) !important; }
+.side-link-hot { border-color: var(--accent) !important; }
+.chip[hidden] { display: none; }
