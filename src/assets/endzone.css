@@ -1,0 +1,145 @@
+/* Tasarım önizlemesi 3: EndZone düzeni. Koyu zemin, iri yoğun manşet, turuncu + nane vurgular, tarih ve etiketlerde daktilo yazı. Üstte Dispatch tarzı siyah başlık. */
+@font-face{font-family:"Anton";font-style:normal;font-display:swap;font-weight:400;src:url(/assets/fonts/anton-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Anton";font-style:normal;font-display:swap;font-weight:400;src:url(/assets/fonts/anton-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-display:swap;font-weight:400;src:url(/assets/fonts/ibm-plex-mono-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-display:swap;font-weight:400;src:url(/assets/fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-display:swap;font-weight:500;src:url(/assets/fonts/ibm-plex-mono-latin-ext-500-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-display:swap;font-weight:500;src:url(/assets/fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* Koyu, her temada aynı */
+body.ez {
+  --ez-bg: #0A0A0B; --ez-card: #141416; --ez-line: rgba(255,255,255,.12); --ez-dim: rgba(255,255,255,.58);
+  --ez-or: #FF6B1A; --ez-mint: #3FE0B8;
+  --paper: #0A0A0B; --paper-2: #141416; --ink: #FFFFFF; --ink-2: #D9D9DC; --muted: #9A9AA0;
+  --rule: rgba(255,255,255,.12); --rule-strong: #FFFFFF; --accent: #FF6B1A; --accent-soft: rgba(255,107,26,.14); --band: #FF6B1A; --band-2: #1A1A1D;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace; --cond: "Anton", "League Spartan", Impact, sans-serif;
+  background: var(--ez-bg); color: #fff; color-scheme: dark;
+}
+body.ez .wrap { max-width: 1240px; }
+:where(body.ez) a { color: inherit; }
+
+/* Başlık: Dispatch tarzı siyah şerit */
+.ez-head { background: #000; border-bottom: 1px solid var(--ez-line); position: sticky; top: 0; z-index: 30; }
+.ez-head-in { display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 64px; }
+.ez-logo { display: inline-flex; border: 2px solid #fff; background: #fff; text-decoration: none; font-family: var(--serif); font-weight: 800; font-size: 1.35rem; letter-spacing: .2em; line-height: 1; flex: none; }
+.ez-logo span { padding: 8px 6px 6px 12px; }
+.ez-logo span:first-child { background: #000; color: #fff; }
+.ez-logo span:last-child { color: #000; padding-right: 8px; }
+.ez-nav { display: flex; gap: 26px; }
+.ez-nav a { color: #fff; text-decoration: none; text-transform: uppercase; letter-spacing: .16em; font-family: var(--serif); font-weight: 700; font-size: .82rem; padding: 6px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
+.ez-nav a:hover, .ez-nav a[aria-current="page"] { border-bottom-color: var(--ez-or); }
+.ez-ara { display: inline-flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,.55); padding: 9px 14px; color: #fff; text-decoration: none; font-size: .88rem; min-width: 230px; flex: none; }
+.ez-ara:hover { border-color: var(--ez-or); }
+.ez-ara span { color: var(--ez-dim); }
+
+/* Ortak parçalar */
+.ez-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: var(--mono); font-size: .78rem; color: var(--ez-dim); margin-top: 10px; }
+.ez-yer { color: var(--ez-or) !important; text-decoration: none; }
+.ez-yer:hover { text-decoration: underline; }
+.ez-kat { display: inline-block; font-family: var(--mono); font-size: .8rem; color: var(--ez-mint) !important; text-decoration: none; }
+.ez-chip { font-family: var(--mono); font-size: .82rem; background: #1D1D20; color: #fff !important; padding: 6px 12px; text-decoration: none; white-space: nowrap; }
+.ez-chip:hover { background: var(--ez-or); }
+.ez-sec-h { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--ez-line); margin-bottom: 4px; }
+.ez-sec-h h2, .ez-tools-h h2 { margin: 0; font-family: var(--serif); font-weight: 700; font-size: clamp(1.6rem, 2.4vw, 2.1rem); letter-spacing: -.02em; color: #fff; }
+body.ez h3 { font-family: var(--serif); font-weight: 700; letter-spacing: -.01em; color: #fff; }
+body.ez h3 a, .ez-lead h1 a { text-decoration: none; }
+body.ez h3 a:hover { color: var(--ez-or); }
+body.ez img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Manşet + öne çıkanlar */
+.ez-hero { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 56px; padding: 36px 0 64px; }
+.ez-lead-img { position: relative; display: block; aspect-ratio: 1200 / 630; overflow: hidden; }
+.ez-lead-txt { position: relative; z-index: 1; }
+.ez-lead-txt .ez-kat { background: #000; padding: 4px 10px; margin: -15px 0 0 24px; position: relative; }
+.ez-lead h1 { font-family: var(--cond); font-weight: 400; text-transform: uppercase; font-size: clamp(2rem, 3.5vw, 3.25rem); line-height: 1.04; letter-spacing: -.005em; margin: 12px 0 14px; color: #fff; }
+.ez-lead h1 a:hover { color: var(--ez-or); }
+.ez-lead p { font-size: 1.05rem; line-height: 1.6; color: var(--ez-dim); margin: 0; max-width: 620px; }
+.ez-label { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--ez-or); margin: 0 0 6px; padding-bottom: 12px; border-bottom: 1px solid var(--ez-line); }
+.ez-top-i { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--ez-line); }
+.ez-top-i h3 { margin: 0; font-size: 1.12rem; line-height: 1.25; }
+.ez-top-img { aspect-ratio: 1200 / 630; overflow: hidden; align-self: start; }
+
+/* 3'lü sıra */
+.ez-row { padding-bottom: 64px; }
+.ez-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-top: 28px; }
+.ez-card-img { position: relative; display: block; aspect-ratio: 1200 / 630; overflow: hidden; }
+.ez-card-img .ez-kat { position: absolute; left: 14px; bottom: 14px; background: #111; padding: 4px 8px; }
+.ez-card h3 { margin: 18px 0 0; font-size: 1.35rem; line-height: 1.22; }
+.ez-card img, .ez-top-img img, .ez-list-img img { transition: transform .35s; }
+.ez-card:hover img, .ez-top-i:hover img, .ez-list-i:hover img { transform: scale(1.04); }
+
+/* Son haberler + beyaz araç kartları */
+.ez-latest { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 64px; align-items: start; padding-bottom: 64px; }
+.ez-list-i { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 28px; padding: 26px 0; border-bottom: 1px solid var(--ez-line); }
+.ez-list-i h3 { margin: 6px 0 0; font-size: 1.5rem; line-height: 1.2; }
+.ez-list-img { aspect-ratio: 1200 / 630; overflow: hidden; align-self: start; }
+.ez-tools { background: #fff; color: #111318; border-radius: 16px; padding: 24px 0 4px; overflow: hidden;
+  --paper: #FFFFFF; --paper-2: #F3F3F2; --ink: #111318; --ink-2: #33363D; --muted: #62656D; --rule: #E4E4E2; --rule-strong: #111318;
+  --accent-soft: #FFEBDD; --band: #111318; --band-2: #FFE6D3; color-scheme: light; }
+.ez-tools-h { margin: 0 22px; display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #E4E4E2; }
+.ez-tools-h h2 { color: #111318; }
+.ez-tools .ez-chip { background: #111318; }
+.ez-tools .ez-chip:hover { background: var(--ez-or); }
+.ez-tools form.calc.mini { background: transparent; border: 0; border-bottom: 1px solid #E4E4E2; border-radius: 0; box-shadow: none; margin: 0; }
+.ez-tools form.calc.mini:last-of-type { border-bottom: 0; }
+.ez-tools .calc.mini .w-head { background: transparent; border-bottom: 0; }
+.ez-tools .calc.mini .w-head h3, .ez-tools .calc.mini .w-head h3 a { color: #111318; }
+.ez-tools .calc.mini .w-head .tool-icon { background: #FFEBDD; color: var(--ez-or); border-radius: 10px; }
+.ez-tools .result { background: #111318; color: #fff; border-radius: 10px; }
+.ez-tools .chip.on, .ez-tools label.chip:has(input:checked) { background: var(--ez-or); border-color: var(--ez-or); color: #fff; }
+
+/* Şehirler */
+.ez-sehir { padding-bottom: 72px; }
+.ez-sehir .sehir-grid { margin-top: 24px; }
+body.ez .sehir-kart { background: var(--ez-card); color: #fff; border: 1px solid var(--ez-line); border-radius: 0; }
+body.ez .sehir-kart:hover { border-color: var(--ez-or); }
+body.ez .sehir-kart span { color: var(--ez-dim); font-family: var(--mono); font-size: .78rem; }
+body.ez .yazlik-baslik { color: #fff; }
+body.ez .ilce-grid { gap: 10px; }
+body.ez .ilce-grid a { background: var(--ez-card); border: 1px solid var(--ez-line); border-radius: 0; color: #fff; padding: 12px 14px; }
+body.ez .ilce-grid a:hover { border-color: var(--ez-mint); }
+body.ez .ilce-grid small { color: var(--ez-dim); }
+
+/* Alt bilgi */
+.ez-foot { border-top: 1px solid var(--ez-line); padding: 34px 0 26px; }
+.ez-foot-nav { display: flex; flex-wrap: wrap; gap: 10px 30px; }
+.ez-foot-nav a { text-transform: uppercase; letter-spacing: .14em; font-family: var(--serif); font-weight: 700; font-size: .85rem; text-decoration: none; }
+.ez-foot-nav a:hover { color: var(--ez-or); }
+.ez-foot-alt { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--ez-line); font-family: var(--mono); font-size: .76rem; color: var(--ez-dim); }
+.ez-foot-alt a { color: var(--ez-dim); }
+
+@media (max-width: 1180px) {
+  .ez-nav { gap: 18px; }
+  .ez-nav a { letter-spacing: .1em; font-size: .78rem; }
+  .ez-ara { min-width: 0; }
+  .ez-ara span { display: none; }
+}
+@media (max-width: 1020px) {
+  .ez-head-in { flex-wrap: wrap; min-height: 0; padding-top: 12px; gap: 12px; }
+  .ez-nav { order: 3; flex: 1 0 100%; overflow-x: auto; scrollbar-width: none; gap: 22px; padding-bottom: 8px; }
+  .ez-nav::-webkit-scrollbar { display: none; }
+  /* Mobil sıra: manşet → araçlar → öne çıkanlar → gündem → son haberler → şehirler */
+  .ez-home { display: flex; flex-direction: column; }
+  .ez-hero, .ez-latest { display: contents; }
+  .ez-lead { order: 1; padding-top: 20px; margin-bottom: 32px; }
+  .ez-tools { order: 2; margin-bottom: 40px; }
+  .ez-top { order: 3; margin-bottom: 48px; }
+  .ez-row { order: 4; }
+  .ez-list { order: 5; margin-bottom: 56px; }
+  .ez-sehir { order: 6; }
+  .ez-cards { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+}
+@media (max-width: 680px) {
+  .ez-lead-img { aspect-ratio: auto; }
+  .ez-lead-img img { height: auto; }
+  .ez-lead h1 { font-size: 2.05rem; }
+  .ez-lead p { font-size: .98rem; }
+  .ez-top-i { grid-template-columns: minmax(0, 1fr) 112px; gap: 14px; }
+  .ez-top-i h3 { font-size: 1.02rem; }
+  .ez-list-i { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .ez-list-img { order: -1; }
+  .ez-list-i h3 { font-size: 1.28rem; }
+  .ez-tools { padding: 20px 0 4px; border-radius: 12px; }
+  .ez-tools-h { margin: 0 16px; }
+  .ez-logo { font-size: 1.15rem; }
+}

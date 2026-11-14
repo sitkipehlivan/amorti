@@ -15,7 +15,7 @@ const { tools, amortismanForm, icons, bankaSec, field } = require('./pages/tools
 const OUT = path.join(__dirname, 'dist');
 // Önbellek kırıcı: dosya içeriği değişince adres değişir
 const ver = (f) => require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'src/assets', f))).digest('hex').slice(0, 8);
-const V = { css: ver('style.css'), js: ver('app.js'), gz: ver('gazeta.css'), qz: ver('qurno.css') };
+const V = { css: ver('style.css'), js: ver('app.js'), gz: ver('gazeta.css'), qz: ver('qurno.css'), ez: ver('endzone.css') };
 const urls = [];
 
 // ---------- yardımcılar ----------
@@ -90,12 +90,12 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <link rel="preload" href="/assets/fonts/league-spartan-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/questrial-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>try{var t=localStorage.getItem('amorti-tema');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<link rel="stylesheet" href="/assets/style.css?v=${V.css}">${tasarim === 'gazeta' ? `\n<link rel="stylesheet" href="/assets/gazeta.css?v=${V.gz}">` : ''}${tasarim === 'qurno' ? `\n<link rel="stylesheet" href="/assets/qurno.css?v=${V.qz}">` : ''}
+<link rel="stylesheet" href="/assets/style.css?v=${V.css}">${tasarim === 'gazeta' ? `\n<link rel="stylesheet" href="/assets/gazeta.css?v=${V.gz}">` : ''}${tasarim === 'qurno' ? `\n<link rel="stylesheet" href="/assets/qurno.css?v=${V.qz}">` : ''}${tasarim === 'endzone' ? `\n<link rel="preload" href="/assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>\n<link rel="stylesheet" href="/assets/endzone.css?v=${V.ez}">` : ''}
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 ${ga}
 </head>
-<body${tasarim === 'gazeta' ? ' class="gz"' : tasarim === 'qurno' ? ' class="qz"' : ''}>
-${tasarim === 'gazeta' ? gzHeader(active) : tasarim === 'qurno' ? qzHeader(active) : `<header class="masthead">
+<body${tasarim === 'gazeta' ? ' class="gz"' : tasarim === 'qurno' ? ' class="qz"' : tasarim === 'endzone' ? ' class="ez"' : ''}>
+${tasarim === 'gazeta' ? gzHeader(active) : tasarim === 'qurno' ? qzHeader(active) : tasarim === 'endzone' ? ezHeader(active) : `<header class="masthead">
   <div class="wrap mast-top">
     <div class="mast-date">${bugun}</div>
     <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="36" height="36"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span><span class="logo-tag">Emlak haberleri ve hesaplama araçları</span></a>
@@ -109,7 +109,7 @@ ${tasarim === 'gazeta' ? gzHeader(active) : tasarim === 'qurno' ? qzHeader(activ
 <main>
 ${body}
 </main>
-${tasarim === 'gazeta' ? gzFooter() : tasarim === 'qurno' ? qzFooter() : `<footer class="site-foot">
+${tasarim === 'gazeta' ? gzFooter() : tasarim === 'qurno' ? qzFooter() : tasarim === 'endzone' ? ezFooter() : `<footer class="site-foot">
   <div class="wrap foot-grid">
     <div>
       <a class="foot-name" href="/">${cfg.name.toLowerCase()}</a>
@@ -420,6 +420,68 @@ function gzFooter() {
     ${kutuBaslik('Hesaplama araçları', '/araclar/')}
     ${widgets}
   </aside>
+</div>`,
+  }));
+}
+
+// ---------- Tasarım önizlemesi 3 (EndZone düzeni, koyu ve iddialı; üstte Dispatch tarzı başlık): /onizleme-3/ ----------
+const EZ_MENU = [['/', 'Gündem'], ['/haberler/kategori/kira/', 'Kira'], ['/haberler/kategori/konut-fiyatlari/', 'Konut fiyatları'], ['/haberler/kategori/kredi/', 'Kredi'], ['/konut-kredisi-faiz-oranlari/', 'Faizler'], ['/araclar/', 'Araçlar'], ['/sehirler/', 'Şehirler']];
+const ezAra = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+function ezHeader(active) {
+  return `<header class="ez-head"><div class="wrap ez-head-in">
+  <a class="ez-logo" href="/" aria-label="${cfg.name} anasayfa"><span>AMOR</span><span>Tİ</span></a>
+  <nav class="ez-nav" aria-label="Menü">${EZ_MENU.map((n) => `<a href="${n[0]}"${active === n[0] ? ' aria-current="page"' : ''}>${n[1]}</a>`).join('')}</nav>
+  <a class="ez-ara" href="/ilan-ara/">${ezAra}<span>İlan sitelerinde ev ara</span></a>
+</div></header>`;
+}
+function ezFooter() {
+  return `<footer class="ez-foot"><div class="wrap">
+  <nav class="ez-foot-nav"><a href="/kunye/">Künye</a><a href="/araclar/">Araçlar</a><a href="/sehirler/">Şehirler</a><a href="/kira-paylas/">Kiranı paylaş</a><a href="mailto:${cfg.contactEmail}">İletişim</a></nav>
+  <div class="ez-foot-alt"><span>© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}. Hesaplamalar bilgilendirme amaçlıdır.</span><a href="/gizlilik/">Gizlilik ve KVKK</a></div>
+</div></footer>`;
+}
+{
+  const yer = (h) => { const il = h.sehirler.map((x) => ilBul(x)).find(Boolean); return il ? `<a class="ez-yer" href="/${il.slug}/">${il.ad}</a>` : ''; };
+  const meta = (h) => `<div class="ez-meta">${yer(h)}<span>${h.tarihMetin}</span></div>`;
+  const kat = (h) => `<a class="ez-kat" href="/haberler/kategori/${katSlug(h.kategori)}/">${h.kategori}</a>`;
+  const [ld, ...digerleri] = haberler;
+  const ust = digerleri.slice(0, 4), sira = digerleri.slice(4, 7), liste = digerleri.slice(7, 15);
+  write('/onizleme-3/', layout({
+    title: 'Tasarım önizlemesi 3', description: 'Koyu tasarım önizlemesi', path: '/onizleme-3/', active: '/', noindex: true, tasarim: 'endzone',
+    body: `<div class="wrap ez-home">
+  <section class="ez-hero">
+    <article class="ez-lead">
+      <a class="ez-lead-img" href="/haberler/${ld.slug}/" tabindex="-1" aria-hidden="true">${img(ld, '', false)}</a>
+      <div class="ez-lead-txt">
+        ${kat(ld)}
+        <h1><a href="/haberler/${ld.slug}/">${esc(ld.baslik)}</a></h1>
+        <p>${esc(ld.ozet)}</p>
+        ${meta(ld)}
+      </div>
+    </article>
+    <aside class="ez-top" aria-label="Öne çıkanlar">
+      <h2 class="ez-label">Öne çıkanlar</h2>
+      ${ust.map((h) => `<article class="ez-top-i"><div><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3>${meta(h)}</div><a class="ez-top-img" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a></article>`).join('')}
+    </aside>
+  </section>
+  <section class="ez-row">
+    <div class="ez-sec-h"><h2>Gündem</h2><a class="ez-chip" href="/haberler/">Tümü</a></div>
+    <div class="ez-cards">${sira.map((h) => `<article class="ez-card"><a class="ez-card-img" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}<span class="ez-kat">${h.kategori}</span></a><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3>${meta(h)}</article>`).join('')}</div>
+  </section>
+  <section class="ez-latest">
+    <div class="ez-list">
+      <div class="ez-sec-h"><h2>Son haberler</h2><a class="ez-chip" href="/haberler/">Tümünü gör</a></div>
+      ${liste.map((h) => `<article class="ez-list-i"><div>${kat(h)}<h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3>${meta(h)}</div><a class="ez-list-img" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a></article>`).join('')}
+    </div>
+    <aside class="ez-tools" aria-label="Hesaplama araçları">
+      <div class="ez-tools-h"><h2>Hesapla</h2><a class="ez-chip" href="/araclar/">Tüm araçlar</a></div>
+      ${widgets}
+    </aside>
+  </section>
+  <section class="ez-sehir">
+    <div class="ez-sec-h"><h2>Şehir ve bölge rehberleri</h2><a class="ez-chip" href="/sehirler/">Tümü</a></div>
+    ${sehirKartlari()}
+  </section>
 </div>`,
   }));
 }
@@ -805,13 +867,13 @@ write('/offline/', layout({
 }));
 
 // ---------- SEO dosyaları ----------
-const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/', '/onizleme/', '/onizleme-2/'].includes(u));
+const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/', '/onizleme/', '/onizleme-2/', '/onizleme-3/'].includes(u));
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexable.map((u) => `  <url><loc>${abs(u)}</loc></url>`).join('\n')}
 </urlset>
 `);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\nDisallow: /onizleme/\nDisallow: /onizleme-2/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
+fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\nDisallow: /onizleme/\nDisallow: /onizleme-2/\nDisallow: /onizleme-3/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'llms.txt'), `# ${cfg.name}
 
 > ${cfg.tagline}. Türkiye'de ev alma, kiralama ve konut kredisi kararları için ücretsiz hesaplama araçları, İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölge rehberleri, emlak haberleri.
