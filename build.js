@@ -15,7 +15,7 @@ const { tools, amortismanForm, icons, bankaSec, field } = require('./pages/tools
 const OUT = path.join(__dirname, 'dist');
 // Önbellek kırıcı: dosya içeriği değişince adres değişir
 const ver = (f) => require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'src/assets', f))).digest('hex').slice(0, 8);
-const V = { css: ver('style.css'), js: ver('app.js') };
+const V = { css: ver('style.css'), js: ver('app.js'), gz: ver('gazeta.css') };
 const urls = [];
 
 // ---------- yardımcılar ----------
@@ -58,7 +58,7 @@ const GUNLER = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'
 const AYLAR_ = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const bugun = (() => { const d = new Date(Date.now() + 3 * 3600e3); return `${d.getUTCDate()} ${AYLAR_[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${GUNLER[d.getUTCDay()]}`; })();
 
-function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website' }) {
+function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website', tasarim = '' }) {
   urls.push(p);
   const fullTitle = title.includes(cfg.name) ? title : `${title} | ${cfg.name}`;
   // KVKK: Google Analytics Consent Mode ile; izin verilmeden analiz çerezi yazılmaz. Çerez bandı aşağıda (cerezBandi).
@@ -90,12 +90,12 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <link rel="preload" href="/assets/fonts/league-spartan-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/questrial-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>try{var t=localStorage.getItem('amorti-tema');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<link rel="stylesheet" href="/assets/style.css?v=${V.css}">
+<link rel="stylesheet" href="/assets/style.css?v=${V.css}">${tasarim === 'gazeta' ? `\n<link rel="stylesheet" href="/assets/gazeta.css?v=${V.gz}">` : ''}
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 ${ga}
 </head>
-<body>
-<header class="masthead">
+<body${tasarim ? ` class="gz"` : ''}>
+${tasarim === 'gazeta' ? gzHeader(active) : `<header class="masthead">
   <div class="wrap mast-top">
     <div class="mast-date">${bugun}</div>
     <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="36" height="36"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span><span class="logo-tag">Emlak haberleri ve hesaplama araçları</span></a>
@@ -105,11 +105,11 @@ ${ga}
     ${navItems.map((n) => (n === 'sep' ? '<span class="sep" aria-hidden="true"></span>' : `<a href="${n[0]}"${active === n[0] ? ' aria-current="page"' : ''}>${n[1]}</a>`)).join('')}
   </div></nav>
   ${ticker()}
-</header>
+</header>`}
 <main>
 ${body}
 </main>
-<footer class="site-foot">
+${tasarim === 'gazeta' ? gzFooter() : `<footer class="site-foot">
   <div class="wrap foot-grid">
     <div>
       <a class="foot-name" href="/">${cfg.name.toLowerCase()}</a>
@@ -131,7 +131,7 @@ ${body}
     </div>
   </div>
   <div class="wrap"><p class="small" style="margin:24px 0 0">© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}</p></div>
-</footer>
+</footer>`}
 <script>window.AMORTI_ENF=${JSON.stringify(enf.yol)};window.AMORTI_ILAN=${ILAN_CFG};</script>
 <script src="/assets/app.js?v=${V.js}" defer></script>
 ${cerezBandi}
@@ -361,6 +361,66 @@ ${crumbs(c)}
   </div>
   <aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar</h3>${toolList(tools.filter((x) => x.slug !== t.slug))}</div></aside>
 </div></div>`,
+  }));
+}
+
+// ---------- Tasarım önizlemesi (Gazeta düzeni): /onizleme/ ----------
+const temaBtn = '<button type="button" class="theme-btn" aria-label="Koyu ve açık mod arasında geç" title="Koyu / açık mod"><svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>';
+function gzHeader(active) {
+  return `<header class="gz-head">
+  <div class="gz-top"><div class="wrap"><span class="gz-date">${bugun}</span><span class="gz-top-r"><a href="/kira-paylas/">Kiranı paylaş</a><a href="/ilan-ara/">İlan ara</a>${temaBtn}</span></div></div>
+  <div class="wrap gz-brand">
+    <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="44" height="44"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span><span class="logo-tag">Emlak haberleri ve hesaplama araçları</span></a>
+    <div class="gz-adslot" aria-hidden="true"><span>Reklam alanı · 728×90</span></div>
+  </div>
+  <nav class="gz-nav" aria-label="Kategoriler"><div class="wrap">
+    ${navItems.filter((n) => n !== 'sep').map((n) => `<a href="${n[0]}"${active === n[0] ? ' aria-current="page"' : ''}>${n[1]}</a>`).join('')}
+  </div></nav>
+  ${ticker()}
+</header>`;
+}
+function gzFooter() {
+  return `<footer class="gz-foot">
+  <div class="wrap gz-foot-grid">
+    <div><div class="gz-foot-title">Hesaplama araçları</div><ul>${tools.map((t) => `<li><a href="/araclar/${t.slug}/">${t.menu}</a></li>`).join('')}<li><a href="/ilan-ara/">İlan sitelerinde hazır arama</a></li></ul></div>
+    <div><div class="gz-foot-title">Şehirler</div><ul>${iller.filter((i) => i.tur === 'buyuk').map((i) => `<li><a href="/${i.slug}/">${i.ad}</a></li>`).join('')}<li><a href="/sehirler/">Yazlık bölgeler</a></li></ul></div>
+    <div><div class="gz-foot-title">Kategoriler</div><div class="gz-tags">${KATEGORILER.map(([sl, a]) => `<a href="/haberler/kategori/${sl}/">${a}</a>`).join('')}<a href="/konut-kredisi-faiz-oranlari/">Kredi faizleri</a></div></div>
+    <div><div class="gz-foot-title">${cfg.name}</div><p>${cfg.tagline}. Hesaplamalar bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p><ul><li><a href="/kunye/">Künye</a></li><li><a href="/gizlilik/">Gizlilik ve KVKK</a></li></ul></div>
+  </div>
+  <div class="gz-foot-bottom"><div class="wrap"><span class="gz-foot-logo">${logoMark}<b>${cfg.name.toLowerCase()}</b></span><p>© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}</p></div></div>
+</footer>`;
+}
+{
+  const kutuBaslik = (t, href) => `<div class="gz-boxtitle"><h2>${href ? `<a href="${href}">${t}</a>` : t}</h2></div>`;
+  const rozet = (h) => `<span class="gz-badge">${h.kategori}</span>`;
+  const sol = haberler.slice(5, 13);
+  const kat = (ad) => haberler.filter((h) => h.kategori === ad);
+  const blok = (ad, sl) => { const l = kat(ad); if (l.length < 2) return ''; const [b, ...d] = l; return `${kutuBaslik(ad, `/haberler/kategori/${sl}/`)}
+    <div class="gz-blok"><a class="gz-blok-big" href="/haberler/${b.slug}/">${img(b)}<span class="gz-blok-cap">${esc(b.baslik)}</span></a>
+    <div class="gz-blok-list"><article><div class="gz-date-s">${b.tarihMetin}</div><p>${esc(b.ozet)}</p></article>${d.slice(0, 3).map((h) => `<a href="/haberler/${h.slug}/">${esc(h.baslik)}</a>`).join('')}</div></div>`; };
+  write('/onizleme/', layout({
+    title: 'Tasarım önizlemesi', description: 'Yeni tasarım önizlemesi', path: '/onizleme/', active: '/', noindex: true, tasarim: 'gazeta',
+    body: `<div class="wrap gz-home">
+  <aside class="gz-left" aria-label="Son haberler">
+    ${kutuBaslik('Son haberler')}
+    <ul class="gz-latest">${sol.map((h) => `<li><a class="gz-cat" href="/haberler/kategori/${katSlug(h.kategori)}/">${h.kategori}</a><span class="gz-date-s">${h.tarihMetin}</span><a class="gz-t" href="/haberler/${h.slug}/">${esc(h.baslik)}</a></li>`).join('')}</ul>
+    <a class="gz-btn" href="/haberler/">Tüm haberler</a>
+    <div class="gz-side-ad" aria-hidden="true"><span>Reklam alanı<br>160×600</span></div>
+  </aside>
+  <div class="gz-center">
+    ${lead ? `<article class="gz-lead"><a href="/haberler/${lead.slug}/">${img(lead, '', false)}<span class="gz-lead-cap">${rozet(lead)}<span class="gz-date-s">${lead.tarihMetin}</span><span class="gz-lead-t">${esc(lead.baslik)}</span></span></a></article>` : ''}
+    ${kutuBaslik('Öne çıkan haberler', '/haberler/')}
+    <div class="gz-cards">${rest.slice(0, 4).map((h) => `<article class="gz-card"><a class="gz-card-img" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}${rozet(h)}</a><h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><div class="gz-date-s">${h.tarihMetin}</div><p>${esc(h.ozet)}</p></article>`).join('')}</div>
+    ${blok('Kira', 'kira')}
+    ${blok('Konut fiyatları', 'konut-fiyatlari')}
+    ${kutuBaslik('Şehir ve bölge rehberleri', '/sehirler/')}
+    ${sehirKartlari()}
+  </div>
+  <aside class="gz-right" aria-label="Hesaplama araçları">
+    ${kutuBaslik('Hesaplama araçları', '/araclar/')}
+    ${widgets}
+  </aside>
+</div>`,
   }));
 }
 
@@ -695,13 +755,13 @@ write('/offline/', layout({
 }));
 
 // ---------- SEO dosyaları ----------
-const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/'].includes(u));
+const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/', '/onizleme/'].includes(u));
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexable.map((u) => `  <url><loc>${abs(u)}</loc></url>`).join('\n')}
 </urlset>
 `);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
+fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\nDisallow: /onizleme/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'llms.txt'), `# ${cfg.name}
 
 > ${cfg.tagline}. Türkiye'de ev alma, kiralama ve konut kredisi kararları için ücretsiz hesaplama araçları, İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölge rehberleri, emlak haberleri.
