@@ -942,7 +942,7 @@ const lastmod = (u) => {
 if (cfg.adsenseClient) fs.writeFileSync(path.join(OUT, 'ads.txt'), `google.com, ${cfg.adsenseClient.replace('ca-', '')}, DIRECT, f08c47fec0942fa0\n`);
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${indexable.map((u) => `  <url><loc>${abs(u)}</loc><lastmod>${lastmod(u)}</lastmod>${haberUrl[u] ? `<image:image><image:loc>${abs(haberUrl[u].kapak)}</image:loc></image:image>` : ''}</url>`).join('\n')}
+${indexable.map((u) => `  <url><loc>${abs(u)}</loc><lastmod>${lastmod(u)}</lastmod>${haberUrl[u] ? `<image:image><image:loc>${abs(haberUrl[u].kapak)}</image:loc></image:image>` : (foto(u.split('/').filter(Boolean).join('/')) ? `<image:image><image:loc>${abs(foto(u.split('/').filter(Boolean).join('/')).dosya)}</image:loc></image:image>` : '')}</url>`).join('\n')}
 </urlset>
 `);
 const xmlEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
