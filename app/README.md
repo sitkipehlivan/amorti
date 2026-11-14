@@ -5,7 +5,7 @@ araçları siteyle birlikte anında güncellenir, mağazaya yeniden gönderim ge
 gösterilir. EV Türkiye uygulamasıyla aynı yapı.
 
 - Paket kimliği: `com.amorti.app` · Uygulama adı: Amorti
-- Site adresi: `capacitor.config.ts` → `SITE` (şimdilik amorti-mugw.netlify.app; kendi alan adı bağlanınca güncellenip `npx cap sync` çalıştırılmalı)
+- Site adresi: `capacitor.config.ts` → `SITE` (şimdilik amorti.online; kendi alan adı bağlanınca güncellenip `npx cap sync` çalıştırılmalı)
 - Simge ve açılış ekranı: `resources/` (üretici: `node ../scripts/app-ikon.js`) → `npm run assets`
 - Yerel eklentiler: uygulama içi tarayıcı (sahibinden / Hepsiemlak / Emlakjet ve banka linkleri bununla açılır), paylaşım, açılış ekranı, durum çubuğu
 - Site, uygulamada açıldığını kullanıcı aracısındaki `AmortiApp/1.0` ekinden anlar (`html.in-app` sınıfı).

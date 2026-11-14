@@ -6,9 +6,9 @@ Görseller: `ikon-512.png` (resources/icon.png'den 512), `one-cikan-gorsel.png` 
 - **Uygulama adı (30):** Amorti: Kira, Kredi ve Ev Ara
 - **Kategori:** Ev ve Mekân (House & Home)
 - **Etiketler:** Emlak, Finans, Haberler
-- **Web sitesi:** https://amorti-mugw.netlify.app (alan adı bağlanınca güncelle)
-- **E-posta:** iletisim@amorti.com.tr
-- **Gizlilik politikası:** https://amorti-mugw.netlify.app/gizlilik/
+- **Web sitesi:** https://amorti.online (alan adı bağlanınca güncelle)
+- **E-posta:** iletisim@amorti.online
+- **Gizlilik politikası:** https://amorti.online/gizlilik/
 
 ### Kısa açıklama (80)
 Kira artışını hesapla, kredi faizlerini karşılaştır, ilan sitelerinde hazır ara.

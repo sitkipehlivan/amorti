@@ -2,11 +2,11 @@
 module.exports = {
   name: 'Amorti',
   tagline: 'Ev alırken ve kiralarken hesabı netleştir',
-  domain: 'https://amorti-mugw.netlify.app', // kendi domain bağlanınca güncellenecek
+  domain: 'https://amorti.online',
   lang: 'tr',
   publisher: 'Advance Dijital Medya Reklam Hizmetleri A.Ş.',
   editor: 'Sıtkı Pehlivan',
-  contactEmail: 'iletisim@amorti.com.tr',
+  contactEmail: 'iletisim@amorti.online',
   address: 'İstiklal Mah. Şehit Ali Çelik Sk. Asran Apt. No: 33 İç Kapı No: 3, Ümraniye / İstanbul',
   mersis: '0008193677700001',
   hosting: 'Netlify, Inc. (ABD)',
