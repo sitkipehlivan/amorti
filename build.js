@@ -196,14 +196,14 @@ const wHead = (href, icon, title) => `<div class="w-head"><span class="tool-icon
 const widgets = `
 <form class="calc mini" data-tool="kira-artis" novalidate>
   ${wHead('/araclar/kira-artis-hesaplama/', icons.up, 'Kiran ne kadar artacak?')}
-  ${miniField('kira', 'Şu anki kiran', { id: 'w-kira', unit: 'TL', money: true, value: '25.000' })}
+  ${miniField('kira', 'Şu anki kiran', { id: 'w-kira', unit: 'TL', money: true, value: '30.000' })}
   <div class="field"><label for="w-ay">Sözleşme yenileme ayı</label><div class="input"><select id="w-ay" name="ay">${oranlar.slice(0, 6).map((o, i) => `<option value="${o.oran}"${i === 0 ? ' selected' : ''}>${o.ay} (%${tr2(o.oran)})</option>`).join('')}</select></div></div>
   <div class="result" aria-live="polite" hidden><span class="small">Yeni kiran en fazla</span><div class="mid" data-out="yeni">–</div><span class="small">Aylık artış: <span data-out="artis"></span></span></div>
 </form>
 <form class="calc mini" data-tool="amortisman" novalidate>
   ${wHead('/araclar/amortisman-hesaplama/', icons.hourglass, 'Ev kaç yılda kendini öder?')}
   ${miniField('fiyat', 'Satış fiyatı', { id: 'w-fiyat', unit: 'TL', money: true, value: '6.500.000' })}
-  ${miniField('kira', 'Alınabilecek aylık kira', { id: 'w-akira', unit: 'TL', money: true, value: '30.000' })}
+  ${miniField('kira', 'Alınabilecek aylık kira', { id: 'w-akira', unit: 'TL', money: true, value: '38.000' })}
   ${hidden({ masraf: '4,4', bos: '0,5', bakim: '5', gider: '0', fark: '0' })}
   <div class="result" aria-live="polite" hidden><div class="mid" data-out="yil">–</div><span data-out="verdict" class="verdict"></span> <a class="small" href="/araclar/amortisman-hesaplama/">Detaylı hesapla</a></div>
 </form>
@@ -242,10 +242,10 @@ ${ad('mrec')}
 </form>
 <form class="calc mini" data-tool="kredi-kira" novalidate>
   ${wHead('/araclar/kredi-mi-kira-mi/', icons.scale, 'Kredi mi, kira mı?')}
-  ${miniField('fiyat', 'Ev fiyatı', { id: 'w-kk-fiyat', unit: 'TL', money: true, value: '6.500.000' })}
-  ${miniField('kira', 'Ödediğin aylık kira', { id: 'w-kk-kira', unit: 'TL', money: true, value: '30.000' })}
+  ${miniField('fiyat', 'Ev fiyatı', { id: 'w-kk-fiyat', unit: 'TL', money: true, value: '4.500.000' })}
+  ${miniField('kira', 'Ödediğin aylık kira', { id: 'w-kk-kira', unit: 'TL', money: true, value: '45.000' })}
   <span class="mini-label">Peşinat</span>
-  <div class="chips">${[10, 20, 30, 50].map((y) => `<label class="chip"><input type="radio" name="pesinYuzde" value="${y}"${y === 20 ? ' checked' : ''}><span>%${y}</span></label>`).join('')}</div>
+  <div class="chips">${[10, 20, 30, 50].map((y) => `<label class="chip"><input type="radio" name="pesinYuzde" value="${y}"${y === 50 ? ' checked' : ''}><span>%${y}</span></label>`).join('')}</div>
   ${hidden({ faiz: String(faiz.tipik).replace('.', ','), vade: '120', fark: '0' })}
   <div class="result" aria-live="polite" hidden><span class="small">Aylık kredi taksiti</span><div class="mid" data-out="taksit">–</div><span data-out="verdict" class="verdict"></span> <a class="small" href="/araclar/kredi-mi-kira-mi/">Detaylı karşılaştır</a></div>
 </form>
