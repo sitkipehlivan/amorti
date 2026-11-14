@@ -524,3 +524,30 @@ label.chip:has(input:focus-visible), button.chip:focus-visible { outline: 3px so
 @media (max-width: 900px) { .sehir-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .meta .sehir-etiket { font-weight: 700; color: var(--ink-2); text-decoration: none; }
 .meta .sehir-etiket:hover { color: var(--accent); }
+
+/* ---------- Hareket (araçlar) ---------- */
+/* Kayan seçim zemini */
+.seg.kayar { position: relative; }
+.seg-pill { position: absolute; left: 0; top: 0; border-radius: 999px; background: var(--accent); box-shadow: 0 4px 14px rgba(0,0,0,.12); transition: transform .38s cubic-bezier(.3,1.3,.5,1), width .38s cubic-bezier(.3,1.3,.5,1); pointer-events: none; z-index: 0; }
+.seg.kayar label { position: relative; z-index: 1; }
+.seg.kayar input:checked + span { background: transparent; }
+.seg.kayar span { transition: color .25s; }
+/* Seçim çipleri: yumuşak renk geçişi ve basınca hafif çökme */
+.chip, .bank-chip { transition: background-color .22s, border-color .22s, color .22s, transform .12s; }
+.chip:active, .bank-chip:active, .seg span:active, .btn-hesapla:active { transform: scale(.96); }
+/* Sonuç kutusu açılırken bulanıktan netleşir */
+.result:not([hidden]) { animation: sonucGel .5s cubic-bezier(.2,.8,.2,1); }
+@keyframes sonucGel { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.mid, .big { font-variant-numeric: tabular-nums; }
+/* İlan arama sonuçları sırayla gelir */
+.ia-siteler .site-btn { animation: sonucGel .45s cubic-bezier(.2,.8,.2,1) backwards; }
+.ia-siteler .site-btn:nth-child(2) { animation-delay: .07s; }
+.ia-siteler .site-btn:nth-child(3) { animation-delay: .14s; }
+/* Kaydırınca gelen kartlar ve satırlar */
+html.hareket .rv { transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1), filter .7s cubic-bezier(.2,.8,.2,1); transition-delay: var(--gec, 0ms); }
+html.hareket .rv:not(.gor) { opacity: 0; transform: translateY(22px); filter: blur(8px); }
+html.hareket tr.rv:not(.gor) { transform: translateY(12px); }
+@media (prefers-reduced-motion: reduce) {
+  .seg-pill, .chip, .bank-chip { transition: none; }
+  .result:not([hidden]), .ia-siteler .site-btn { animation: none; }
+}

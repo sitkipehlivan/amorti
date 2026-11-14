@@ -19,8 +19,37 @@
   function tl(n) { return isFinite(n) ? nf0.format(Math.round(n)) + ' TL' : '–'; }
   function val(form, name) { var el = form.elements[name]; return el ? parse(el.value) : NaN; }
   function $(root, sel) { return root.querySelector(sel); }
-  function set(root, key, html) { var el = root.querySelector('[data-out="' + key + '"]'); if (el) el.innerHTML = html; }
-  function show(root, on) { var r = root.querySelector('.result'); if (r) r.hidden = !on; }
+  // Hareket: "hareketi azalt" açıksa hiç animasyon yok
+  var AZ_HAREKET = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Ana sonuç sayıları (.mid, .big) eski değerden yeni değere kısa sürede akar
+  var SAYI = /(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?)/;
+  function trSayi(t) { return parseFloat(t.replace(/\./g, '').replace(',', '.')); }
+  function say(el, html) {
+    var m = SAYI.exec(html);
+    if (AZ_HAREKET || !m) { el.innerHTML = html; el._n = m ? trSayi(m[1]) : NaN; return; }
+    var hedef = trSayi(m[1]), ond = (m[1].split(',')[1] || '').length;
+    var bas = html.slice(0, m.index), son = html.slice(m.index + m[1].length);
+    var gizli = el.closest('.result') && el.closest('.result').hidden;
+    var from = isFinite(el._n) && !gizli && el._shown ? el._n : 0;
+    el._n = hedef; el._shown = true;
+    if (el._raf) cancelAnimationFrame(el._raf);
+    if (from === hedef) { el.innerHTML = html; return; }
+    var fmt = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: ond, maximumFractionDigits: ond });
+    var sure = from === 0 ? 650 : 320, t0 = null;
+    function adim(t) {
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / sure), e = 1 - Math.pow(1 - k, 3);
+      el.innerHTML = k < 1 ? bas + fmt.format(from + (hedef - from) * e) + son : html;
+      if (k < 1) el._raf = requestAnimationFrame(adim); else el._raf = 0;
+    }
+    el._raf = requestAnimationFrame(adim);
+  }
+  function set(root, key, html) {
+    var el = root.querySelector('[data-out="' + key + '"]');
+    if (!el) return;
+    if (el.classList.contains('mid') || el.classList.contains('big')) say(el, String(html)); else el.innerHTML = html;
+  }
+  function show(root, on) { var r = root.querySelector('.result'); if (!r) return; if (!on) r.querySelectorAll('.mid,.big').forEach(function (x) { x._shown = false; }); r.hidden = !on; }
 
   function yearsGrid(container, years, markYear) {
     if (!container) return;
@@ -480,6 +509,50 @@
       e.preventDefault();
       B.open({ url: a.href, toolbarColor: '#E85D04' });
     }, true);
+  }
+
+  // ---------- Hareket: kayan seçim zemini ve kaydırınca gelen araçlar ----------
+  // Satılık / Kiralık gibi iki-üç seçenekli alanlarda seçili zemin kayarak yer değiştirir
+  function segKur(seg) {
+    if (seg._pill) return;
+    var pill = document.createElement('i');
+    pill.className = 'seg-pill'; pill.setAttribute('aria-hidden', 'true');
+    seg.insertBefore(pill, seg.firstChild); seg._pill = pill; seg.classList.add('kayar');
+    function yerlestir(anim) {
+      var c = seg.querySelector('input:checked');
+      var span = c && c.nextElementSibling;
+      if (!span || !span.offsetWidth) return;
+      if (!anim) pill.style.transition = 'none';
+      var r = span.getBoundingClientRect(), sr = seg.getBoundingClientRect();
+      pill.style.width = r.width + 'px';
+      pill.style.height = r.height + 'px';
+      pill.style.transform = 'translate(' + (r.left - sr.left - seg.clientLeft) + 'px,' + (r.top - sr.top - seg.clientTop) + 'px)';
+      if (!anim) { pill.offsetWidth; pill.style.transition = ''; }
+    }
+    seg.addEventListener('change', function () { yerlestir(true); });
+    seg._yer = yerlestir; yerlestir(false);
+  }
+  var segler = document.querySelectorAll('.seg');
+  segler.forEach(segKur);
+  window.addEventListener('resize', function () { segler.forEach(function (s) { s._yer && s._yer(false); }); });
+  window.addEventListener('load', function () { segler.forEach(function (s) { s._yer && s._yer(false); }); });
+
+  // Araç kartları ve banka satırları sayfa kaydırıldıkça sırayla, bulanıktan netleşerek gelir
+  if (!AZ_HAREKET && 'IntersectionObserver' in window) {
+    var hedefler = document.querySelectorAll('form.calc, .tool-list > *, table.faiz-tablo tbody tr, .faiz-row');
+    if (hedefler.length) {
+      document.documentElement.classList.add('hareket');
+      var gozcu = new IntersectionObserver(function (girdiler) {
+        var sira = 0;
+        girdiler.forEach(function (g) {
+          if (!g.isIntersecting) return;
+          g.target.style.setProperty('--gec', (Math.min(sira++, 6) * 70) + 'ms');
+          g.target.classList.add('gor');
+          gozcu.unobserve(g.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      hedefler.forEach(function (el) { el.classList.add('rv'); gozcu.observe(el); });
+    }
   }
 
   // Koyu / açık mod

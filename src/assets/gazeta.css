@@ -98,7 +98,7 @@ body.gz .ticker-track b { color: #FF5A5A; }
 :root[data-theme="dark"] body.gz .calc.mini .w-head .tool-icon { background: #333; }
 .gz-right .result { border-radius: 0; }
 .gz-right .side-link { border-radius: 0; }
-.gz-right .chip, .gz-right .bank-chip, .gz-right .seg, .gz-right .seg span { border-radius: 0; }
+.gz-right .chip, .gz-right .bank-chip, .gz-right .seg, .gz-right .seg span, .gz-right .seg-pill { border-radius: 0; }
 .gz-right .side-box { padding: 18px; margin-bottom: 22px; background: var(--gz-box); }
 body.gz .sehir-kart { border-radius: 0; background: var(--gz-black); }
 body.gz .sehir-kart:hover { background: #333; }
