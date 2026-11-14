@@ -4,6 +4,7 @@ ozet: TCMB'nin Eylül 2026 Konut Fiyat Endeksi'ne göre İstanbul'da konut fiyat
 tarih: 2026-10-20
 kategori: Konut fiyatları
 ilceler: istanbul
+sehir: istanbul
 kaynak: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, 2026
 gorsel: karsilastirma
 gorsel_etiket: Konut fiyatlarında yıllık artış, Eylül 2026

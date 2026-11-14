@@ -511,3 +511,16 @@ label.chip:has(input:focus-visible), button.chip:focus-visible { outline: 3px so
   .home-grid { align-items: stretch; }
   .home-side > form.calc, .home-side > .side-title { width: 100%; box-sizing: border-box; }
 }
+
+/* ---------- Şehirler ---------- */
+.sehir-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.sehir-kart { display: flex; flex-direction: column; gap: 4px; padding: 18px 16px; border-radius: var(--r); background: var(--band); color: #fff; text-decoration: none; transition: transform .15s; }
+.sehir-kart:hover { transform: translateY(-2px); color: #fff; }
+.sehir-kart b { font-family: var(--serif); font-size: 1.35rem; }
+.sehir-kart span { font-size: .85rem; opacity: .9; }
+.yazlik-baslik { margin: 26px 0 12px; font-size: 1.1rem; }
+.ilce-grid a small { display: block; font-size: .75rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.ilce-grid-sm a { padding: 8px 10px; font-size: .88rem; }
+@media (max-width: 900px) { .sehir-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.meta .sehir-etiket { font-weight: 700; color: var(--ink-2); text-decoration: none; }
+.meta .sehir-etiket:hover { color: var(--accent); }

@@ -4,6 +4,7 @@ ozet: TÜİK verilerine göre ağustosta 127.410 konut satıldı; satışlar yı
 tarih: 2026-09-21
 kategori: Piyasa
 ilceler: istanbul
+sehir: istanbul
 kaynak: TÜİK Konut Satış İstatistikleri, Ağustos 2026
 gorsel: rakam
 gorsel_rakam: 127.410

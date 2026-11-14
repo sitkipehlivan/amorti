@@ -4,21 +4,22 @@ Bu dosya, her sabah çalışan zamanlanmış görevin tüm kurallarını içerir
 
 ## Sitenin okuru ve haberin amacı
 
-Okur: İstanbul'da ev almayı, kiralamayı ya da yatırım yapmayı düşünen sıradan biri. Haber ona şu sorulardan birinde yardım etmeli: "Ev fiyatları/kiralar nereye gidiyor?", "Kredi çekmeli miyim?", "Hangi ilçede ne oluyor, değer kazanır mı?", "Kiracı/ev sahibi olarak haklarım ve yükümlülüklerim değişti mi?"
+Okur: İstanbul, İzmir, Ankara, Bursa, Antalya'da ya da sahildeki yazlık bölgelerde (Bodrum, Fethiye, Marmaris, Çeşme/Alaçatı, Urla, Seferihisar, Alanya, Kaş, Kemer, Side/Manavgat, Kuşadası, Didim, Ayvalık) ev almayı, kiralamayı ya da yatırım yapmayı düşünen sıradan biri. Site tektir; haberler ilgili şehrin ve ilçenin sayfalarında da görünür. Haber ona şu sorulardan birinde yardım etmeli: "Ev fiyatları/kiralar nereye gidiyor?", "Kredi çekmeli miyim?", "Hangi ilçede ne oluyor, değer kazanır mı?", "Kiracı/ev sahibi olarak haklarım ve yükümlülüklerim değişti mi?"
 
 ## Konular (öncelik sırasıyla)
 
 1. **Resmî veri açıklamaları:** TÜİK kira artış oranı (TÜFE 12 aylık ortalama), TÜİK konut satış istatistikleri, TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, TCMB faiz kararları (konut kredisine etkisiyle).
 2. **Konut kredisi:** bankaların konut kredisi faiz değişiklikleri, kamu destekli kampanyalar (ör. ilk ev kredisi), BDDK düzenlemeleri.
 3. **Mevzuat:** kira hukuku, tapu harcı, emlak vergisi, değerli konut vergisi, kentsel dönüşüm yasası, emlakçı komisyonu düzenlemeleri.
-4. **İstanbul ilçe gelişmeleri (yatırımcı gözüyle):** yeni metro/raylı sistem hatları ve açılış tarihleri, kentsel dönüşüm projeleri, imar planı değişiklikleri, büyük kamu projeleri (hastane, kampüs, park, sahil düzenlemesi), TOKİ/KİPTAŞ projeleri. Öncelik Anadolu yakası ilçeleri (sitede rehber sayfası olanlar), ama Avrupa yakası haberleri de yazılabilir.
-5. **Piyasa:** büyük konut projeleri, yabancıya satış verileri, deprem ve yapı güvenliğiyle ilgili kamu açıklamaları.
+4. **Şehir ve ilçe gelişmeleri (yatırımcı gözüyle):** İstanbul, İzmir, Ankara, Bursa ve Antalya'da yeni metro/raylı sistem hatları ve açılış tarihleri, kentsel dönüşüm projeleri, imar planı değişiklikleri, büyük kamu projeleri (hastane, kampüs, park, sahil düzenlemesi), TOKİ/KİPTAŞ ve büyükşehir belediyesi konut projeleri, şehir bazlı kira ve fiyat verileri (TCMB/TÜİK il kırılımları). Öncelik sitede rehber sayfası olan ilçeler.
+5. **Yazlık bölgeler:** Bodrum, Fethiye, Marmaris, Çeşme ve Alaçatı, Urla, Seferihisar, Alanya, Kaş, Kemer, Side/Manavgat, Kuşadası, Didim, Ayvalık için imar ve kıyı düzenlemeleri, kısa dönem kiralama izinleri ve denetimleri, yabancıya satış verileri, büyük altyapı (yol, havalimanı, liman, su). Bahar ve yaz aylarında bu konulara ağırlık ver.
+6. **Piyasa:** büyük konut projeleri, yabancıya satış verileri, deprem ve yapı güvenliğiyle ilgili kamu açıklamaları.
 
 Yazılmayacaklar: tek bir firmanın tanıtım/reklam bülteni ("X projesinde %20 indirim"), ünlülerin ev alım/satımı, magazin, doğrulanamayan "kulis" haberleri, köşe yazısı/yorum özetleri, siyasi polemik.
 
 ## Kaynak
 
-- Önce birincil kaynak: TÜİK bülteni, TCMB basın duyurusu/EVDS, Resmî Gazete, ilgili bakanlık, İBB / ilçe belediyesi / Metro İstanbul duyurusu, bankanın kendi sayfası.
+- Önce birincil kaynak: TÜİK bülteni, TCMB basın duyurusu/EVDS, Resmî Gazete, ilgili bakanlık, İBB, İzmir/Ankara/Bursa/Antalya/Muğla/Aydın/Balıkesir büyükşehir belediyeleri, ilçe belediyeleri, Metro İstanbul / İzmir Metro / EGO / Burulaş duyuruları, bankanın kendi sayfası.
 - Birincil kaynak yoksa en az iki güvenilir haber sitesinde aynı bilginin geçmesi gerekir.
 - Habere kaynak olacak sayfayı mutlaka açıp oku; arama sonucu özetiyle haber yazma.
 - Doğrulayamadığın rakamı yazma. Emin olmadığın haberi ekleme.
@@ -26,7 +27,8 @@ Yazılmayacaklar: tek bir firmanın tanıtım/reklam bülteni ("X projesinde %20
 ## Haber değeri ve tekrar
 
 - Son 24 saat içinde yayınlanmış/duyurulmuş gelişmeler. Pazartesi günü hafta sonunu da tara.
-- Günde **en fazla 3** haber. Yeni bir şey yoksa haber yazma; zorlama.
+- Günde **en fazla 4** haber. Yeni bir şey yoksa haber yazma; zorlama.
+- Türkiye geneli haberlerden sonra şehirleri dengeli tara: son 7 günde haberi çıkmamış şehirlere (İzmir, Ankara, Bursa, Antalya ve yazlık bölgeler) öncelik ver. Her gün her şehir için haber aramak zorunlu değil, ama hafta içinde her şehre en az bir kez bak.
 - `content/haberler/` altındaki son 30 günlük dosyaları oku. Aynı olayı (aynı veri açıklaması, aynı proje duyurusu) tekrar yazma. Önemli yeni bir gelişme varsa (ör. açılış tarihi kesinleşti) yeni haber yazılabilir ama başlık ve içerik yeni bilgiyi öne çıkarmalı.
 
 ## Yazım
@@ -42,7 +44,9 @@ Yazılmayacaklar: tek bir firmanın tanıtım/reklam bülteni ("X projesinde %20
   - `/araclar/kira-artis-hesaplama/`
   - `/araclar/konut-kredisi-hesaplama/`
   - `/araclar/kredi-mi-kira-mi/`
-  - İlçe haberinde ilgili ilçe rehberi: `/istanbul/<ilce-slug>/`
+  - Şehir haberinde şehir sayfası: `/<il-slug>/` (ör. `/izmir/`)
+  - İlçe haberinde ilgili ilçe rehberi (varsa): `/<il-slug>/<ilce-slug>/` (ör. `/izmir/karsiyaka/`, `/mugla/bodrum/`, Alaçatı için `/izmir/alacati/`). Rehberi olan ilçeler `data/sehirler.js` (rehberler) ve `data/ilceler.js` içindedir; rehberi yoksa şehir sayfasına link ver.
+  - İlçede ilan araması: `/ilan-ara/?il=<il-slug>&ilce=<ilce-slug>`
 - Sayılar Türkçe biçimde: 1.250.000 TL, %31,23, 2,89.
 - Yatırım tavsiyesi verme ("şimdi alın", "kaçırmayın" yok). Ne olduğunu ve okur için ne anlama geldiğini anlat.
 
@@ -62,7 +66,8 @@ baslik: Başlık
 ozet: Bir iki cümlelik özet.
 tarih: 2026-11-05
 kategori: Kira
-ilceler: istanbul
+sehir: turkiye
+ilceler:
 kaynak: TÜİK Tüketici Fiyat Endeksi, Ekim 2026
 gorsel: rakam
 gorsel_rakam: %31,23
@@ -79,8 +84,8 @@ Metin. [Link metni](/araclar/kira-artis-hesaplama/) ve **kalın** kullanılabili
 ```
 
 - `kategori` şu değerlerden biri: `Kira`, `Konut fiyatları`, `Kredi`, `Mevzuat`, `Ulaşım`, `Kentsel dönüşüm`, `Projeler`, `Piyasa`.
-- `ilceler`: virgülle ayrılmış ilçe slug'ları. Genel (tüm İstanbul'u ilgilendiren) haberlerde `istanbul`. İlçeye özel haberlerde ilgili ilçe slug'ları; slug listesi `data/ilceler.js` içindedir (adalar, atasehir, beykoz, cekmekoy, kadikoy, kartal, maltepe, pendik, sancaktepe, sultanbeyli, sile, tuzla, umraniye, uskudar). Listede olmayan bir ilçe (ör. Avrupa yakası) için `istanbul` yaz.
-- `gorsel` ve `gorsel_*` alanları: haberin kapak infografiği (aşağıdaki "Kapak görseli" bölümü). Her haberde zorunlu.
+- `sehir`: haberin ait olduğu şehir slug'ı: `istanbul`, `izmir`, `ankara`, `bursa`, `antalya`, `mugla`, `aydin`, `balikesir`. Birden fazla şehri ilgilendiriyorsa virgülle (`istanbul, izmir`). Tüm Türkiye'yi ilgilendiren haberlerde (kira artış oranı, TCMB faizi, ulusal konut satışları) `turkiye`. Bu alan haberin hangi şehir sayfasında görüneceğini belirler.
+- `ilceler`: ilçeye özel haberlerde ilgili ilçe slug'ları, virgülle (ör. `karsiyaka, bayrakli`). Slug'lar `data/sehirler.js` içindeki il listelerindedir (Türkçe karakterler sadeleştirilmiş: Çeşme → `cesme`, Ümraniye → `umraniye`). Şehir geneli veya Türkiye geneli haberde boş bırak.
 - `kaynak`: kaynağın adı; birincil kaynak linki varsa markdown link olarak: `[TÜİK TÜFE Ekim 2026](https://data.tuik.gov.tr/...)`.
 - Gövdede yalnızca: paragraf, `## ` / `### ` başlık, `- ` liste, `**kalın**`, `[link](url)`. HTML yazma.
 
@@ -103,7 +108,7 @@ TÜİK her ayın 3'ünde (hafta sonu/tatile denk gelirse sonraki iş günü) enf
 
 1. TÜİK bülteninden "12 aylık ortalamalara göre" TÜFE değişimini doğrula (en az iki kaynak veya TÜİK'in kendisi).
 2. Listenin **en başına** ekle: `{ ay: '<Ay> <Yıl>', oran: <sayı>, aciklama: '<açıklama günü>' },` — ay, oranın uygulanacağı aydır (ör. 3 Aralık'ta açıklanan oran "Aralık 2026").
-3. Aynı gün bununla ilgili bir haber yaz (kategori `Kira`, ilceler `istanbul`), örnek hesaplarla.
+3. Aynı gün bununla ilgili bir haber yaz (kategori `Kira`, sehir `turkiye`), örnek hesaplarla.
 4. `site.config.js` içindeki `updated` alanını bugünün tarihiyle güncelle (ör. `'3 Aralık 2026'`).
 
 ## Konut kredisi faizi varsayılanı
@@ -123,10 +128,10 @@ Araçlar kira artışını `data/enflasyon.js` dosyasındaki beklentiye göre he
 
 1. `npm ci` (ilk seferde) ve `node build.js` çalıştır; hata vermeden bitmeli ("Tamam: N sayfa"). Yeni haberin kapağını `dist/haberler/<slug>/kapak.png` dosyasını açarak kontrol et: yazılar taşmamalı, rakam doğru olmalı.
 2. Değişiklik varsa hepsini `main` dalına TEK commit ile ekle ve push et. Commit mesajı: `Haberler: N yeni` (oran güncellemesi varsa `+ kira oranı <Ay Yıl>`).
-3. Netlify push sonrası siteyi otomatik derler; ayrıca deploy yapma.
+3. Commit mesajına `[deploy]` EKLEME. Değişiklikler her gün 12:53'teki toplu yayınla canlıya çıkar (bkz. CLAUDE.md).
 4. Yeni haber ve oran güncellemesi yoksa hiçbir değişiklik yapma, commit atma.
 
 ## Rapor
 
 - Değişiklik yoksa yalnızca: "Yeni haber yok."
-- Varsa kısa özet: yayınlanan her haberin başlığı, kategorisi, ilgili ilçeleri ve canlı linki (`site.config.js` içindeki `domain` + `/haberler/<slug>/`), varsa kira oranı veya faiz varsayılanı güncellemesi.
+- Varsa kısa özet: yayınlanan her haberin başlığı, kategorisi, şehri ve ilçeleri ve bir sonraki toplu yayında (12:53) canlıya çıkacak linki (`site.config.js` içindeki `domain` + `/haberler/<slug>/`), varsa kira oranı veya faiz varsayılanı güncellemesi.

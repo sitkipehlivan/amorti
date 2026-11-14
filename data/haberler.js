@@ -58,7 +58,11 @@ function parse(file) {
     tarih,
     tarihMetin: `${d} ${AYLAR[mo - 1]} ${y}`,
     kategori: fm.kategori,
-    ilceler: (fm.ilceler || 'istanbul').split(',').map((s) => s.trim()).filter(Boolean),
+    ilceler: (fm.ilceler || '').split(',').map((s) => s.trim()).filter((s) => s && s !== 'istanbul' && s !== 'turkiye'),
+    // sehir: haberin ait olduğu şehir(ler) (istanbul, izmir, ankara, bursa, antalya, mugla, aydin, balikesir) ya da turkiye.
+    // Eski haberlerde sehir yoksa: ilçe yazılıysa İstanbul, değilse Türkiye geneli.
+    sehirler: fm.sehir ? fm.sehir.split(',').map((s) => s.trim()).filter(Boolean)
+      : ((fm.ilceler || '').split(',').some((s) => s.trim() && !['istanbul', 'turkiye'].includes(s.trim())) ? ['istanbul'] : ['turkiye']),
     kaynakDuz: (fm.kaynak || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'),
     gorsel: fm.gorsel ? {
       tip: fm.gorsel, rakam: fm.gorsel_rakam, etiket: fm.gorsel_etiket, alt: fm.gorsel_alt,

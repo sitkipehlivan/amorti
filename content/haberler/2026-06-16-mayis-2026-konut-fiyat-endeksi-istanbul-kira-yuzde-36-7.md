@@ -4,6 +4,7 @@ ozet: TCMB'nin mayıs verilerine göre İstanbul'da yeni kiracı kiraları yıll
 tarih: 2026-06-16
 kategori: Konut fiyatları
 ilceler: istanbul
+sehir: istanbul
 kaynak: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi, Mayıs 2026
 gorsel: karsilastirma
 gorsel_etiket: İstanbul'da yıllık artış, Mayıs 2026

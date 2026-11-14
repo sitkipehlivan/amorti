@@ -235,15 +235,47 @@
   }
 
   // ---------- 6. Hazır ilan araması ----------
-  var IA = window.AMORTI_ILAN || { odalar: [], yaslar: [], ilceler: {} };
+  var IA = window.AMORTI_ILAN || { odalar: [], yaslar: [], iller: {} };
+  function bulunma(ad) { // Kadıköy'de, Beşiktaş'ta
+    var k = ad.toLocaleLowerCase('tr'), v = 'e';
+    for (var i = k.length - 1; i >= 0; i--) if ('aeıioöuü'.indexOf(k[i]) > -1) { v = 'aıou'.indexOf(k[i]) > -1 ? 'a' : 'e'; break; }
+    return ad + '’' + ('fstkçşhp'.indexOf(k[k.length - 1]) > -1 ? 't' : 'd') + v;
+  }
+  function ilceAdi(il, ilce) {
+    var L = (IA.iller[il] || { i: [] }).i;
+    for (var i = 0; i < L.length; i++) if (L[i][0] === ilce) return L[i][1];
+    return '';
+  }
+  // Şehir değişince ilçe listesini yenile (ilan araması ve kira paylaşımı)
+  function ilceDoldur(ilSel, ilceSel, secili) {
+    var il = IA.iller[ilSel.value]; if (!il || !ilceSel) return;
+    var ilk = ilceSel.options[0] && ilceSel.options[0].value === '' ? ilceSel.options[0].text : '';
+    var html = ilk ? '<option value="">' + ilk + '</option>' : '', grup = null;
+    il.i.forEach(function (x) {
+      if (x[2] !== grup) { html += (grup !== null ? '</optgroup>' : '') + '<optgroup label="' + x[2] + '">'; grup = x[2]; }
+      html += '<option value="' + x[0] + '"' + (x[0] === secili ? ' selected' : '') + '>' + x[1] + '</option>';
+    });
+    ilceSel.innerHTML = html + (grup !== null ? '</optgroup>' : '');
+  }
+  document.querySelectorAll('select[name="il"]').forEach(function (sel) {
+    var f = sel.form; var ilce = f && f.elements.ilce;
+    sel.addEventListener('change', function () { ilceDoldur(sel, ilce, ''); if (ilce) ilce.dispatchEvent(new Event('input', { bubbles: true })); });
+    var on = window.AMORTI_ONSECIM;
+    if (on && f && f.getAttribute('name') === 'kira-paylas') {
+      if (on.il && IA.iller[on.il]) { sel.value = on.il; ilceDoldur(sel, ilce, on.ilce || ''); }
+    }
+  });
   function iaSecim(form) {
     var islem = (form.querySelector('input[name="islem"]:checked') || {}).value || 'satilik';
     var odalar = [].map.call(form.querySelectorAll('input[name="oda"]:checked'), function (i) { return i.value; });
     var yas = (form.querySelector('input[name="yas"]:checked') || {}).value || '';
     var min = val(form, 'min'), max = val(form, 'max');
-    return { islem: islem, ilce: form.elements.ilce.value, min: min > 0 ? Math.round(min) : 0, max: max > 0 ? Math.round(max) : 0, odalar: odalar, yas: yas };
+    return { islem: islem, il: (form.elements.il && form.elements.il.value) || 'istanbul', ilce: form.elements.ilce.value, min: min > 0 ? Math.round(min) : 0, max: max > 0 ? Math.round(max) : 0, odalar: odalar, yas: yas };
   }
   function iaBul(list, k) { for (var i = 0; i < list.length; i++) if (list[i].k === k) return list[i]; return null; }
+  // Hepsiemlak adreste yalnızca ilçe adını kullanır; Türkiye'de başka ilde aynı adlı ilçesi olanlar için il-ilçe yazılır.
+  var HP_IKIZ = { kemer: 1, aksu: 1, yenisehir: 1, golbasi: 1, kemalpasa: 1, edremit: 1, yenipazar: 1, bayindir: 0 };
+  function hpYer(s) { return !s.ilce ? s.il : (HP_IKIZ[s.ilce] ? s.il + '-' + s.ilce : s.ilce); }
   var iaSiteler = [
     { ad: 'sahibinden.com', url: function (s) {
       var q = [], eksik = false;
@@ -252,7 +284,7 @@
       if (s.min) q.push('price_min=' + s.min);
       if (s.max) q.push('price_max=' + s.max);
       s.odalar.forEach(function (k) { var o = iaBul(IA.odalar, k); if (o && o.sb && o.sb.length) o.sb.forEach(function (c) { q.push('a20=' + c); }); else eksik = true; });
-      return { url: 'https://www.sahibinden.com/' + s.islem + '-daire/istanbul-' + s.ilce + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda ve bina yaşını sitede seç' : '' };
+      return { url: 'https://www.sahibinden.com/' + s.islem + '-daire/' + s.il + (s.ilce ? '-' + s.ilce : '') + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda ve bina yaşını sitede seç' : '' };
     } },
     { ad: 'Hepsiemlak', url: function (s) {
       var q = [], eksik = false;
@@ -264,7 +296,7 @@
       if (s.min) q.push('p31=' + s.min);
       if (s.max) q.push('p32=' + s.max);
       if (s.min || s.max) q.push('p33=1');
-      return { url: 'https://www.hepsiemlak.com/' + s.ilce + '-' + s.islem + '/daire' + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda sayısını sitede seç' : (y && y.hpNot) || '' };
+      return { url: 'https://www.hepsiemlak.com/' + hpYer(s) + '-' + s.islem + '/daire' + (q.length ? '?' + q.join('&') : ''), eksik: eksik ? 'Oda sayısını sitede seç' : (y && y.hpNot) || '' };
     } },
     { ad: 'Emlakjet', url: function (s) {
       var f = [];
@@ -275,7 +307,7 @@
       var od = [];
       s.odalar.forEach(function (k) { var o = iaBul(IA.odalar, k); if (o) od = od.concat(o.ej); });
       if (od.length) f.push('oda-sayisi=' + od.join(','));
-      return { url: 'https://www.emlakjet.com/' + s.islem + '-daire/istanbul-' + s.ilce + (f.length ? '?filtreler=' + f.join('&') : ''), eksik: '' };
+      return { url: 'https://www.emlakjet.com/' + s.islem + '-daire/' + s.il + (s.ilce ? '-' + s.ilce : '') + (f.length ? '?filtreler=' + f.join('&') : ''), eksik: '' };
     } },
   ];
   function iaPara(n, kira) {
@@ -297,6 +329,7 @@
     if (!form.classList.contains('ia-mini')) try {
       var q = new URLSearchParams();
       if (s.islem !== 'satilik') q.set('islem', s.islem);
+      if (s.il !== 'istanbul') q.set('il', s.il);
       if (s.ilce) q.set('ilce', s.ilce);
       if (s.min) q.set('min', s.min);
       if (s.max) q.set('max', s.max);
@@ -306,7 +339,7 @@
       history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
     } catch (e) {}
     var out = form.querySelector('[data-out="siteler"]');
-    if (!s.ilce) { set(form, 'ozet', form.classList.contains('ia-mini') ? 'Bir ilçe seç, üç sitede hazır arama çıksın.' : 'Aramaya başlamak için bir ilçe seç.'); out.innerHTML = ''; return; }
+    var yerAd = s.ilce ? ilceAdi(s.il, s.ilce) : (IA.iller[s.il] || {}).ad || '';
     var parca = [];
     if (s.min && s.max) parca.push(iaPara(s.min, kira) + '–' + iaPara(s.max, kira) + ' TL arası');
     else if (s.max) parca.push(iaPara(s.max, kira) + ' TL’ye kadar');
@@ -314,7 +347,7 @@
     if (s.odalar.length) parca.push(s.odalar.join(' veya '));
     var y = iaBul(IA.yaslar, s.yas);
     if (y && y.k) parca.push(y.k === '31+' ? '31 yaş ve üzeri binalarda' : y.ad.replace(' yaş', ' yaşındaki binalarda'));
-    set(form, 'ozet', '<b>' + (IA.ilceler[s.ilce] || '') + '</b>’de ' + (parca.length ? parca.join(', ') + ' ' : '') + (kira ? 'kiralık' : 'satılık') + ' daireler');
+    set(form, 'ozet', '<b>' + bulunma(yerAd) + '</b> ' + (parca.length ? parca.join(', ') + ' ' : '') + (kira ? 'kiralık' : 'satılık') + ' daireler');
     out.innerHTML = iaSiteler.map(function (site) {
       var r = site.url(s);
       return '<a class="site-btn" href="' + r.url.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener nofollow">' +
@@ -337,7 +370,9 @@
     try {
       var q = new URLSearchParams(location.search);
       if (q.get('islem') === 'kiralik') form.querySelector('input[name="islem"][value="kiralik"]').checked = true;
-      if (q.get('ilce') && IA.ilceler[q.get('ilce')]) form.elements.ilce.value = q.get('ilce');
+      var qil = q.get('il') || 'istanbul';
+      if (IA.iller[qil] && form.elements.il) { form.elements.il.value = qil; ilceDoldur(form.elements.il, form.elements.ilce, q.get('ilce') || ''); }
+      else if (q.get('ilce')) form.elements.ilce.value = q.get('ilce');
       if (+q.get('min')) form.elements.min.value = nf0.format(+q.get('min'));
       if (+q.get('max')) form.elements.max.value = nf0.format(+q.get('max'));
       (q.get('oda') || '').split(',').forEach(function (k) { var i = form.querySelector('input[name="oda"][value="' + k + '"]'); if (i) i.checked = true; });
