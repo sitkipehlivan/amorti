@@ -157,12 +157,13 @@ const catLink = (h) => `<a class="cat" data-k="${h.kategori}" href="/haberler/ka
 const meta = (h) => `<div class="meta">${catLink(h)}${h.sehirler.filter((x) => ilBul(x)).map((x) => `<a class="sehir-etiket" href="/${x}/">${ilBul(x).ad}</a>`).join('')}<span>${h.tarihMetin}</span></div>`;
 const newsItem = (h) => `<li class="with-thumb"><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div>${meta(h)}<h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></div></li>`;
 const toolList = (list = tools) => `<ul class="tool-list">${list.map((t) => `<li><a href="/araclar/${t.slug}/"><span class="tool-icon">${t.icon}</span><span><h3>${t.menu}</h3><p>${t.kisa}</p></span></a></li>`).join('')}</ul>`;
-const ILAN_CFG = JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, iller: Object.fromEntries(iller.map((il) => [il.slug, { ad: il.ad, b: il.bulunma, i: il.ilceler.map((x) => [x.slug, x.ad, x.grup]) }])) });
+const ILAN_CFG = JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, tipler: ilanAra.tipler, iller: Object.fromEntries(iller.map((il) => [il.slug, { ad: il.ad, b: il.bulunma, i: il.ilceler.map((x) => [x.slug, x.ad, x.grup]) }])) });
 const rehberUrl = (r) => `/${r.il}/${r.slug}/`;
 const ilceGrid = (il, except, filtre = () => true) => `<div class="ilce-grid">${rehberler.filter((r) => r.il === il && r.slug !== except && filtre(r)).map((r) => `<a href="${rehberUrl(r)}">${r.ad}</a>`).join('')}</div>`;
 // İl ve ilçe seçimi (ilan araması ve kira paylaşımı)
 const ilSecenek = (sec = 'istanbul') => iller.map((il) => `<option value="${il.slug}"${il.slug === sec ? ' selected' : ''}>${il.ad}</option>`).join('');
 const ilceSecenek = (ilSlug = 'istanbul', sec = '') => { const il = ilBul(ilSlug); const gr = [...new Set(il.ilceler.map((x) => x.grup))]; return gr.map((g) => `<optgroup label="${g}">${il.ilceler.filter((x) => x.grup === g).map((x) => `<option value="${x.slug}"${x.slug === sec ? ' selected' : ''}>${x.ad}</option>`).join('')}</optgroup>`).join(''); };
+const tipChips = (sec = 'daire') => `<div class="chips" role="radiogroup" aria-label="Konut tipi">${ilanAra.tipler.map((t) => `<label class="chip"><input type="radio" name="tip" value="${t.k}"${t.k === sec ? ' checked' : ''}><span>${t.ad}</span></label>`).join('')}</div>`;
 const sehirKartlari = () => `<div class="sehir-grid">${iller.filter((il) => il.tur === 'buyuk').map((il) => `<a class="sehir-kart" href="/${il.slug}/"><b>${il.ad}</b><span>${rehberler.filter((r) => r.il === il.slug).length} ilçe rehberi</span></a>`).join('')}</div>
 <h3 class="yazlik-baslik">Yazlık bölgeler</h3>
 <div class="ilce-grid">${rehberler.filter((r) => r.yazlik).map((r) => `<a href="${rehberUrl(r)}">${r.ad}<small>${ilBul(r.il).ad}</small></a>`).join('')}</div>`;
@@ -237,6 +238,8 @@ ${ad('mrec')}
     <div class="field"><label for="w-ia-il">Şehir</label><div class="input"><select id="w-ia-il" name="il">${ilSecenek()}</select></div></div>
     <div class="field"><label for="w-ia-ilce">İlçe</label><div class="input"><select id="w-ia-ilce" name="ilce"><option value="">Tüm ilçeler</option>${ilceSecenek()}</select></div></div>
   </div>
+  <span class="mini-label">Konut tipi</span>
+  ${tipChips()}
   <span class="mini-label">Oda sayısı</span>
   <div class="chips">${ilanAra.odalar.slice(0, 4).map((o) => `<label class="chip"><input type="checkbox" name="oda" value="${o.k}"><span>${o.k}</span></label>`).join('')}</div>
   <div class="ia-sonuc" aria-live="polite">
@@ -377,6 +380,10 @@ function ilanAraForm({ il = 'istanbul', ilce = '' } = {}) {
     <div class="field"><label for="ia-ilce">İlçe</label><div class="input"><select id="ia-ilce" name="ilce"><option value="">Tüm ilçeler</option>${ilceSecenek(il, ilce)}</select></div></div>
   </div>
   <div class="ia-row">
+    <span class="ia-label">Konut tipi</span>
+    ${tipChips()}
+  </div>
+  <div class="ia-row">
     <span class="ia-label">Fiyat aralığı</span>
     <div class="chips">${fiyatChips('satilik')}${fiyatChips('kiralik')}</div>
     <div class="fields ia-fiyat">
@@ -405,7 +412,7 @@ function ilanAraForm({ il = 'istanbul', ilce = '' } = {}) {
   const c = [['/', 'Anasayfa'], [P, 'İlan ara']];
   write(P, layout({
     title: 'Satılık ve kiralık ev ara: sahibinden, Hepsiemlak ve Emlakjet için hazır arama',
-    description: 'İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölgelerde şehir, ilçe, fiyat, oda sayısı ve bina yaşını seç; sahibinden, Hepsiemlak ve Emlakjet\'te hazır aramaya tek tıkla git.',
+    description: 'İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölgelerde daire, rezidans, villa, müstakil ev ve yazlık için şehir, ilçe, fiyat, oda sayısı ve bina yaşını seç; sahibinden, Hepsiemlak ve Emlakjet\'te hazır aramaya tek tıkla git.',
     path: P, active: P,
     jsonld: [crumbLd(c), { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Hazır ilan araması', url: abs(P), applicationCategory: 'UtilitiesApplication', operatingSystem: 'Web', offers: { '@type': 'Offer', price: '0', priceCurrency: 'TRY' }, inLanguage: 'tr' }],
     body: `<div class="wrap page">
@@ -471,9 +478,9 @@ const sehirHaberleri = (ilSlug, ilceSlug, n = 6) => {
   if (ilceSlug) kendi.sort((x, y) => (y.ilceler.includes(ilceSlug) ? 1 : 0) - (x.ilceler.includes(ilceSlug) ? 1 : 0));
   return [...kendi, ...haberler.filter((h) => h.sehirler.includes('turkiye'))].slice(0, n);
 };
-const ilanButonlari = (il, ilce, ad) => `<div class="ilce-ilan">
-      <span><b>${bulunma(ad)} ev mi arıyorsun?</b> Fiyat, oda ve bina yaşını seç; üç ilan sitesinde hazır aramaya git.</span>
-      <span class="ilce-ilan-btns"><a class="btn" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}">Satılık ara</a><a class="btn btn-ghost" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}&amp;islem=kiralik">Kiralık ara</a></span>
+const ilanButonlari = (il, ilce, ad, tip = '') => `<div class="ilce-ilan">
+      <span><b>${bulunma(ad)} ev mi arıyorsun?</b> Konut tipi, fiyat, oda ve bina yaşını seç; üç ilan sitesinde hazır aramaya git.</span>
+      <span class="ilce-ilan-btns"><a class="btn" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}${tip ? `&amp;tip=${tip}` : ''}">Satılık ara</a><a class="btn btn-ghost" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}${tip ? `&amp;tip=${tip}` : ''}&amp;islem=kiralik">Kiralık ara</a></span>
     </div>`;
 
 write('/sehirler/', layout({
@@ -529,7 +536,7 @@ ${crumbs(cc)}
   <div>
     <h1>${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi</h1>
     <p class="lede">${i.ozet}</p>
-    ${ilanButonlari(il.slug, aramaIlce, i.ad)}
+    ${ilanButonlari(il.slug, aramaIlce, i.ad, i.yazlik ? 'tum' : '')}
     <h2 style="margin-top:28px">${bulunma(i.ad)} bir evin amortisman süresini hesapla</h2>
     ${amortismanForm({ heading: false, fiyat: '', kira: '', idPrefix: `${il.slug}-${i.slug}` })}
 
