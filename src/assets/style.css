@@ -551,3 +551,12 @@ html.hareket tr.rv:not(.gor) { transform: translateY(12px); }
   .seg-pill, .chip, .bank-chip { transition: none; }
   .result:not([hidden]), .ia-siteler .site-btn { animation: none; }
 }
+
+/* Şehir/ilçe fotoğrafı */
+.sehir-foto { margin: 6px 0 18px; }
+.sehir-foto img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--r); background: var(--paper-2); }
+.sehir-foto figcaption { margin-top: 8px; font-size: .78rem; color: var(--muted); line-height: 1.45; }
+.sehir-foto figcaption a { color: inherit; }
+.sehir-kart.fotolu { position: relative; overflow: hidden; min-height: 132px; justify-content: flex-end; background: #111318 var(--foto) center / cover no-repeat; isolation: isolate; }
+.sehir-kart.fotolu::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,.05) 30%, rgba(0,0,0,.72) 100%); }
+.sehir-kart.fotolu b, .sehir-kart.fotolu span { text-shadow: 0 1px 6px rgba(0,0,0,.45); }

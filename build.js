@@ -191,7 +191,15 @@ const ilceGrid = (il, except, filtre = () => true) => `<div class="ilce-grid">${
 const ilSecenek = (sec = 'istanbul') => iller.map((il) => `<option value="${il.slug}"${il.slug === sec ? ' selected' : ''}>${il.ad}</option>`).join('');
 const ilceSecenek = (ilSlug = 'istanbul', sec = '') => { const il = ilBul(ilSlug); const gr = [...new Set(il.ilceler.map((x) => x.grup))]; return gr.map((g) => `<optgroup label="${g}">${il.ilceler.filter((x) => x.grup === g).map((x) => `<option value="${x.slug}"${x.slug === sec ? ' selected' : ''}>${x.ad}</option>`).join('')}</optgroup>`).join(''); };
 const tipChips = (sec = 'daire') => `<div class="chips" role="radiogroup" aria-label="Konut tipi">${ilanAra.tipler.map((t) => `<label class="chip"><input type="radio" name="tip" value="${t.k}"${t.k === sec ? ' checked' : ''}><span>${t.ad}</span></label>`).join('')}</div>`;
-const sehirKartlari = () => `<div class="sehir-grid">${iller.filter((il) => il.tur === 'buyuk').map((il) => `<a class="sehir-kart" href="/${il.slug}/"><b>${il.ad}</b><span>${rehberler.filter((r) => r.il === il.slug).length} ilçe rehberi</span></a>`).join('')}</div>
+// Şehir/ilçe fotoğrafları (Wikimedia Commons). Dosya yoksa fotoğraf gösterilmez.
+const FOTOLAR = require('./data/fotolar');
+const foto = (k) => { const f = FOTOLAR[k]; return f && fs.existsSync(path.join(__dirname, 'src', f.dosya)) ? f : null; };
+const fotoFigur = (k, alt, oncelikli = true) => {
+  const f = foto(k); if (!f) return '';
+  return `<figure class="sehir-foto"><img src="${f.dosya}" srcset="${f.kucuk} 640w, ${f.dosya} 1280w" sizes="(max-width: 760px) 100vw, 760px" alt="${esc(alt || f.baslik)}" width="1280" height="720"${oncelikli ? ' fetchpriority="high"' : ' loading="lazy"'}>
+<figcaption>${esc(f.baslik)} · Fotoğraf: <a href="${f.kaynak}" rel="noopener nofollow">${esc(f.yazar)}</a>, <a href="${f.lisansUrl || f.kaynak}" rel="noopener nofollow license">${esc(f.lisans)}</a></figcaption></figure>`;
+};
+const sehirKartlari = () => `<div class="sehir-grid">${iller.filter((il) => il.tur === 'buyuk').map((il) => `<a class="sehir-kart${foto(il.slug) ? ' fotolu' : ''}" href="/${il.slug}/"${foto(il.slug) ? ` style="--foto:url(${foto(il.slug).kucuk})"` : ''}><b>${il.ad}</b><span>${rehberler.filter((r) => r.il === il.slug).length} ilçe rehberi</span></a>`).join('')}</div>
 <h3 class="yazlik-baslik">Yazlık bölgeler</h3>
 <div class="ilce-grid">${rehberler.filter((r) => r.yazlik).map((r) => `<a href="${rehberUrl(r)}">${r.ad}<small>${ilBul(r.il).ad}</small></a>`).join('')}</div>`;
 const sidebar = () => `<aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar</h3>${toolList()}</div></aside>`;
@@ -710,6 +718,7 @@ for (const il of iller) {
     body: `${adTop()}<div class="wrap page">${crumbs(c)}
 <div class="layout"><div>
 <h1>${il.ad} emlak rehberi</h1>
+${fotoFigur(il.slug, `${il.ad}: ${FOTOLAR[il.slug] ? FOTOLAR[il.slug].baslik : ''}`)}
 <p class="lede">${il.ozet}</p>
 ${ilanButonlari(il.slug, '', il.ad)}
 ${gruplar.map((g) => `<h2 style="margin-top:28px">${g}</h2>${ilceGrid(il.slug, null, (r) => (r.yazlik ? 'Yazlık bölgeler' : r.grup || 'İlçe rehberleri') === g)}`).join('')}
@@ -731,7 +740,7 @@ ${hab.length ? `<h2 style="margin-top:32px">${haberler.some((h) => h.sehirler.in
       description: `${bulunma(i.ad)} ev alırken ve kiralarken bilmen gerekenler: öne çıkan mahalleler, ulaşım, yatırımcı notları ve ${i.ad} için amortisman hesaplama.`,
       path: p, active: '/sehirler/',
       og: { yazlik: i.yazlik, baslik: `${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi`, alt: 'Mahalleler, ulaşım, yatırımcı notları ve amortisman hesabı', cipler: i.mahalleler.map((m) => m.split(/[:(,]/)[0].trim()).filter((m) => m.length < 18) },
-      jsonld: [crumbLd(cc), { '@context': 'https://schema.org', '@type': 'WebPage', name: `${i.ad} ev ve kira rehberi`, url: abs(p), inLanguage: 'tr', about: yerLd(i.ad, il.ad), publisher: { '@id': abs('/#kurum') } },
+      jsonld: [crumbLd(cc), { '@context': 'https://schema.org', '@type': 'WebPage', name: `${i.ad} ev ve kira rehberi`, url: abs(p), inLanguage: 'tr', about: yerLd(i.ad, il.ad), ...(foto(`${il.slug}/${i.slug}`) ? { primaryImageOfPage: { '@type': 'ImageObject', url: abs(foto(`${il.slug}/${i.slug}`).dosya), creditText: foto(`${il.slug}/${i.slug}`).yazar, license: foto(`${il.slug}/${i.slug}`).lisansUrl, acquireLicensePage: foto(`${il.slug}/${i.slug}`).kaynak } } : {}), publisher: { '@id': abs('/#kurum') } },
         faqLd([
           [`${bulunma(i.ad)} hangi ${i.yazlik ? 'bölgeler ve mahalleler' : 'mahalleler'} öne çıkıyor?`, `${i.ad} için öne çıkan ${i.yazlik ? 'bölgeler' : 'mahalleler'}: ${i.mahalleler.join(', ')}.`],
           [`${bulunma(i.ad)} ulaşım nasıl?`, i.ulasim.join(' ')],
@@ -743,6 +752,7 @@ ${crumbs(cc)}
 <div class="layout">
   <div>
     <h1>${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi</h1>
+    ${fotoFigur(`${il.slug}/${i.slug}`, `${i.ad}, ${il.ad}: ${FOTOLAR[`${il.slug}/${i.slug}`] ? FOTOLAR[`${il.slug}/${i.slug}`].baslik : ''}`)}
     <p class="lede">${i.ozet}</p>
     ${ilanButonlari(il.slug, aramaIlce, i.ad, i.yazlik ? 'tum' : '', i.bolge && ilanAra.semtler.some((x) => x.k === i.slug) ? i.slug : '')}
     <h2 style="margin-top:28px">${bulunma(i.ad)} bir evin amortisman süresini hesapla</h2>
