@@ -9,7 +9,7 @@ const haberler = require('./data/haberler');
 const oranlar = require('./data/kira-oranlari');
 const enf = require('./data/enflasyon');
 const faiz = require('./data/faizler');
-const { kapakYaz } = require('./lib/kapak');
+const { kapakYaz, sayfaKartYaz, RENK: KAT_RENK } = require('./lib/kapak');
 const { tools, amortismanForm, icons, bankaSec, field } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
@@ -58,10 +58,24 @@ const GUNLER = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'
 const AYLAR_ = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const bugun = (() => { const d = new Date(Date.now() + 3 * 3600e3); return `${d.getUTCDate()} ${AYLAR_[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${GUNLER[d.getUTCDay()]}`; })();
 
-function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website', tasarim = '' }) {
+function ogOtomatik(p, title, description, og) {
+  const seg = p.split('/').filter(Boolean);
+  const il = seg[0] && ilBul(seg[0]);
+  let etiket = cfg.name, renk = '#E85D04';
+  if (seg[0] === 'araclar' && seg[1]) etiket = 'Hesaplama aracı';
+  else if (seg[0] === 'araclar') etiket = 'Hesaplama araçları';
+  else if (p === '/konut-kredisi-faiz-oranlari/') { etiket = 'Güncel kredi faizleri'; renk = '#1F5FD6'; }
+  else if (seg[0] === 'haberler' && seg[1] === 'kategori') { etiket = 'Emlak haberleri'; const k = Object.keys(KAT_RENK).find((x) => katSlug(x) === seg[2]); if (k) renk = KAT_RENK[k]; }
+  else if (il && seg[1]) { etiket = `${og && og.yazlik ? 'Yazlık rehberi' : 'İlçe rehberi'} · ${il.ad}`; renk = '#0E8C7C'; }
+  else if (il || seg[0] === 'sehirler') { etiket = 'Şehir rehberi'; renk = '#0E8C7C'; }
+  else if (seg[0] === 'ilan-ara') etiket = 'Hazır ilan araması';
+  const ad = seg.length ? seg.join('-') : 'anasayfa';
+  return '/og/' + sayfaKartYaz({ etiket, renk, baslik: (og && og.baslik) || title, alt: (og && og.alt) || description, cipler: (og && og.cipler) || [] }, path.join(OUT, 'og'), ad);
+}
+function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website', tasarim = '', og = null }) {
   urls.push(p);
   const fullTitle = title.includes(cfg.name) ? title : `${title} | ${cfg.name}`;
-  image = image || '/assets/og-amorti.png';
+  image = image || (noindex || p === '/404.html' ? '/assets/og-amorti.png' : ogOtomatik(p, title, description, og));
   // KVKK: Google Analytics Consent Mode ile; izin verilmeden analiz çerezi yazılmaz. Çerez bandı aşağıda (cerezBandi).
   const ga = cfg.ga4 ? `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}(function(){var c=null;try{c=localStorage.getItem('am-cerez')}catch(e){}var a=c==='evet'?'granted':'denied';gtag('consent','default',{analytics_storage:a,ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500})})();gtag('js',new Date());gtag('config','${cfg.ga4}');</script><script async src="https://www.googletagmanager.com/gtag/js?id=${cfg.ga4}"></script>` : '';
   const cerezBandi = cfg.ga4 ? `<div id="cerez" role="dialog" aria-label="Çerez tercihi" hidden style="position:fixed;z-index:99;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:#141414;color:#f5f5f5;border-radius:14px;padding:14px 16px;box-shadow:0 14px 40px rgba(0,0,0,.3);font-size:14px;line-height:1.45"><p style="margin:0 0 10px">Sitenin nasıl kullanıldığını ölçmek için <b>Google Analytics</b> istatistik çerezlerini kullanmak istiyoruz. İzin vermezsen istatistik çerezi yazılmaz. <a href="/gizlilik/" style="color:#ffb27a">Gizlilik ve çerezler</a></p><div style="display:flex;gap:8px"><button type="button" data-v="evet" style="flex:1;height:38px;border-radius:999px;border:1px solid #fff;background:#fff;color:#141414;font-weight:700;cursor:pointer">Kabul et</button><button type="button" data-v="hayir" style="flex:1;height:38px;border-radius:999px;border:1px solid #fff;background:#fff;color:#141414;font-weight:700;cursor:pointer">Reddet</button></div></div><script>(function(){var b=document.getElementById('cerez'),K='am-cerez';function al(){try{return localStorage.getItem(K)}catch(e){return null}}if(!al())b.hidden=false;b.querySelectorAll('button').forEach(function(x){x.addEventListener('click',function(){var v=x.getAttribute('data-v');try{localStorage.setItem(K,v)}catch(e){}b.hidden=true;if(window.gtag)gtag('consent','update',{analytics_storage:v==='evet'?'granted':'denied'})})});document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-cerez-ac]')){e.preventDefault();b.hidden=false}})})();</script>` : '';
@@ -712,6 +726,7 @@ ${hab.length ? `<h2 style="margin-top:32px">${haberler.some((h) => h.sehirler.in
       title: `${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi: mahalleler, ulaşım, amortisman`,
       description: `${bulunma(i.ad)} ev alırken ve kiralarken bilmen gerekenler: öne çıkan mahalleler, ulaşım, yatırımcı notları ve ${i.ad} için amortisman hesaplama.`,
       path: p, active: '/sehirler/',
+      og: { yazlik: i.yazlik, baslik: `${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi`, alt: 'Mahalleler, ulaşım, yatırımcı notları ve amortisman hesabı', cipler: i.mahalleler.map((m) => m.split(/[:(,]/)[0].trim()).filter((m) => m.length < 18) },
       jsonld: [crumbLd(cc), { '@context': 'https://schema.org', '@type': 'WebPage', name: `${i.ad} ev ve kira rehberi`, url: abs(p), inLanguage: 'tr', about: yerLd(i.ad, il.ad), publisher: { '@id': abs('/#kurum') } },
         faqLd([
           [`${bulunma(i.ad)} hangi ${i.yazlik ? 'bölgeler ve mahalleler' : 'mahalleler'} öne çıkıyor?`, `${i.ad} için öne çıkan ${i.yazlik ? 'bölgeler' : 'mahalleler'}: ${i.mahalleler.join(', ')}.`],
