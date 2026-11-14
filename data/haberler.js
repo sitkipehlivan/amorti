@@ -56,6 +56,8 @@ function parse(file) {
     baslik: fm.baslik,
     ozet: fm.ozet,
     tarih,
+    guncelleme: fm.guncelleme || '',
+    kelime: m[2].split(/\s+/).filter(Boolean).length,
     tarihMetin: `${d} ${AYLAR[mo - 1]} ${y}`,
     kategori: fm.kategori,
     ilceler: (fm.ilceler || '').split(',').map((s) => s.trim()).filter((s) => s && s !== 'istanbul' && s !== 'turkiye'),

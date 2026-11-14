@@ -61,6 +61,7 @@ const bugun = (() => { const d = new Date(Date.now() + 3 * 3600e3); return `${d.
 function layout({ title, description, path: p, body, jsonld = [], active = '', noindex = false, image = '', ogType = 'website', tasarim = '' }) {
   urls.push(p);
   const fullTitle = title.includes(cfg.name) ? title : `${title} | ${cfg.name}`;
+  image = image || '/assets/og-amorti.png';
   // KVKK: Google Analytics Consent Mode ile; izin verilmeden analiz çerezi yazılmaz. Çerez bandı aşağıda (cerezBandi).
   const ga = cfg.ga4 ? `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}(function(){var c=null;try{c=localStorage.getItem('am-cerez')}catch(e){}var a=c==='evet'?'granted':'denied';gtag('consent','default',{analytics_storage:a,ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500})})();gtag('js',new Date());gtag('config','${cfg.ga4}');</script><script async src="https://www.googletagmanager.com/gtag/js?id=${cfg.ga4}"></script>` : '';
   const cerezBandi = cfg.ga4 ? `<div id="cerez" role="dialog" aria-label="Çerez tercihi" hidden style="position:fixed;z-index:99;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:#141414;color:#f5f5f5;border-radius:14px;padding:14px 16px;box-shadow:0 14px 40px rgba(0,0,0,.3);font-size:14px;line-height:1.45"><p style="margin:0 0 10px">Sitenin nasıl kullanıldığını ölçmek için <b>Google Analytics</b> istatistik çerezlerini kullanmak istiyoruz. İzin vermezsen istatistik çerezi yazılmaz. <a href="/gizlilik/" style="color:#ffb27a">Gizlilik ve çerezler</a></p><div style="display:flex;gap:8px"><button type="button" data-v="evet" style="flex:1;height:38px;border-radius:999px;border:1px solid #fff;background:#fff;color:#141414;font-weight:700;cursor:pointer">Kabul et</button><button type="button" data-v="hayir" style="flex:1;height:38px;border-radius:999px;border:1px solid #fff;background:#fff;color:#141414;font-weight:700;cursor:pointer">Reddet</button></div></div><script>(function(){var b=document.getElementById('cerez'),K='am-cerez';function al(){try{return localStorage.getItem(K)}catch(e){return null}}if(!al())b.hidden=false;b.querySelectorAll('button').forEach(function(x){x.addEventListener('click',function(){var v=x.getAttribute('data-v');try{localStorage.setItem(K,v)}catch(e){}b.hidden=true;if(window.gtag)gtag('consent','update',{analytics_storage:v==='evet'?'granted':'denied'})})});document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-cerez-ac]')){e.preventDefault();b.hidden=false}})})();</script>` : '';
@@ -72,7 +73,7 @@ function layout({ title, description, path: p, body, jsonld = [], active = '', n
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${abs(p)}">
-${noindex ? '<meta name="robots" content="noindex">' : ''}
+${noindex ? '<meta name="robots" content="noindex">' : '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">'}
 <meta property="og:type" content="${ogType}">
 ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="${abs(image)}">` : ''}
 <meta property="og:site_name" content="${cfg.name}">
@@ -83,6 +84,7 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <meta name="theme-color" content="#E85D04">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="${cfg.name} emlak haberleri" href="/rss.xml">
 <link rel="apple-touch-icon" href="/assets/app/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="${cfg.name}">
 <meta name="mobile-web-app-capable" content="yes">
@@ -148,6 +150,13 @@ const crumbLd = (items) => ({
   '@context': 'https://schema.org', '@type': 'BreadcrumbList',
   itemListElement: items.map(([href, label], i) => ({ '@type': 'ListItem', position: i + 1, name: label, item: abs(href) })),
 });
+const ORG = {
+  '@type': 'Organization', '@id': abs('/#kurum'), name: cfg.name, url: abs('/'),
+  logo: { '@type': 'ImageObject', url: abs('/assets/app/icon-512.png'), width: 512, height: 512 },
+  email: cfg.contactEmail, parentOrganization: { '@type': 'Organization', name: cfg.publisher },
+  description: `${cfg.tagline}. Türkiye'de ev alma, kiralama ve konut kredisi için hesaplama araçları, şehir rehberleri ve emlak haberleri.`,
+};
+const yerLd = (ad, ilAd) => ({ '@type': 'Place', name: ilAd && ilAd !== ad ? `${ad}, ${ilAd}` : ad, address: { '@type': 'PostalAddress', addressLocality: ad, ...(ilAd ? { addressRegion: ilAd } : {}), addressCountry: 'TR' } });
 const faqLd = (faq) => ({
   '@context': 'https://schema.org', '@type': 'FAQPage',
   mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
@@ -284,7 +293,7 @@ write('/', layout({
   title: `${cfg.name}: Emlak haberleri, kira artışı ve konut kredisi faizleri`,
   description: 'İstanbul ve Türkiye emlak haberleri, güncel kira artış oranı, bankaların konut kredisi faizleri ve konut fiyatları. Amortisman, kira artışı ve kredi hesaplama araçları.',
   path: '/', active: '/', image: lead ? lead.kapak : '',
-  jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', name: cfg.name, url: abs('/'), inLanguage: 'tr' }],
+  jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', '@id': abs('/#site'), name: cfg.name, url: abs('/'), inLanguage: 'tr', description: cfg.tagline, publisher: { '@id': abs('/#kurum') } }, { '@context': 'https://schema.org', ...ORG }],
   body: `<h1 class="visually-hidden">${cfg.name}: emlak haberleri ve hesaplama araçları</h1>
 <div class="wrap home-grid">
   <div class="home-main">
@@ -678,7 +687,8 @@ for (const il of iller) {
     title: `${il.ad} emlak rehberi: ilçeler, kiralar, amortisman ve haberler`,
     description: `${bulunma(il.ad)} ev alırken ve kiralarken: ilçe rehberleri, ${il.ad} emlak haberleri, kira artışı ve amortisman hesaplama, ilan sitelerinde hazır arama.`,
     path: P, active: '/sehirler/',
-    jsonld: [crumbLd(c)],
+    jsonld: [crumbLd(c), { '@context': 'https://schema.org', '@type': 'CollectionPage', name: `${il.ad} emlak rehberi`, url: abs(P), inLanguage: 'tr', about: yerLd(il.ad), publisher: { '@id': abs('/#kurum') },
+      mainEntity: { '@type': 'ItemList', itemListElement: reh.map((r, k) => ({ '@type': 'ListItem', position: k + 1, name: `${r.ad} ev ve kira rehberi`, url: abs(rehberUrl(r)) })) } }],
     body: `${adTop()}<div class="wrap page">${crumbs(c)}
 <div class="layout"><div>
 <h1>${il.ad} emlak rehberi</h1>
@@ -702,7 +712,13 @@ ${hab.length ? `<h2 style="margin-top:32px">${haberler.some((h) => h.sehirler.in
       title: `${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi: mahalleler, ulaşım, amortisman`,
       description: `${bulunma(i.ad)} ev alırken ve kiralarken bilmen gerekenler: öne çıkan mahalleler, ulaşım, yatırımcı notları ve ${i.ad} için amortisman hesaplama.`,
       path: p, active: '/sehirler/',
-      jsonld: [crumbLd(cc)],
+      jsonld: [crumbLd(cc), { '@context': 'https://schema.org', '@type': 'WebPage', name: `${i.ad} ev ve kira rehberi`, url: abs(p), inLanguage: 'tr', about: yerLd(i.ad, il.ad), publisher: { '@id': abs('/#kurum') } },
+        faqLd([
+          [`${bulunma(i.ad)} hangi ${i.yazlik ? 'bölgeler ve mahalleler' : 'mahalleler'} öne çıkıyor?`, `${i.ad} için öne çıkan ${i.yazlik ? 'bölgeler' : 'mahalleler'}: ${i.mahalleler.join(', ')}.`],
+          [`${bulunma(i.ad)} ulaşım nasıl?`, i.ulasim.join(' ')],
+          [`${bulunma(i.ad)} ev alırken nelere dikkat etmeli?`, i.notlar.join(' ')],
+          [`${bulunma(i.ad)} bir ev kaç yılda kendini öder?`, `Amortisman süresi, satış fiyatının yıllık net kira gelirine bölünmesiyle bulunur. Aidat, vergi, bakım ve boş kalınan aylar düşüldükten sonraki net kira esas alınmalıdır. Bu sayfadaki amortisman aracına ${i.ad} için baktığın evin fiyatını ve alınabilecek kirayı yazarak süreyi hesaplayabilirsin.`],
+        ])],
       body: `${adTop()}<div class="wrap page">
 ${crumbs(cc)}
 <div class="layout">
@@ -723,11 +739,11 @@ ${crumbs(cc)}
     ${ad('mobile')}
 
     <div class="prose">
-      <h2>Öne çıkan ${i.yazlik ? 'bölgeler ve mahalleler' : 'mahalleler'}</h2>
+      <h2>${bulunma(i.ad)} hangi ${i.yazlik ? 'bölgeler ve mahalleler' : 'mahalleler'} öne çıkıyor?</h2>
       <ul class="pill-list">${i.mahalleler.map((m) => `<li>${m}</li>`).join('')}</ul>
-      <h2>Ulaşım</h2>
+      <h2>${bulunma(i.ad)} ulaşım nasıl?</h2>
       <ul>${i.ulasim.map((u) => `<li>${u}</li>`).join('')}</ul>
-      <h2>Yatırım yaparken dikkat</h2>
+      <h2>${bulunma(i.ad)} ev alırken nelere dikkat etmeli?</h2>
       <ul>${i.notlar.map((n) => `<li>${n}</li>`).join('')}</ul>
       <p>Bir ilana bakıyorsan, aynı mahalledeki benzer ilanlarla karşılaştırmak için <a href="/araclar/ilan-firsat-mi/">bu ilan fırsat mı</a> aracını kullan.</p>
     </div>
@@ -746,7 +762,7 @@ ${crumbs(cc)}
 // ---------- Haberler ----------
 write('/haberler/', layout({
   title: 'Emlak haberleri: kira, konut fiyatları ve kredi',
-  description: 'Kira artış oranları, konut fiyat endeksi, konut kredisi faizleri ve İstanbul emlak piyasasından güncel haberler.',
+  description: 'Kira artış oranı, konut fiyatları, konut kredisi faizleri; İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölgelerden güncel emlak haberleri.',
   path: '/haberler/', active: '/haberler/',
   jsonld: [crumbLd([['/', 'Anasayfa'], ['/haberler/', 'Haberler']])],
   body: `${adTop()}<div class="wrap page">${crumbs([['/', 'Anasayfa'], ['/haberler/', 'Haberler']])}
@@ -755,13 +771,17 @@ write('/haberler/', layout({
 
 for (const h of haberler) {
   const p = `/haberler/${h.slug}/`;
-  const c = [['/', 'Anasayfa'], ['/haberler/', 'Haberler'], [p, h.kategori]];
+  const c = [['/', 'Anasayfa'], ['/haberler/', 'Haberler'], [`/haberler/kategori/${katSlug(h.kategori)}/`, h.kategori], [p, h.baslik]];
+  const yerler = h.sehirler.filter((x) => ilBul(x)).map((x) => yerLd(ilBul(x).ad));
   write(p, layout({
     title: h.baslik, description: h.ozet, path: p, active: `/haberler/kategori/${katSlug(h.kategori)}/`, image: h.kapak, ogType: 'article',
     jsonld: [crumbLd(c), {
       '@context': 'https://schema.org', '@type': 'NewsArticle', headline: h.baslik, description: h.ozet,
-      datePublished: h.tarih, dateModified: h.tarih, image: [abs(h.kapak)], inLanguage: 'tr', mainEntityOfPage: abs(p),
-      author: { '@type': 'Organization', name: cfg.name }, publisher: { '@type': 'Organization', name: cfg.publisher },
+      datePublished: `${h.tarih}T09:00:00+03:00`, dateModified: `${h.guncelleme || h.tarih}T09:00:00+03:00`, image: [{ '@type': 'ImageObject', url: abs(h.kapak), width: 1200, height: 630 }], inLanguage: 'tr', mainEntityOfPage: abs(p),
+      articleSection: h.kategori, isAccessibleForFree: true, wordCount: h.kelime,
+      ...(yerler.length ? { contentLocation: yerler, spatialCoverage: yerler } : { spatialCoverage: { '@type': 'Country', name: 'Türkiye' } }),
+      ...(h.kaynakDuz ? { citation: h.kaynakDuz } : {}),
+      author: { '@type': 'Organization', name: `${cfg.name} haber masası`, url: abs('/kunye/') }, publisher: ORG,
     }],
     body: `${adTop()}<div class="wrap page">${crumbs(c)}
 <div class="layout"><article class="prose">
@@ -779,13 +799,23 @@ ${ad('mobile')}
 }
 
 // ---------- Haber kategorileri ----------
+const KAT_SEO = {
+  kira: ['Kira haberleri: kira artış oranı, kiracı ve ev sahibi hakları', 'Aylık kira artış oranı, şehirlerde kira fiyatları, kiracı ve ev sahibini ilgilendiren yasal düzenlemeler. Güncel kira haberleri.'],
+  'konut-fiyatlari': ['Konut fiyatları haberleri: endeks, şehir şehir fiyatlar', 'TCMB konut fiyat endeksi, İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölgelerde konut fiyatlarındaki son gelişmeler.'],
+  kredi: ['Konut kredisi haberleri: faiz oranları ve kampanyalar', 'Konut kredisi faizlerindeki değişiklikler, TCMB faiz kararlarının krediye etkisi, kamu destekli kredi kampanyaları ve BDDK düzenlemeleri.'],
+  piyasa: ['Emlak piyasası haberleri: konut satışları ve yabancıya satış', 'TÜİK konut satış istatistikleri, yabancıya konut satışları, enflasyon beklentileri ve emlak piyasasındaki genel gelişmeler.'],
+  ulasim: ['Ulaşım haberleri: metro, raylı sistem ve yol projeleri', 'Yeni metro ve raylı sistem hatları, açılış tarihleri ve büyük yol projeleri; ulaşımın konut fiyatlarına ve kiralara etkisi.'],
+  'kentsel-donusum': ['Kentsel dönüşüm haberleri: projeler, kuralar ve haklar', 'Kentsel dönüşüm projeleri, hak sahipliği, kura ve tahliye süreçleri, yarısı bizden kampanyası ve riskli yapı düzenlemeleri.'],
+  projeler: ['Konut projeleri haberleri: TOKİ ve belediye projeleri', 'TOKİ, KİPTAŞ ve büyükşehir belediyelerinin konut projeleri, başvuru ve kura tarihleri, büyük kamu yatırımları.'],
+  mevzuat: ['Emlak mevzuatı haberleri: vergi, harç ve yasal düzenlemeler', 'Tapu harcı, emlak vergisi, değerli konut vergisi, kira hukuku ve kısa dönem kiralama gibi konut mevzuatındaki değişiklikler.'],
+};
 const tumKategoriler = [...KATEGORILER, ...[...new Set(haberler.map((h) => h.kategori))].filter((k) => !KATEGORILER.some(([, a]) => a === k)).map((k) => [katSlug(k), k])];
 for (const [slug, ad] of tumKategoriler) {
   const p = `/haberler/kategori/${slug}/`;
   const list = haberler.filter((h) => h.kategori === ad);
   const c = [['/', 'Anasayfa'], ['/haberler/', 'Haberler'], [p, ad]];
   write(p, layout({
-    title: `${ad} haberleri`, description: `${ad} kategorisindeki güncel emlak haberleri: ${list.slice(0, 3).map((h) => h.baslik).join('; ')}`.slice(0, 300),
+    title: KAT_SEO[slug] ? KAT_SEO[slug][0] : `${ad} haberleri`, description: KAT_SEO[slug] ? KAT_SEO[slug][1] : `${ad} kategorisindeki güncel emlak haberleri ve şehir şehir gelişmeler.`,
     path: p, active: p, jsonld: [crumbLd(c)],
     body: `${adTop()}<div class="wrap page">${crumbs(c)}
 <div class="layout"><div><h1>${ad}</h1>
@@ -830,7 +860,8 @@ write('/tesekkurler/', layout({
 
 // ---------- Kurumsal ----------
 write('/kunye/', layout({
-  title: 'Künye', description: `${cfg.name} künye bilgileri.`, path: '/kunye/',
+  title: 'Künye ve yayın ilkeleri', description: `${cfg.name} künye bilgileri, yayıncı, iletişim, haber kaynakları ve düzeltme politikası. Veriler TÜİK, TCMB ve bankaların resmî sayfalarından derlenir.`, path: '/kunye/',
+  jsonld: [{ '@context': 'https://schema.org', '@type': 'AboutPage', name: `${cfg.name} künye`, url: abs('/kunye/'), inLanguage: 'tr', mainEntity: ORG }],
   body: `<div class="wrap page prose"><h1>Künye</h1>
 <p><strong>Yayıncı:</strong> ${cfg.publisher}</p>
 <p><strong>Genel Yayın Yönetmeni:</strong> ${cfg.editor}</p>
@@ -839,6 +870,7 @@ write('/kunye/', layout({
 <p><strong>İletişim:</strong> <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a></p>
 <p><strong>Yer sağlayıcı:</strong> ${cfg.hosting}</p>
 <p>${cfg.name}, ev alma ve kiralama kararlarını kolaylaştırmak için hesaplama araçları, ilçe rehberleri ve emlak haberleri yayınlar. Sitedeki hesaplamalar bilgilendirme amaçlıdır ve yatırım tavsiyesi niteliği taşımaz; yatırım danışmanlığı yalnızca yetkili kuruluşlarca verilir.</p>
+<h2>Yayın ilkeleri ve kaynaklar</h2><p>Haberler ve hesaplama araçlarındaki veriler öncelikle birincil kaynaklardan alınır: Türkiye İstatistik Kurumu (TÜİK) bültenleri, Türkiye Cumhuriyet Merkez Bankası (TCMB) duyuruları ve EVDS verileri, Resmî Gazete, ilgili bakanlıklar, belediyeler ve bankaların kendi sayfaları. Birincil kaynak bulunamayan bilgiler en az iki güvenilir yayında doğrulanmadan yayımlanmaz. Her haberin sonunda kaynağı belirtilir. Tanıtım bülteni, doğrulanamayan kulis bilgisi ve yatırım tavsiyesi yayımlamayız.</p>
 <h2>Düzeltme ve cevap hakkı</h2><p>Hakkınızda yer alan bir haber veya yorumla ilgili düzeltme ve cevap talebinizi, ilgili sayfanın adresini belirterek <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a> adresine gönderebilirsiniz. 5187 sayılı Basın Kanunu'na uygun talepler gecikmeksizin yayımlanır. Haberlerin yayın tarihleri her haberde gösterilir.</p>
 <h2>Telif hakkı ve içerik bildirimi</h2><p>Hakkınızı ihlal ettiğini düşündüğünüz bir içerik varsa, sayfanın adresini ve hak sahipliğinizi gösteren bilgiyle <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a> adresine yazın. 5651 sayılı Kanun ve 5846 sayılı FSEK kapsamındaki bildirimleri inceler, haklı bulunan içeriği en geç 24 saat içinde yayından kaldırırız.</p></div>`,
 }));
@@ -868,12 +900,39 @@ write('/offline/', layout({
 
 // ---------- SEO dosyaları ----------
 const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/', '/onizleme/', '/onizleme-2/', '/onizleme-3/'].includes(u));
+const BUGUN_ISO = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
+const haberUrl = Object.fromEntries(haberler.map((h) => [`/haberler/${h.slug}/`, h]));
+const sonHaber = (fn) => { const l = haberler.filter(fn); return l.length ? l[0].tarih : null; };
+const lastmod = (u) => {
+  if (haberUrl[u]) return haberUrl[u].guncelleme || haberUrl[u].tarih;
+  const seg = u.split('/').filter(Boolean);
+  if (seg[0] === 'haberler' && seg[1] === 'kategori') return sonHaber((h) => katSlug(h.kategori) === seg[2]) || BUGUN_ISO;
+  if (ilBul(seg[0])) return sonHaber((h) => h.sehirler.includes(seg[0]) || h.sehirler.includes('turkiye')) || BUGUN_ISO;
+  return BUGUN_ISO;
+};
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${indexable.map((u) => `  <url><loc>${abs(u)}</loc></url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${indexable.map((u) => `  <url><loc>${abs(u)}</loc><lastmod>${lastmod(u)}</lastmod>${haberUrl[u] ? `<image:image><image:loc>${abs(haberUrl[u].kapak)}</image:loc></image:image>` : ''}</url>`).join('\n')}
 </urlset>
 `);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\nDisallow: /onizleme/\nDisallow: /onizleme-2/\nDisallow: /onizleme-3/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
+const xmlEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const rfc822 = (d) => new Date(`${d}T09:00:00+03:00`).toUTCString();
+fs.writeFileSync(path.join(OUT, 'rss.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>${cfg.name} emlak haberleri</title>
+<link>${abs('/haberler/')}</link>
+<description>Kira, konut fiyatları, konut kredisi ve şehir şehir emlak haberleri.</description>
+<language>tr</language>
+<atom:link href="${abs('/rss.xml')}" rel="self" type="application/rss+xml"/>
+${haberler.slice(0, 40).map((h) => `<item><title>${xmlEsc(h.baslik)}</title><link>${abs(`/haberler/${h.slug}/`)}</link><guid>${abs(`/haberler/${h.slug}/`)}</guid><pubDate>${rfc822(h.tarih)}</pubDate><category>${xmlEsc(h.kategori)}</category><description>${xmlEsc(h.ozet)}</description><enclosure url="${abs(h.kapak)}" type="image/png" length="0"/></item>`).join('\n')}
+</channel>
+</rss>
+`);
+// Arama motorları ve yapay zekâ arama botları açıkça serbest; yalnızca teşekkür ve önizleme sayfaları kapalı
+const KAPALI = ['/tesekkurler/', '/onizleme/', '/onizleme-2/', '/onizleme-3/'];
+const AI_BOTLAR = ['Googlebot', 'Bingbot', 'YandexBot', 'OAI-SearchBot', 'ChatGPT-User', 'GPTBot', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot', 'Applebot-Extended', 'DuckAssistBot', 'meta-externalagent'];
+fs.writeFileSync(path.join(OUT, 'robots.txt'), `${['*', ...AI_BOTLAR].map((b) => `User-agent: ${b}\nAllow: /\n${KAPALI.map((k) => `Disallow: ${k}`).join('\n')}`).join('\n\n')}\n\nSitemap: ${abs('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'llms.txt'), `# ${cfg.name}
 
 > ${cfg.tagline}. Türkiye'de ev alma, kiralama ve konut kredisi kararları için ücretsiz hesaplama araçları, İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölge rehberleri, emlak haberleri.
@@ -882,13 +941,23 @@ fs.writeFileSync(path.join(OUT, 'llms.txt'), `# ${cfg.name}
 ${tools.map((t) => `- [${t.menu}](${abs(`/araclar/${t.slug}/`)}): ${t.kisa}`).join('\n')}
 
 ## Güncel veriler
-- ${oranlar[0].ay} kira artış üst sınırı (TÜFE 12 aylık ortalama): %${tr2(oranlar[0].oran)}
+- ${oranlar[0].ay} kira artış üst sınırı (TÜFE 12 aylık ortalama): %${tr2(oranlar[0].oran)}. Konut kiralarında yıllık artış, kanun gereği bu oranı geçemez.
+- Son 12 ayın kira artış oranları: ${oranlar.slice(0, 12).map((o) => `${o.ay} %${tr2(o.oran)}`).join('; ')}
+- Konut kredisi: ${faiz.sonKontrolMetin} itibarıyla bankaların sitelerinde ilan edilen en düşük aylık faiz %${tr2(faiz.enDusuk ? faiz.enDusuk.oran : faiz.tipik)}${faiz.enDusuk ? ` (${faiz.enDusuk.banka})` : ''}, ortanca %${tr2(faiz.ortanca || faiz.tipik)}. Banka banka tablo: ${abs('/konut-kredisi-faiz-oranlari/')}
+
+## Yöntem ve kaynaklar
+- Kira artış oranı: TÜİK TÜFE 12 aylık ortalama değişim, her ayın 3'ünde açıklanır.
+- Konut fiyatları ve yeni kiracı kiraları: TCMB Konut Fiyat Endeksi ve Yeni Kiracı Kira Endeksi.
+- Konut satışları: TÜİK Konut Satış İstatistikleri.
+- Kredi faizleri: bankaların kendi sitelerinde ilan ettiği oranlar, hafta içi her gün kontrol edilir.
+- Amortisman: satış fiyatı / yıllık net kira (aidat, vergi, bakım ve boş kalınan aylar düşülerek).
+- Hesaplamalar bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Yayıncı: ${cfg.publisher}. Künye: ${abs('/kunye/')}
 
 ## Şehir ve ilçe rehberleri
 ${iller.map((il) => `- [${il.ad}](${abs(`/${il.slug}/`)}): ${rehberler.filter((r) => r.il === il.slug).map((r) => `[${r.ad}](${abs(rehberUrl(r))})`).join(', ')}`).join('\n')}
 
 ## Haberler
-${haberler.map((h) => `- [${h.baslik}](${abs(`/haberler/${h.slug}/`)})`).join('\n')}
+${haberler.map((h) => `- [${h.baslik}](${abs(`/haberler/${h.slug}/`)}) (${h.tarih}): ${h.ozet}`).join('\n')}
 `);
 
 console.log(`Tamam: ${urls.length} sayfa -> dist/`);
