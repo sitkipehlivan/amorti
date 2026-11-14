@@ -209,22 +209,46 @@ fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 fs.cpSync(path.join(__dirname, 'src/assets'), path.join(OUT, 'assets'), { recursive: true });
 // Haber kapağı fotoğrafı: önce haberin "foto" alanı, sonra ilçe/il fotoğrafı (yalnızca Unsplash), yoksa kategoriye göre konu fotoğrafı.
-const KONU_KAT = { 'Kira': ['apartman-1', 'apartman-2', 'apartman-3', 'konut-2'], 'Konut fiyatları': ['konut-1', 'konut-2', 'konut-3', 'apartman-2'], 'Kredi': ['anahtar-0', 'anahtar-1', 'para-1'], 'Piyasa': ['apartman-2', 'konut-3', 'anahtar-0', 'konut-1'], 'Ulaşım': ['tren-1', 'tren-2', 'tren-3'], 'Mevzuat': ['para-1', 'anahtar-1', 'apartman-1'], 'Kentsel dönüşüm': ['insaat-1', 'insaat-2'], 'Projeler': ['insaat-1', 'insaat-2', 'konut-2'] };
-const KONU_ONCE = new Set(['Ulaşım', 'Kentsel dönüşüm', 'Projeler', 'Kredi']);
+// Kategori → konu fotoğrafı grupları (data/fotolar.js → KONU, ad önekleri)
+const KONU_KAT = { 'Kira': ['kira', 'apartman', 'konut'], 'Konut fiyatları': ['konut', 'sehir', 'apartman'], 'Kredi': ['anahtar', 'kredi', 'para'], 'Piyasa': ['sehir', 'konut', 'apartman', 'kredi'], 'Ulaşım': ['tren', 'ulasim'], 'Mevzuat': ['belge', 'para', 'kredi', 'anahtar'], 'Kentsel dönüşüm': ['insaat'], 'Projeler': ['insaat', 'konut'] };
+const KONU_ONCE = new Set(['Ulaşım', 'Kentsel dönüşüm', 'Projeler', 'Kredi', 'Mevzuat']);
 const ozet32 = (t) => [...t].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
-function kapakFotosu(h) {
-  const yol = (k) => k && FOTOLAR.KONU[k] ? { dosya: FOTOLAR.KONU[k].dosya, yazar: FOTOLAR.KONU[k].yazar, kaynak: FOTOLAR.KONU[k].kaynak } : null;
-  const yer = (k) => FOTOLAR[k] && FOTOLAR[k].unsplash && fs.existsSync(path.join(__dirname, 'src/assets/foto/konu/yer-' + k.replace('/', '-') + '.jpg')) ? { dosya: '/assets/foto/konu/yer-' + k.replace('/', '-') + '.jpg', yazar: FOTOLAR[k].yazar, kaynak: FOTOLAR[k].kaynak } : null;
-  if (h.foto) return yol(h.foto) || yer(h.foto);
-  const iller_ = h.sehirler.filter((x) => ilBul(x));
-  let yerFoto = null;
-  for (const ilce of h.ilceler) for (const il of iller_) yerFoto = yerFoto || yer(`${il}/${ilce}`);
-  if (!yerFoto) for (const il of iller_) yerFoto = yerFoto || yer(il);
-  const liste = KONU_KAT[h.kategori] || KONU_KAT.Piyasa;
-  const konu = yol(liste[ozet32(h.slug) % liste.length]);
-  return KONU_ONCE.has(h.kategori) ? (konu || yerFoto) : (yerFoto || konu);
+const konuGrubu = (ad) => ad.replace(/-\d+$/, '').replace(/^sehir-.*/, 'sehir');
+// Yalnızca İstanbul haberlerinde kullanılacak konu fotoğrafları (tramvay, vapur, Boğaz, İstanbul apartmanları)
+const ISTANBUL_KONU = new Set(['ulasim-1', 'ulasim-2', 'ulasim-3', 'ulasim-4', 'tren-2', 'konut-3', 'apartman-1', 'apartman-2', 'apartman-3', 'kira-1', 'kira-2']);
+const kullanim = {}; // aynı fotoğrafın tekrarını azaltmak için: en az kullanılan aday seçilir
+function sec(adaylar, h) {
+  if (!adaylar.length) return null;
+  // Önce en az kullanılan; eşitlikte öncelik grubu (yer/konu sırası), sonra habere göre sabit karışım
+  const sirali = adaylar.slice().sort((a, b) => (kullanim[a.k] || 0) - (kullanim[b.k] || 0) || a.p - b.p || (ozet32(h.slug + a.k) - ozet32(h.slug + b.k))).map((x) => x.k);
+  kullanim[sirali[0]] = (kullanim[sirali[0]] || 0) + 1;
+  return sirali[0];
 }
-for (const h of haberler) {
+function kapakFotosu(h) {
+  const konu = (k) => FOTOLAR.KONU[k] ? { anahtar: k, dosya: FOTOLAR.KONU[k].dosya, yazar: FOTOLAR.KONU[k].yazar, kaynak: FOTOLAR.KONU[k].kaynak } : null;
+  const yerAnahtar = (k) => FOTOLAR[k] && FOTOLAR[k].unsplash && fs.existsSync(path.join(__dirname, 'src/assets/foto/konu/yer-' + k.replace('/', '-') + '.jpg')) ? 'yer:' + k : null;
+  const coz = (a) => a.startsWith('yer:') ? (() => { const k = a.slice(4); return { anahtar: a, dosya: '/assets/foto/konu/yer-' + k.replace('/', '-') + '.jpg', yazar: FOTOLAR[k].yazar, kaynak: FOTOLAR[k].kaynak }; })() : konu(a);
+  if (h.foto) return konu(h.foto) || (yerAnahtar(h.foto) ? coz(yerAnahtar(h.foto)) : null);
+  const iller_ = h.sehirler.filter((x) => ilBul(x));
+  // 1) ilçe fotoğrafı (haber belli bir ilçeyle ilgiliyse en anlamlı seçim)
+  const ilceAday = [];
+  for (const ilce of h.ilceler) for (const il of iller_) { const y = yerAnahtar(`${il}/${ilce}`); if (y) ilceAday.push(y); }
+  // 2) il fotoğrafı + o ilin şehir havuzu (sehir-istanbul-3 gibi)
+  const ilAday = [];
+  for (const il of iller_) { const y = yerAnahtar(il); if (y) ilAday.push(y); Object.keys(FOTOLAR.KONU).filter((k) => k.startsWith(`sehir-${il}-`)).forEach((k) => ilAday.push(k)); }
+  // 3) kategoriye göre konu fotoğrafları
+  const gruplar = KONU_KAT[h.kategori] || KONU_KAT.Piyasa;
+  const istanbulDisi = iller_.length && !iller_.includes('istanbul');
+  const konuAday = Object.keys(FOTOLAR.KONU).filter((k) => gruplar.includes(konuGrubu(k)) && !(istanbulDisi && ISTANBUL_KONU.has(k)) && (konuGrubu(k) !== 'sehir' || !iller_.length || iller_.some((il) => k.startsWith(`sehir-${il}-`))));
+  const p = (liste, oncelik) => liste.map((k) => ({ k, p: oncelik }));
+  let secim;
+  if (KONU_ONCE.has(h.kategori)) secim = sec([...p(konuAday, 0), ...p(ilceAday, 1), ...p(ilAday, 2)], h);
+  else if (ilceAday.length) secim = sec([...p(ilceAday, 0), ...p(ilAday, 1)], h);
+  else secim = sec([...p(ilAday, 0), ...p(konuAday, 1)], h);
+  return secim ? coz(secim) : null;
+}
+// Eskiden yeniye sırayla atanır: yeni haber eklenince eski kapaklar değişmez
+for (const h of haberler.slice().sort((a, b) => (a.tarih + a.slug).localeCompare(b.tarih + b.slug))) {
   h.kapakFotoBilgi = kapakFotosu(h);
   h.kapakFoto = h.kapakFotoBilgi ? path.join(__dirname, 'src', h.kapakFotoBilgi.dosya) : null;
   h.kapak = `/haberler/${h.slug}/` + kapakYaz(h, path.join(OUT, 'haberler', h.slug));

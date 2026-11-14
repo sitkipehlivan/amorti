@@ -560,5 +560,270 @@ module.exports.KONU = {
   "dosya": "/assets/foto/konu/para-1.jpg",
   "yazar": "Nedret Binici",
   "kaynak": "https://unsplash.com/photos/a-pile-of-different-currency-sitting-on-top-of-each-other-TD9ZL6i81R4"
+ },
+ "insaat-3": {
+  "dosya": "/assets/foto/konu/insaat-3.jpg",
+  "yazar": "Josh Olalde",
+  "kaynak": "https://unsplash.com/photos/construction-worker-in-hard-hat-on-building-frame-X1P1_EDNnok"
+ },
+ "insaat-4": {
+  "dosya": "/assets/foto/konu/insaat-4.jpg",
+  "yazar": "Etienne Girardet",
+  "kaynak": "https://unsplash.com/photos/two-men-working-sgYamIzhAhg"
+ },
+ "insaat-5": {
+  "dosya": "/assets/foto/konu/insaat-5.jpg",
+  "yazar": "Ivan Henao",
+  "kaynak": "https://unsplash.com/photos/man-kneeling-on-unfinished-building-during-daytime-04rZ7R1fKhY"
+ },
+ "insaat-6": {
+  "dosya": "/assets/foto/konu/insaat-6.jpg",
+  "yazar": "Vincenzo Cassano",
+  "kaynak": "https://unsplash.com/photos/a-bulldozer-digging-through-a-demolished-building-MqAiJPYEFrs"
+ },
+ "insaat-7": {
+  "dosya": "/assets/foto/konu/insaat-7.jpg",
+  "yazar": "Abdur Ahmanus",
+  "kaynak": "https://unsplash.com/photos/yellow-and-black-heavy-equipment-Pg3hfZa_izQ"
+ },
+ "insaat-8": {
+  "dosya": "/assets/foto/konu/insaat-8.jpg",
+  "yazar": "kerry rawlinson",
+  "kaynak": "https://unsplash.com/photos/white-concrete-building-under-blue-sky-during-daytime-k8uW_jDFFKw"
+ },
+ "sehir-istanbul-1": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-1.jpg",
+  "yazar": "Ahmet Kahveci",
+  "kaynak": "https://unsplash.com/photos/an-aerial-view-of-a-city-and-a-bridge-aSVQ_wMEPTY"
+ },
+ "sehir-istanbul-2": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-2.jpg",
+  "yazar": "Spenser Sembrat",
+  "kaynak": "https://unsplash.com/photos/mosque-by-the-water-at-sunset-with-bridge-O1n-f15L668"
+ },
+ "sehir-istanbul-3": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-3.jpg",
+  "yazar": "Mehmet Uzut",
+  "kaynak": "https://unsplash.com/photos/a-city-with-a-body-of-water-in-the-background-LZRx3mV8kgM"
+ },
+ "sehir-istanbul-4": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-4.jpg",
+  "yazar": "Ash Coronado",
+  "kaynak": "https://unsplash.com/photos/a-bridge-over-a-body-of-water-with-a-city-in-the-background-4W5fMO59hFQ"
+ },
+ "sehir-istanbul-5": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-5.jpg",
+  "yazar": "Janosch Jost",
+  "kaynak": "https://unsplash.com/photos/an-aerial-view-of-a-city-with-a-bridge-in-the-background-ApmpvBsxo-s"
+ },
+ "sehir-ankara-1": {
+  "dosya": "/assets/foto/konu/sehir-ankara-1.jpg",
+  "yazar": "Cengiz Özarpat",
+  "kaynak": "https://unsplash.com/photos/a-castle-with-a-flag-on-top-of-it-ozW-I1FsDxc"
+ },
+ "sehir-ankara-2": {
+  "dosya": "/assets/foto/konu/sehir-ankara-2.jpg",
+  "yazar": "ekrem osmanoglu",
+  "kaynak": "https://unsplash.com/photos/green-trees-near-city-buildings-during-daytime-3A1Geqv39oc"
+ },
+ "sehir-ankara-3": {
+  "dosya": "/assets/foto/konu/sehir-ankara-3.jpg",
+  "yazar": "ekrem osmanoglu",
+  "kaynak": "https://unsplash.com/photos/brown-and-white-concrete-building-fveUA9OFjVM"
+ },
+ "sehir-ankara-4": {
+  "dosya": "/assets/foto/konu/sehir-ankara-4.jpg",
+  "yazar": "Felix Munyika",
+  "kaynak": "https://unsplash.com/photos/a-view-of-a-city-with-mountains-in-the-background-4SuqYh9h9ts"
+ },
+ "sehir-izmir-1": {
+  "dosya": "/assets/foto/konu/sehir-izmir-1.jpg",
+  "yazar": "Parastoo Maleki",
+  "kaynak": "https://unsplash.com/photos/a-trolley-car-traveling-down-a-street-next-to-tall-buildings-j49sLH08tM0"
+ },
+ "sehir-izmir-2": {
+  "dosya": "/assets/foto/konu/sehir-izmir-2.jpg",
+  "yazar": "Parastoo Maleki",
+  "kaynak": "https://unsplash.com/photos/a-large-body-of-water-with-a-city-in-the-background-LvTAYcSL63c"
+ },
+ "sehir-izmir-3": {
+  "dosya": "/assets/foto/konu/sehir-izmir-3.jpg",
+  "yazar": "ismail yazıcı",
+  "kaynak": "https://unsplash.com/photos/a-view-of-a-body-of-water-with-a-city-in-the-background-J2ovUoNN9bk"
+ },
+ "konut-4": {
+  "dosya": "/assets/foto/konu/konut-4.jpg",
+  "yazar": "Christian Lendl",
+  "kaynak": "https://unsplash.com/photos/a-large-building-with-many-cars-parked-in-front-of-it-4jwlqIm14aE"
+ },
+ "konut-5": {
+  "dosya": "/assets/foto/konu/konut-5.jpg",
+  "yazar": "Lhordy Prepuse",
+  "kaynak": "https://unsplash.com/photos/tall-apartment-buildings-against-a-sunset-sky-Df2XV_6QWO8"
+ },
+ "konut-6": {
+  "dosya": "/assets/foto/konu/konut-6.jpg",
+  "yazar": "bahareh moradian",
+  "kaynak": "https://unsplash.com/photos/two-tall-modern-buildings-against-a-clear-blue-sky-hk4zCmw2OCA"
+ },
+ "kira-1": {
+  "dosya": "/assets/foto/konu/kira-1.jpg",
+  "yazar": "Onur Can Elma",
+  "kaynak": "https://unsplash.com/photos/a-modern-building-with-many-windows-against-the-sky-QsiIm_lK6WQ"
+ },
+ "kira-2": {
+  "dosya": "/assets/foto/konu/kira-2.jpg",
+  "yazar": "Ronin",
+  "kaynak": "https://unsplash.com/photos/dense-cityscape-with-a-large-turkish-flag-overlooking-a-waterfront-5RQ3oswSntc"
+ },
+ "kira-3": {
+  "dosya": "/assets/foto/konu/kira-3.jpg",
+  "yazar": "Koorosh Akbarnejad",
+  "kaynak": "https://unsplash.com/photos/old-apartment-building-against-a-cloudy-sky-adTtCHQlfWo"
+ },
+ "kira-4": {
+  "dosya": "/assets/foto/konu/kira-4.jpg",
+  "yazar": "Ant Rozetsky",
+  "kaynak": "https://unsplash.com/photos/a-city-street-filled-with-lots-of-tall-buildings-t8VRakfnlAY"
+ },
+ "kira-5": {
+  "dosya": "/assets/foto/konu/kira-5.jpg",
+  "yazar": "Sam Baroudi",
+  "kaynak": "https://unsplash.com/photos/a-view-of-a-city-with-tall-buildings-pi-gC46fofY"
+ },
+ "kira-6": {
+  "dosya": "/assets/foto/konu/kira-6.jpg",
+  "yazar": "selim buka",
+  "kaynak": "https://unsplash.com/photos/brown-and-white-concrete-building-JHUYAcyF_bQ"
+ },
+ "kira-7": {
+  "dosya": "/assets/foto/konu/kira-7.jpg",
+  "yazar": "Artur Voznenko",
+  "kaynak": "https://unsplash.com/photos/a-city-street-filled-with-lots-of-tall-buildings-U8WxzwVoqZk"
+ },
+ "kira-8": {
+  "dosya": "/assets/foto/konu/kira-8.jpg",
+  "yazar": "Michal Balog",
+  "kaynak": "https://unsplash.com/photos/brown-cardboard-boxes-on-brown-wooden-table-66NaCdBrkCs"
+ },
+ "kira-9": {
+  "dosya": "/assets/foto/konu/kira-9.jpg",
+  "yazar": "Ryu Orn",
+  "kaynak": "https://unsplash.com/photos/black-and-blue-backpack-on-brown-wooden-table-JQ-WgCJk5ow"
+ },
+ "kira-10": {
+  "dosya": "/assets/foto/konu/kira-10.jpg",
+  "yazar": "Point3D Commercial Imaging Ltd.",
+  "kaynak": "https://unsplash.com/photos/white-wooden-framed-glass-door-nQlVMCHPysY"
+ },
+ "kira-11": {
+  "dosya": "/assets/foto/konu/kira-11.jpg",
+  "yazar": "Med Badr  Chemmaoui",
+  "kaynak": "https://unsplash.com/photos/home-office-living-room-workspace-xtDpXi_a-YQ"
+ },
+ "kredi-1": {
+  "dosya": "/assets/foto/konu/kredi-1.jpg",
+  "yazar": "Cytonn Photography",
+  "kaynak": "https://unsplash.com/photos/person-writing-on-white-paper-GJao3ZTX9gU"
+ },
+ "kredi-2": {
+  "dosya": "/assets/foto/konu/kredi-2.jpg",
+  "yazar": "Signature Pro",
+  "kaynak": "https://unsplash.com/photos/person-writing-on-white-paper-wB9iWZKwljw"
+ },
+ "kredi-3": {
+  "dosya": "/assets/foto/konu/kredi-3.jpg",
+  "yazar": "Sasun Bughdaryan",
+  "kaynak": "https://unsplash.com/photos/yellow-piggy-bank-with-wooden-house-and-red-heart-7XUhaurwDd4"
+ },
+ "kredi-4": {
+  "dosya": "/assets/foto/konu/kredi-4.jpg",
+  "yazar": "Sasun Bughdaryan",
+  "kaynak": "https://unsplash.com/photos/calculator-piggy-bank-and-house-model-on-blue-background-mjD3YZhGt74"
+ },
+ "kredi-5": {
+  "dosya": "/assets/foto/konu/kredi-5.jpg",
+  "yazar": "Pauli Nie",
+  "kaynak": "https://unsplash.com/photos/a-small-house-bank-with-a-coin-and-blank-card-DUwZP3JzVC4"
+ },
+ "belge-1": {
+  "dosya": "/assets/foto/konu/belge-1.jpg",
+  "yazar": "Markus Spiske",
+  "kaynak": "https://unsplash.com/photos/rubber-stamp-on-legal-document-7PMGUqYQpYc"
+ },
+ "sehir-istanbul-6": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-6.jpg",
+  "yazar": "Joshua Kettle",
+  "kaynak": "https://unsplash.com/photos/a-view-of-a-city-and-a-bridge-at-night-cmWcpcscSGA"
+ },
+ "sehir-istanbul-7": {
+  "dosya": "/assets/foto/konu/sehir-istanbul-7.jpg",
+  "yazar": "Janosch Jost",
+  "kaynak": "https://unsplash.com/photos/an-aerial-view-of-a-city-with-a-bridge-in-the-background-ApmpvBsxo-s"
+ },
+ "kredi-6": {
+  "dosya": "/assets/foto/konu/kredi-6.jpg",
+  "yazar": "Tuấn 123",
+  "kaynak": "https://unsplash.com/photos/two-men-shaking-hands-over-a-house-model-and-keys-69K2AGQc_Yw"
+ },
+ "kredi-7": {
+  "dosya": "/assets/foto/konu/kredi-7.jpg",
+  "yazar": "Jakub Żerdzicki",
+  "kaynak": "https://unsplash.com/photos/hand-holding-house-keys-over-miniature-houses-t0CRdNl_mTg"
+ },
+ "insaat-9": {
+  "dosya": "/assets/foto/konu/insaat-9.jpg",
+  "yazar": "Design Hills",
+  "kaynak": "https://unsplash.com/photos/concrete-building-under-construction-hfI0pr6g4yw"
+ },
+ "ulasim-1": {
+  "dosya": "/assets/foto/konu/ulasim-1.jpg",
+  "yazar": "Majid Abparvar",
+  "kaynak": "https://unsplash.com/photos/a-trolley-car-on-a-street-with-flags-on-it-KmfnTyuht3M"
+ },
+ "ulasim-2": {
+  "dosya": "/assets/foto/konu/ulasim-2.jpg",
+  "yazar": "Wina Tristiana",
+  "kaynak": "https://unsplash.com/photos/a-red-trolley-car-traveling-down-a-street-next-to-a-crowd-of-people-l8HVYKxe02E"
+ },
+ "ulasim-3": {
+  "dosya": "/assets/foto/konu/ulasim-3.jpg",
+  "yazar": "Youssef Mohamed",
+  "kaynak": "https://unsplash.com/photos/a-large-bridge-spanning-over-a-large-body-of-water-Lw0OeEoCuyo"
+ },
+ "ulasim-4": {
+  "dosya": "/assets/foto/konu/ulasim-4.jpg",
+  "yazar": "Ibrahim Uzun",
+  "kaynak": "https://unsplash.com/photos/a-red-and-white-boat-traveling-down-a-river-C5xzEpwXOok"
+ },
+ "yazlik-1": {
+  "dosya": "/assets/foto/konu/yazlik-1.jpg",
+  "yazar": "Igor Pyrig",
+  "kaynak": "https://unsplash.com/photos/the-sun-is-setting-over-the-water-from-a-house-lH-Fd1fgcuk"
+ },
+ "yazlik-2": {
+  "dosya": "/assets/foto/konu/yazlik-2.jpg",
+  "yazar": "Hosein Noorbakhsh",
+  "kaynak": "https://unsplash.com/photos/a-body-of-water-surrounded-by-a-lush-green-hillside-_oHeGwCbsGE"
+ },
+ "yazlik-3": {
+  "dosya": "/assets/foto/konu/yazlik-3.jpg",
+  "yazar": "Nancy Harmsen",
+  "kaynak": "https://unsplash.com/photos/white-building-near-the-street-at-daytime-bs2gOABC8qo"
+ },
+ "yazlik-4": {
+  "dosya": "/assets/foto/konu/yazlik-4.jpg",
+  "yazar": "Igor Pyrig",
+  "kaynak": "https://unsplash.com/photos/a-sandy-beach-next-to-a-body-of-water-1LFNQHzPm1U"
+ },
+ "yazlik-5": {
+  "dosya": "/assets/foto/konu/yazlik-5.jpg",
+  "yazar": "Can Özmen",
+  "kaynak": "https://unsplash.com/photos/a-body-of-water-with-boats-floating-on-top-of-it-P13qBs-_6vw"
+ },
+ "yazlik-6": {
+  "dosya": "/assets/foto/konu/yazlik-6.jpg",
+  "yazar": "Aydin Hassan",
+  "kaynak": "https://unsplash.com/photos/a-body-of-water-surrounded-by-mountains-_PC1w9Wu7RY"
  }
 };

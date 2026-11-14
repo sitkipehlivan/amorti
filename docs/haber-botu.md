@@ -27,8 +27,8 @@ Yazılmayacaklar: tek bir firmanın tanıtım/reklam bülteni ("X projesinde %20
 ## Haber değeri ve tekrar
 
 - Son 24 saat içinde yayınlanmış/duyurulmuş gelişmeler. Pazartesi günü hafta sonunu da tara.
-- Günde **en fazla 4** haber. Yeni bir şey yoksa haber yazma; zorlama.
-- Türkiye geneli haberlerden sonra şehirleri dengeli tara: son 7 günde haberi çıkmamış şehirlere (İzmir, Ankara, Bursa, Antalya ve yazlık bölgeler) öncelik ver. Her gün her şehir için haber aramak zorunlu değil, ama hafta içinde her şehre en az bir kez bak.
+- Günde **en fazla 5** haber. Yeni bir şey yoksa haber yazma; zorlama. Aynı gün aynı şehirden ikiden fazla haber yazma (TÜİK/TCMB gibi Türkiye geneli veri haberleri hariç).
+- Türkiye geneli haberlerden sonra şehirleri dengeli tara: son 7 günde haberi çıkmamış şehirlere (İzmir, Ankara, Bursa, Antalya ve yazlık bölgeler) öncelik ver. Her gün her şehir için ayrı arama yap (ör. "İzmir konut", "Bodrum kira"); son 7 günde hiç haberi olmayan şehri öne al.
 - `content/haberler/` altındaki son 30 günlük dosyaları oku. Aynı olayı (aynı veri açıklaması, aynı proje duyurusu) tekrar yazma. Önemli yeni bir gelişme varsa (ör. açılış tarihi kesinleşti) yeni haber yazılabilir ama başlık ve içerik yeni bilgiyi öne çıkarmalı.
 
 ## Yazım
