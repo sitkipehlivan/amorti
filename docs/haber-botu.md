@@ -91,7 +91,7 @@ Metin. [Link metni](/araclar/kira-artis-hesaplama/) ve **kalın** kullanılabili
 
 ## Kapak görseli
 
-Her haberin kapağı, ön bilgideki `gorsel` alanlarından derleme sırasında otomatik çizilir (`lib/kapak.js`). Görsel indirme, yapay zekâ ile görsel üretme veya dosya ekleme yapma; sadece aşağıdaki alanları doldur. Rakamlar haber metniyle birebir aynı olmalı.
+Her haberin kapağı, ön bilgideki `gorsel` alanlarından derleme sırasında otomatik çizilir (`lib/kapak.js`). Kapağın arka planına fotoğraf da otomatik konur: haberin ilçesinin ya da ilinin fotoğrafı (yalnızca Unsplash kaynaklılar), yoksa kategoriye uygun konu fotoğrafı (`data/fotolar.js` → `KONU`). Ulaşım, kentsel dönüşüm, projeler ve kredi haberlerinde önce konu fotoğrafı seçilir. İstersen ön bilgiye `foto: tren-2` (konu adı) ya da `foto: izmir/cesme` yazarak seçimi elle belirleyebilirsin; yeni fotoğraf ekleme. Görsel indirme, yapay zekâ ile görsel üretme veya dosya ekleme yapma; sadece aşağıdaki alanları doldur. Rakamlar haber metniyle birebir aynı olmalı.
 
 Şablonlar:
 

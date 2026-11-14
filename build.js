@@ -10,6 +10,7 @@ const oranlar = require('./data/kira-oranlari');
 const enf = require('./data/enflasyon');
 const faiz = require('./data/faizler');
 const { kapakYaz, sayfaKartYaz, RENK: KAT_RENK } = require('./lib/kapak');
+const FOTOLAR = require('./data/fotolar');
 const { tools, amortismanForm, icons, bankaSec, field } = require('./pages/tools');
 
 const OUT = path.join(__dirname, 'dist');
@@ -192,7 +193,6 @@ const ilSecenek = (sec = 'istanbul') => iller.map((il) => `<option value="${il.s
 const ilceSecenek = (ilSlug = 'istanbul', sec = '') => { const il = ilBul(ilSlug); const gr = [...new Set(il.ilceler.map((x) => x.grup))]; return gr.map((g) => `<optgroup label="${g}">${il.ilceler.filter((x) => x.grup === g).map((x) => `<option value="${x.slug}"${x.slug === sec ? ' selected' : ''}>${x.ad}</option>`).join('')}</optgroup>`).join(''); };
 const tipChips = (sec = 'daire') => `<div class="chips" role="radiogroup" aria-label="Konut tipi">${ilanAra.tipler.map((t) => `<label class="chip"><input type="radio" name="tip" value="${t.k}"${t.k === sec ? ' checked' : ''}><span>${t.ad}</span></label>`).join('')}</div>`;
 // Şehir/ilçe fotoğrafları (Wikimedia Commons). Dosya yoksa fotoğraf gösterilmez.
-const FOTOLAR = require('./data/fotolar');
 const foto = (k) => { const f = FOTOLAR[k]; return f && fs.existsSync(path.join(__dirname, 'src', f.dosya)) ? f : null; };
 const fotoFigur = (k, alt, oncelikli = true) => {
   const f = foto(k); if (!f) return '';
@@ -208,7 +208,27 @@ const sidebar = () => `<aside>${ad('mrec')}<div class="box"><h3>Diğer araçlar<
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 fs.cpSync(path.join(__dirname, 'src/assets'), path.join(OUT, 'assets'), { recursive: true });
-for (const h of haberler) h.kapak = `/haberler/${h.slug}/` + kapakYaz(h, path.join(OUT, 'haberler', h.slug));
+// Haber kapağı fotoğrafı: önce haberin "foto" alanı, sonra ilçe/il fotoğrafı (yalnızca Unsplash), yoksa kategoriye göre konu fotoğrafı.
+const KONU_KAT = { 'Kira': ['apartman-1', 'apartman-2', 'apartman-3', 'konut-2'], 'Konut fiyatları': ['konut-1', 'konut-2', 'konut-3', 'apartman-2'], 'Kredi': ['anahtar-0', 'anahtar-1', 'para-1'], 'Piyasa': ['apartman-2', 'konut-3', 'anahtar-0', 'konut-1'], 'Ulaşım': ['tren-1', 'tren-2', 'tren-3'], 'Mevzuat': ['para-1', 'anahtar-1', 'apartman-1'], 'Kentsel dönüşüm': ['insaat-1', 'insaat-2'], 'Projeler': ['insaat-1', 'insaat-2', 'konut-2'] };
+const KONU_ONCE = new Set(['Ulaşım', 'Kentsel dönüşüm', 'Projeler', 'Kredi']);
+const ozet32 = (t) => [...t].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+function kapakFotosu(h) {
+  const yol = (k) => k && FOTOLAR.KONU[k] ? { dosya: FOTOLAR.KONU[k].dosya, yazar: FOTOLAR.KONU[k].yazar, kaynak: FOTOLAR.KONU[k].kaynak } : null;
+  const yer = (k) => FOTOLAR[k] && FOTOLAR[k].unsplash && fs.existsSync(path.join(__dirname, 'src/assets/foto/konu/yer-' + k.replace('/', '-') + '.jpg')) ? { dosya: '/assets/foto/konu/yer-' + k.replace('/', '-') + '.jpg', yazar: FOTOLAR[k].yazar, kaynak: FOTOLAR[k].kaynak } : null;
+  if (h.foto) return yol(h.foto) || yer(h.foto);
+  const iller_ = h.sehirler.filter((x) => ilBul(x));
+  let yerFoto = null;
+  for (const ilce of h.ilceler) for (const il of iller_) yerFoto = yerFoto || yer(`${il}/${ilce}`);
+  if (!yerFoto) for (const il of iller_) yerFoto = yerFoto || yer(il);
+  const liste = KONU_KAT[h.kategori] || KONU_KAT.Piyasa;
+  const konu = yol(liste[ozet32(h.slug) % liste.length]);
+  return KONU_ONCE.has(h.kategori) ? (konu || yerFoto) : (yerFoto || konu);
+}
+for (const h of haberler) {
+  h.kapakFotoBilgi = kapakFotosu(h);
+  h.kapakFoto = h.kapakFotoBilgi ? path.join(__dirname, 'src', h.kapakFotoBilgi.dosya) : null;
+  h.kapak = `/haberler/${h.slug}/` + kapakYaz(h, path.join(OUT, 'haberler', h.slug));
+}
 const img = (h, cls = '', lazy = true) => `<img class="${cls}" src="${h.kapak}" alt="${esc((h.gorsel && h.gorsel.etiket) || h.baslik)}" width="1200" height="630"${lazy ? ' loading="lazy"' : ''}>`;
 fs.writeFileSync(path.join(OUT, 'favicon.svg'), logoMark.replace('aria-hidden="true"', 'xmlns="http://www.w3.org/2000/svg"').replace(/var\(--accent\)/g, '#E85D04'));
 
@@ -818,7 +838,7 @@ ${meta(h)}
 <h1>${esc(h.baslik)}</h1>
 <p class="lede">${esc(h.ozet)}</p>
 <div class="byline">Amorti haber masası, ${h.tarihMetin}</div>
-<figure class="kapak">${img(h, '', false)}</figure>
+<figure class="kapak">${img(h, '', false)}${h.kapakFotoBilgi ? `<figcaption>Kapak fotoğrafı: <a href="${h.kapakFotoBilgi.kaynak}" rel="noopener nofollow">${esc(h.kapakFotoBilgi.yazar)}</a> / Unsplash</figcaption>` : ''}</figure>
 ${h.body}
 ${ad('mobile')}
 </article>${sidebar()}</div>
@@ -955,7 +975,7 @@ fs.writeFileSync(path.join(OUT, 'rss.xml'), `<?xml version="1.0" encoding="UTF-8
 <description>Kira, konut fiyatları, konut kredisi ve şehir şehir emlak haberleri.</description>
 <language>tr</language>
 <atom:link href="${abs('/rss.xml')}" rel="self" type="application/rss+xml"/>
-${haberler.slice(0, 40).map((h) => `<item><title>${xmlEsc(h.baslik)}</title><link>${abs(`/haberler/${h.slug}/`)}</link><guid>${abs(`/haberler/${h.slug}/`)}</guid><pubDate>${rfc822(h.tarih)}</pubDate><category>${xmlEsc(h.kategori)}</category><description>${xmlEsc(h.ozet)}</description><enclosure url="${abs(h.kapak)}" type="image/png" length="0"/></item>`).join('\n')}
+${haberler.slice(0, 40).map((h) => `<item><title>${xmlEsc(h.baslik)}</title><link>${abs(`/haberler/${h.slug}/`)}</link><guid>${abs(`/haberler/${h.slug}/`)}</guid><pubDate>${rfc822(h.tarih)}</pubDate><category>${xmlEsc(h.kategori)}</category><description>${xmlEsc(h.ozet)}</description><enclosure url="${abs(h.kapak)}" type="${h.kapak.endsWith('.jpg') ? 'image/jpeg' : 'image/png'}" length="0"/></item>`).join('\n')}
 </channel>
 </rss>
 `);
