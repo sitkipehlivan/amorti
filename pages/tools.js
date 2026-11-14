@@ -191,7 +191,7 @@ const tools = [
 <li><strong>3–6. yıl:</strong> kademeli olarak uzun vadeli seviyeye iner (${enf.yol.slice(2, 6).map((v) => '%' + tr1(v)).join(', ')})</li>
 <li><strong>Sonraki yıllar: %${tr1(enf.medyan)}</strong> — 2000–2025 arasında gerçekleşen yıl sonu enflasyonun medyanı</li>
 </ul>
-<p>Uzun vadeli seviye için TCMB'nin %5 hedefi yerine Türkiye'nin 2000'den bu yana yaşadığı tipik enflasyonu kullandık; TCMB'nin 2028 tahmini %${enf.beklenti.tcmb[2028]}. Aynı dönemin yıllık bileşik ortalaması ise %${tr1(enf.geoOrt)}; 2001, 2022 ve 2023 gibi yüksek yıllar bu ortalamayı yukarı çekiyor. Beklentiler her ay güncellenir.</p>
+<p>Uzun vadeli seviye için TCMB'nin %5 hedefi yerine Türkiye'nin 2000'den bu yana yaşadığı tipik enflasyonu kullandık; TCMB'nin 2028 tahmini %${tr1(enf.beklenti.tcmb[2028])}. Aynı dönemin yıllık bileşik ortalaması ise %${tr1(enf.geoOrt)}; 2001, 2022 ve 2023 gibi yüksek yıllar bu ortalamayı yukarı çekiyor. Beklentiler her ay güncellenir.</p>
 <div class="table-wrap"><table class="data"><thead><tr><th>Yıl</th><th>Yıl sonu TÜFE</th><th>Yıl</th><th>Yıl sonu TÜFE</th></tr></thead><tbody>
 ${(() => { const ys = Object.keys(enf.gecmis); const half = Math.ceil(ys.length / 2); const rows = []; for (let i = 0; i < half; i++) { const a = ys[i], b = ys[i + half]; rows.push(`<tr><td>${a}</td><td>%${tr2(enf.gecmis[a])}</td><td>${b || ''}</td><td>${b ? '%' + tr2(enf.gecmis[b]) : ''}</td></tr>`); } return rows.join(''); })()}
 </tbody></table></div>

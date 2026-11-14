@@ -12,10 +12,10 @@ const gecmis = {
 };
 
 const beklenti = {
-  kaynak: 'TCMB Piyasa Katılımcıları Anketi, Ekim 2026',
-  ay12: 23.89, // 12 ay sonrası TÜFE beklentisi
-  ay24: 17.94, // 24 ay sonrası TÜFE beklentisi
-  tcmb: { 2027: 15, 2028: 9, ortaVade: 5, kaynak: 'TCMB Enflasyon Raporu, Ağustos 2026' },
+  kaynak: 'TCMB Piyasa Katılımcıları Anketi, Kasım 2026',
+  ay12: 24.04, // 12 ay sonrası TÜFE beklentisi
+  ay24: 18.02, // 24 ay sonrası TÜFE beklentisi
+  tcmb: { 2027: 21, 2028: 13.5, ortaVade: 5, kaynak: 'TCMB Enflasyon Raporu, Kasım 2026' },
 };
 
 const degerler = Object.values(gecmis).sort((a, b) => a - b);
