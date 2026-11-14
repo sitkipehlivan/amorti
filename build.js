@@ -15,7 +15,7 @@ const { tools, amortismanForm, icons, bankaSec, field } = require('./pages/tools
 const OUT = path.join(__dirname, 'dist');
 // Önbellek kırıcı: dosya içeriği değişince adres değişir
 const ver = (f) => require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'src/assets', f))).digest('hex').slice(0, 8);
-const V = { css: ver('style.css'), js: ver('app.js'), gz: ver('gazeta.css') };
+const V = { css: ver('style.css'), js: ver('app.js'), gz: ver('gazeta.css'), qz: ver('qurno.css') };
 const urls = [];
 
 // ---------- yardımcılar ----------
@@ -90,12 +90,12 @@ ${image ? `<meta property="og:image" content="${abs(image)}">\n<meta property="o
 <link rel="preload" href="/assets/fonts/league-spartan-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/questrial-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>try{var t=localStorage.getItem('amorti-tema');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<link rel="stylesheet" href="/assets/style.css?v=${V.css}">${tasarim === 'gazeta' ? `\n<link rel="stylesheet" href="/assets/gazeta.css?v=${V.gz}">` : ''}
+<link rel="stylesheet" href="/assets/style.css?v=${V.css}">${tasarim === 'gazeta' ? `\n<link rel="stylesheet" href="/assets/gazeta.css?v=${V.gz}">` : ''}${tasarim === 'qurno' ? `\n<link rel="stylesheet" href="/assets/qurno.css?v=${V.qz}">` : ''}
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 ${ga}
 </head>
-<body${tasarim ? ` class="gz"` : ''}>
-${tasarim === 'gazeta' ? gzHeader(active) : `<header class="masthead">
+<body${tasarim === 'gazeta' ? ' class="gz"' : tasarim === 'qurno' ? ' class="qz"' : ''}>
+${tasarim === 'gazeta' ? gzHeader(active) : tasarim === 'qurno' ? qzHeader(active) : `<header class="masthead">
   <div class="wrap mast-top">
     <div class="mast-date">${bugun}</div>
     <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="36" height="36"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span><span class="logo-tag">Emlak haberleri ve hesaplama araçları</span></a>
@@ -109,7 +109,7 @@ ${tasarim === 'gazeta' ? gzHeader(active) : `<header class="masthead">
 <main>
 ${body}
 </main>
-${tasarim === 'gazeta' ? gzFooter() : `<footer class="site-foot">
+${tasarim === 'gazeta' ? gzFooter() : tasarim === 'qurno' ? qzFooter() : `<footer class="site-foot">
   <div class="wrap foot-grid">
     <div>
       <a class="foot-name" href="/">${cfg.name.toLowerCase()}</a>
@@ -421,6 +421,56 @@ function gzFooter() {
     ${widgets}
   </aside>
 </div>`,
+  }));
+}
+
+// ---------- Tasarım önizlemesi 2 (Qurno düzeni, sade): /onizleme-2/ ----------
+function qzHeader(active) {
+  const menu = [['/', 'Gündem'], ['/haberler/kategori/kira/', 'Kira'], ['/haberler/kategori/konut-fiyatlari/', 'Konut fiyatları'], ['/haberler/kategori/kredi/', 'Kredi'], ['/konut-kredisi-faiz-oranlari/', 'Faizler'], ['/araclar/', 'Araçlar'], ['/sehirler/', 'Şehirler']];
+  return `<header class="qz-head"><div class="wrap qz-head-in">
+  <a class="logo" href="/" aria-label="${cfg.name} anasayfa"><span class="logo-row">${logoMark.replace('width="30" height="30"', 'width="28" height="28"')}<span class="logo-name">${cfg.name.toLowerCase()}</span></span></a>
+  <nav class="qz-nav" aria-label="Menü">${menu.map((n) => `<a href="${n[0]}"${active === n[0] ? ' aria-current="page"' : ''}>${n[1]}</a>`).join('')}</nav>
+  <div class="qz-head-r"><a class="qz-ara" href="/ilan-ara/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Ev ara</a>${temaBtn}</div>
+</div></header>`;
+}
+function qzFooter() {
+  return `<footer class="qz-foot"><div class="wrap qz-foot-in">
+  <span>© 2026 ${cfg.name}. Yayıncı: ${cfg.publisher}</span>
+  <nav><a href="/kunye/">Künye</a><span>|</span><a href="/gizlilik/">Gizlilik ve KVKK</a><span>|</span><a href="/kira-paylas/">Kiranı paylaş</a></nav>
+</div></footer>`;
+}
+{
+  const takvim = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/></svg>';
+  const baslik = (t) => `<h2 class="qz-title"><span>${t}</span></h2>`;
+  const kart = (h) => `<article class="qz-card">
+    <a class="qz-card-img" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a>
+    <div class="qz-meta">${takvim}<span>${h.tarihMetin}</span></div>
+    <h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3>
+    <p>${esc(h.ozet)}</p>
+    <div class="qz-tags"><a href="/haberler/kategori/${katSlug(h.kategori)}/">${h.kategori}</a>${h.sehirler.filter((x) => ilBul(x)).map((x) => `<a href="/${x}/">${ilBul(x).ad}</a>`).join('')}</div>
+  </article>`;
+  write('/onizleme-2/', layout({
+    title: 'Tasarım önizlemesi 2', description: 'Sade tasarım önizlemesi', path: '/onizleme-2/', active: '/', noindex: true, tasarim: 'qurno',
+    body: `<section class="qz-hero"><div class="wrap">
+  <p class="qz-hero-t">Ev alırken ve kiralarken <span>hesabı netleştir.</span></p>
+  <p class="qz-hero-s">Güncel emlak haberleri, bankaların konut kredisi faizleri ve tek tıkla hesaplama araçları.</p>
+  <div class="qz-hero-btns"><a class="qz-btn" href="/araclar/kira-artis-hesaplama/">Kira artışını hesapla</a><a class="qz-btn qz-btn-o" href="/ilan-ara/">İlan sitelerinde ara</a></div>
+</div></section>
+<div class="wrap qz-home">
+  <div class="qz-main">
+    ${baslik('Son haberler')}
+    <div class="qz-grid">${haberler.slice(0, 8).map(kart).join('')}</div>
+    <p style="text-align:center;margin:10px 0 0"><a class="qz-btn" href="/haberler/">Tüm haberler</a></p>
+  </div>
+  <aside class="qz-side" aria-label="Hesaplama araçları">
+    <div class="qz-side-title">Hesaplama araçları</div>
+    ${widgets}
+  </aside>
+</div>
+<section class="qz-sehir"><div class="wrap">
+  ${baslik('Şehir ve bölge rehberleri')}
+  ${sehirKartlari()}
+</div></section>`,
   }));
 }
 
@@ -755,13 +805,13 @@ write('/offline/', layout({
 }));
 
 // ---------- SEO dosyaları ----------
-const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/', '/onizleme/'].includes(u));
+const indexable = urls.filter((u) => !['/tesekkurler/', '/404.html', '/offline/', '/onizleme/', '/onizleme-2/'].includes(u));
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexable.map((u) => `  <url><loc>${abs(u)}</loc></url>`).join('\n')}
 </urlset>
 `);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\nDisallow: /onizleme/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
+fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /tesekkurler/\nDisallow: /onizleme/\nDisallow: /onizleme-2/\n\nSitemap: ${abs('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'llms.txt'), `# ${cfg.name}
 
 > ${cfg.tagline}. Türkiye'de ev alma, kiralama ve konut kredisi kararları için ücretsiz hesaplama araçları, İstanbul, İzmir, Ankara, Bursa, Antalya ve yazlık bölge rehberleri, emlak haberleri.
