@@ -62,4 +62,10 @@ const fiyatlar = {
   kiralik: [[0, 25000, '25 bine kadar'], [25000, 40000, '25–40 bin'], [40000, 70000, '40–70 bin'], [70000, 0, '70 bin üstü']],
 };
 
-module.exports = { ilceler, odalar, yaslar, fiyatlar, tipler };
+// Mahalle düzeyinde arama yapılabilen bölgeler (ilçe rehberi olan semtler). sb: sahibinden adres eki, ej: Emlakjet adres eki.
+// Hepsiemlak mahalle adresi bilinmiyor; orada ilçe araması açılır.
+const semtler = [
+  { il: 'izmir', ilce: 'cesme', k: 'alacati', ad: 'Alaçatı', sb: 'alacati-alacati-mh.', ej: 'alacati-mahallesi' },
+];
+
+module.exports = { ilceler, odalar, yaslar, fiyatlar, tipler, semtler };

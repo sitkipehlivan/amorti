@@ -157,7 +157,7 @@ const catLink = (h) => `<a class="cat" data-k="${h.kategori}" href="/haberler/ka
 const meta = (h) => `<div class="meta">${catLink(h)}${h.sehirler.filter((x) => ilBul(x)).map((x) => `<a class="sehir-etiket" href="/${x}/">${ilBul(x).ad}</a>`).join('')}<span>${h.tarihMetin}</span></div>`;
 const newsItem = (h) => `<li class="with-thumb"><a class="thumb" href="/haberler/${h.slug}/" tabindex="-1" aria-hidden="true">${img(h)}</a><div>${meta(h)}<h3><a href="/haberler/${h.slug}/">${esc(h.baslik)}</a></h3><p>${esc(h.ozet)}</p></div></li>`;
 const toolList = (list = tools) => `<ul class="tool-list">${list.map((t) => `<li><a href="/araclar/${t.slug}/"><span class="tool-icon">${t.icon}</span><span><h3>${t.menu}</h3><p>${t.kisa}</p></span></a></li>`).join('')}</ul>`;
-const ILAN_CFG = JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, tipler: ilanAra.tipler, iller: Object.fromEntries(iller.map((il) => [il.slug, { ad: il.ad, b: il.bulunma, i: il.ilceler.map((x) => [x.slug, x.ad, x.grup]) }])) });
+const ILAN_CFG = JSON.stringify({ odalar: ilanAra.odalar, yaslar: ilanAra.yaslar, tipler: ilanAra.tipler, semtler: ilanAra.semtler, iller: Object.fromEntries(iller.map((il) => [il.slug, { ad: il.ad, b: il.bulunma, i: il.ilceler.map((x) => [x.slug, x.ad, x.grup]) }])) });
 const rehberUrl = (r) => `/${r.il}/${r.slug}/`;
 const ilceGrid = (il, except, filtre = () => true) => `<div class="ilce-grid">${rehberler.filter((r) => r.il === il && r.slug !== except && filtre(r)).map((r) => `<a href="${rehberUrl(r)}">${r.ad}</a>`).join('')}</div>`;
 // İl ve ilçe seçimi (ilan araması ve kira paylaşımı)
@@ -368,6 +368,7 @@ ${crumbs(c)}
 function ilanAraForm({ il = 'istanbul', ilce = '' } = {}) {
   const fiyatChips = (tur) => ilanAra.fiyatlar[tur].map(([a, b, ad]) => `<button type="button" class="chip" data-fiyat="${a}-${b}" data-tur="${tur}"${tur === 'kiralik' ? ' hidden' : ''}>${ad}</button>`).join('');
   return `<form class="calc ilan-ara" data-tool="ilan-ara" novalidate>
+  <input type="hidden" name="semt" value="">
   <div class="ia-row">
     <span class="ia-label" id="ia-islem">Ne arıyorsun?</span>
     <div class="seg" role="radiogroup" aria-labelledby="ia-islem">
@@ -478,9 +479,9 @@ const sehirHaberleri = (ilSlug, ilceSlug, n = 6) => {
   if (ilceSlug) kendi.sort((x, y) => (y.ilceler.includes(ilceSlug) ? 1 : 0) - (x.ilceler.includes(ilceSlug) ? 1 : 0));
   return [...kendi, ...haberler.filter((h) => h.sehirler.includes('turkiye'))].slice(0, n);
 };
-const ilanButonlari = (il, ilce, ad, tip = '') => `<div class="ilce-ilan">
+const ilanButonlari = (il, ilce, ad, tip = '', semt = '') => `<div class="ilce-ilan">
       <span><b>${bulunma(ad)} ev mi arıyorsun?</b> Konut tipi, fiyat, oda ve bina yaşını seç; üç ilan sitesinde hazır aramaya git.</span>
-      <span class="ilce-ilan-btns"><a class="btn" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}${tip ? `&amp;tip=${tip}` : ''}">Satılık ara</a><a class="btn btn-ghost" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}${tip ? `&amp;tip=${tip}` : ''}&amp;islem=kiralik">Kiralık ara</a></span>
+      <span class="ilce-ilan-btns"><a class="btn" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}${tip ? `&amp;tip=${tip}` : ''}${semt ? `&amp;semt=${semt}` : ''}">Satılık ara</a><a class="btn btn-ghost" href="/ilan-ara/?il=${il}${ilce ? `&amp;ilce=${ilce}` : ''}${tip ? `&amp;tip=${tip}` : ''}${semt ? `&amp;semt=${semt}` : ''}&amp;islem=kiralik">Kiralık ara</a></span>
     </div>`;
 
 write('/sehirler/', layout({
@@ -536,7 +537,7 @@ ${crumbs(cc)}
   <div>
     <h1>${i.ad} ${i.yazlik ? 'yazlık ' : ''}ev ve kira rehberi</h1>
     <p class="lede">${i.ozet}</p>
-    ${ilanButonlari(il.slug, aramaIlce, i.ad, i.yazlik ? 'tum' : '')}
+    ${ilanButonlari(il.slug, aramaIlce, i.ad, i.yazlik ? 'tum' : '', i.bolge && ilanAra.semtler.some((x) => x.k === i.slug) ? i.slug : '')}
     <h2 style="margin-top:28px">${bulunma(i.ad)} bir evin amortisman süresini hesapla</h2>
     ${amortismanForm({ heading: false, fiyat: '', kira: '', idPrefix: `${il.slug}-${i.slug}` })}
 
